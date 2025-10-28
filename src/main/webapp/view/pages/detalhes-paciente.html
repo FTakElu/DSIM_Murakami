@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Paciente - DSIM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .patient-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .patient-details h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .patient-details p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: white;
+            color: #2c3e50;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .period-selector {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .period-selector h3 {
+            color: #2c3e50;
+            margin-right: 10px;
+        }
+
+        .period-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .period-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #666;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .period-btn.active {
+            background: #3498db;
+            border-color: #3498db;
+            color: white;
+        }
+
+        .period-btn:hover {
+            border-color: #3498db;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f0f0f0;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .chart-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .chart-icon.heartbeat {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .chart-icon.oxygen {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .chart-icon.temperature {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .chart-value {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .chart-canvas {
+            height: 300px !important;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid;
+        }
+
+        .info-card.personal {
+            border-left-color: #3498db;
+        }
+
+        .info-card.medical {
+            border-left-color: #e74c3c;
+        }
+
+        .info-card.emergency {
+            border-left-color: #f39c12;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-content {
+            display: grid;
+            gap: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #6c757d;
+            text-align: right;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .period-selector {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="patient-info">
+                <div class="patient-avatar" id="patientAvatar">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+                <div class="patient-details">
+                    <h1 id="patientName">Carregando...</h1>
+                    <p id="patientAge">Idade: --</p>
+                </div>
+            </div>
+            <a href="pacientes.html" class="back-button">← Voltar ao Painel</a>
+        </div>
+
+        <div class="content">
+            <div class="period-selector">
+                <h3>📊 Período de Análise:</h3>
+                <div class="period-buttons">
+                    <button class="period-btn active" onclick="changePeriod('1day')">1 Dia</button>
+                    <button class="period-btn" onclick="changePeriod('1month')">1 Mês</button>
+                    <button class="period-btn" onclick="changePeriod('1year')">1 Ano</button>
+                </div>
+            </div>
+
+            <div id="loadingIndicator" class="loading">
+                <p>⏳ Carregando dados do paciente...</p>
+            </div>
+
+            <div id="errorMessage" class="error" style="display: none;">
+                <p>❌ Erro ao carregar dados do paciente.</p>
+            </div>
+
+            <div id="mainContent" style="display: none;">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-icon heartbeat">❤️</div>
+                            <div>
+                                <div class="chart-title">Batimentos Cardíacos</div>
+                                <div class="chart-value" id="heartbeatValue">-- bpm</div>
+                            </div>
+                        </div>
+                        <canvas id="heartbeatChart" class="chart-canvas"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-icon oxygen">🫁</div>
+                            <div>
+                                <div class="chart-title">Saturação de Oxigênio</div>
+                                <div class="chart-value" id="oxygenValue">-- %</div>
+                            </div>
+                        </div>
+                        <canvas id="oxygenChart" class="chart-canvas"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-icon temperature">🌡️</div>
+                            <div>
+                                <div class="chart-title">Temperatura Corporal</div>
+                                <div class="chart-value" id="temperatureValue">-- °C</div>
+                            </div>
+                        </div>
+                        <canvas id="temperatureChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="info-cards">
+                    <div class="info-card personal">
+                        <div class="card-title">
+                            👤 Informações Pessoais
+                        </div>
+                        <div class="card-content" id="personalInfo">
+                            <!-- Será preenchido via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="info-card medical">
+                        <div class="card-title">
+                            🏥 Informações Médicas
+                        </div>
+                        <div class="card-content" id="medicalInfo">
+                            <!-- Será preenchido via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="info-card emergency">
+                        <div class="card-title">
+                            🚨 Contato de Emergência
+                        </div>
+                        <div class="card-content" id="emergencyInfo">
+                            <!-- Será preenchido via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPatient = null;
+        let currentPeriod = '1day';
+        let charts = {};
+
+        // Função para obter ID do paciente da URL
+        function getPatientIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Função para buscar dados completos do paciente
+        async function buscarPacienteCompleto(id) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/pacientes/${id}`);
+                if (!response.ok) {
+                    throw new Error('Paciente não encontrado');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar paciente:', error);
+                throw error;
+            }
+        }
+
+        // Função para buscar dados históricos da API
+        async function buscarDadosHistoricos(pacienteId, periodo) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/pacientes/${pacienteId}/historico-sinais/${periodo}`);
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar histórico');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar histórico:', error);
+                // Fallback para dados simulados se a API falhar
+                return gerarDadosSimuladosLocal(periodo);
+            }
+        }
+
+        // Função fallback para gerar dados localmente
+        function gerarDadosSimuladosLocal(periodo) {
+            let dataPoints, labels;
+            
+            switch (periodo) {
+                case '1day':
+                    dataPoints = 24;
+                    labels = Array.from({length: dataPoints}, (_, i) => `${String(i).padStart(2, '0')}:00`);
+                    break;
+                case '1month':
+                    dataPoints = 30;
+                    labels = Array.from({length: dataPoints}, (_, i) => String(i + 1));
+                    break;
+                case '1year':
+                    labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                    dataPoints = labels.length;
+                    break;
+            }
+
+            const batimentos = Array.from({length: dataPoints}, () => 70 + Math.random() * 30);
+            const oxigenio = Array.from({length: dataPoints}, () => 95 + Math.random() * 5);
+            const temperatura = Array.from({length: dataPoints}, () => 36 + Math.random() * 2);
+
+            return { labels, batimentos, oxigenio, temperatura };
+        }
+
+        // Função para criar gráfico
+        function createChart(canvasId, label, data, borderColor, backgroundColor) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            // Destruir gráfico existente se houver
+            if (charts[canvasId]) {
+                charts[canvasId].destroy();
+            }
+
+            charts[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: label,
+                        data: data.data,
+                        borderColor: borderColor,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: borderColor,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: '#f0f0f0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#f0f0f0'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 8
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para atualizar gráficos
+        async function updateCharts() {
+            if (!currentPatient || !currentPatient.sinaisVitais) return;
+
+            const sinais = currentPatient.sinaisVitais;
+
+            try {
+                // Buscar dados históricos da API
+                const historico = await buscarDadosHistoricos(currentPatient.id, currentPeriod);
+
+                // Criar dados no formato esperado pelo Chart.js
+                const heartbeatData = { labels: historico.labels, data: historico.batimentos };
+                const oxygenData = { labels: historico.labels, data: historico.oxigenio };
+                const temperatureData = { labels: historico.labels, data: historico.temperatura };
+
+                // Criar gráficos
+                createChart('heartbeatChart', 'Batimentos (bpm)', heartbeatData, '#e74c3c', 'rgba(231, 76, 60, 0.1)');
+                createChart('oxygenChart', 'Oxigenação (%)', oxygenData, '#3498db', 'rgba(52, 152, 219, 0.1)');
+                createChart('temperatureChart', 'Temperatura (°C)', temperatureData, '#f39c12', 'rgba(243, 156, 18, 0.1)');
+
+            } catch (error) {
+                console.error('Erro ao atualizar gráficos:', error);
+            }
+
+            // Atualizar valores atuais
+            document.getElementById('heartbeatValue').textContent = `${sinais.batimentos} bpm`;
+            document.getElementById('oxygenValue').textContent = `${sinais.oxigenio}%`;
+            document.getElementById('temperatureValue').textContent = `${sinais.temperatura}°C`;
+        }
+
+        // Função para preencher informações do paciente
+        function preencherInformacoes(paciente) {
+            // Cabeçalho
+            const avatar = document.getElementById('patientAvatar');
+            const name = document.getElementById('patientName');
+            const age = document.getElementById('patientAge');
+
+            avatar.textContent = paciente.nome.charAt(0).toUpperCase();
+            name.textContent = paciente.nome;
+            
+            const birthDate = new Date(paciente.dataNascimento);
+            const ageYears = new Date().getFullYear() - birthDate.getFullYear();
+            age.textContent = `Idade: ${ageYears} anos`;
+
+            // Informações pessoais
+            const personalInfo = document.getElementById('personalInfo');
+            personalInfo.innerHTML = `
+                <div class="info-item">
+                    <span class="info-label">Nome Completo:</span>
+                    <span class="info-value">${paciente.nome}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Data de Nascimento:</span>
+                    <span class="info-value">${new Date(paciente.dataNascimento).toLocaleDateString('pt-BR')}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gênero:</span>
+                    <span class="info-value">${paciente.genero}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Telefone:</span>
+                    <span class="info-value">${paciente.telefone}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Estado Civil:</span>
+                    <span class="info-value">${paciente.relacionamento || 'Não informado'}</span>
+                </div>
+            `;
+
+            // Informações médicas
+            const medicalInfo = document.getElementById('medicalInfo');
+            if (paciente.informacaoMedica) {
+                medicalInfo.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">Tipo Sanguíneo:</span>
+                        <span class="info-value">${paciente.informacaoMedica.tipoSangue}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Deficiência:</span>
+                        <span class="info-value">${paciente.informacaoMedica.deficiencia || 'Nenhuma'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Problemas Específicos:</span>
+                        <span class="info-value">${paciente.informacaoMedica.problemasEspecificos || 'Nenhum'}</span>
+                    </div>
+                `;
+            }
+
+            // Contato de emergência
+            const emergencyInfo = document.getElementById('emergencyInfo');
+            if (paciente.contatoEmergencial) {
+                emergencyInfo.innerHTML = `
+                    <div class="info-item">
+                        <span class="info-label">Nome:</span>
+                        <span class="info-value">${paciente.contatoEmergencial.nome}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Telefone:</span>
+                        <span class="info-value">${paciente.contatoEmergencial.telefone}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">${paciente.contatoEmergencial.email || 'Não informado'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Instagram:</span>
+                        <span class="info-value">${paciente.contatoEmergencial.instagram || 'Não informado'}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Função para mudar período
+        function changePeriod(period) {
+            currentPeriod = period;
+            
+            // Atualizar botões
+            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Atualizar gráficos
+            updateCharts();
+        }
+
+        // Função principal para carregar dados
+        async function carregarDados() {
+            const patientId = getPatientIdFromUrl();
+            
+            if (!patientId) {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').innerHTML = '<p>❌ ID do paciente não encontrado na URL.</p>';
+                document.getElementById('loadingIndicator').style.display = 'none';
+                return;
+            }
+
+            try {
+                currentPatient = await buscarPacienteCompleto(patientId);
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                
+                preencherInformacoes(currentPatient);
+                updateCharts();
+                
+            } catch (error) {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('loadingIndicator').style.display = 'none';
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', carregarDados);
+    </script>
+</body>
+</html>

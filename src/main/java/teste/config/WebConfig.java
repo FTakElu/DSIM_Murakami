@@ -1,0 +1,42 @@
+package teste.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Serve arquivos HTML do diretório VIEW (seguindo padrão MVC)
+        registry.addResourceHandler("/**")
+                .addResourceLocations(
+                    "/view/",
+                    "classpath:/static/",
+                    "classpath:/public/"
+                )
+                .setCachePeriod(0); // Desabilita cache durante desenvolvimento
+        
+        // Serve recursos específicos (CSS, JS, imagens)
+        registry.addResourceHandler("/assets/**")
+                .addResourceLocations("/view/assets/");
+                
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("/view/css/");
+    }
+    
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // Redirecionar a raiz para a página inicial
+        registry.addViewController("/").setViewName("forward:/index.html");
+        registry.addViewController("/index").setViewName("forward:/index.html");
+        
+        // Páginas específicas
+        registry.addViewController("/login").setViewName("forward:/pages/login.html");
+        registry.addViewController("/cadastro").setViewName("forward:/pages/cadastro.html");
+        registry.addViewController("/pacientes").setViewName("forward:/pages/pacientes.html");
+        registry.addViewController("/adicionar-paciente").setViewName("forward:/pages/adicionar-paciente.html");
+    }
+}

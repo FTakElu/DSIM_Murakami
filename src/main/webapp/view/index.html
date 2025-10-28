@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSIM - Dispositivo de Segurança Inteligente Para Monitoramento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* CSS direto para garantir compatibilidade */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+            background-color: #f9fafb;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .home-header {
+            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .home-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .home-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .home-logo:hover {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-enter {
+            background: white;
+            color: #2563eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-enter:hover {
+            background: #f8fafc;
+            color: #2563eb;
+            text-decoration: none;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .home-hero {
+            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .home-hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .home-hero .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-start {
+            background: white;
+            color: #2563eb;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-start:hover {
+            background: #f8fafc;
+            color: #2563eb;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3.5rem;
+            color: #2563eb;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+        
+        .device-showcase {
+            background: #f9fafb;
+            padding: 6rem 0;
+        }
+        
+        .device-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .device-specs {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .device-specs li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .device-specs .icon {
+            color: #059669;
+            width: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .home-hero h1 { font-size: 2.5rem; }
+            .device-info { grid-template-columns: 1fr; }
+            .home-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="home-header">
+        <div class="container">
+            <a href="index.html" class="home-logo">
+                <i class="fas fa-heartbeat"></i> DSIM
+            </a>
+                        <a href="pages/login.html" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Entrar no Sistema
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="home-hero">
+        <div class="container">
+            <div>
+                <h1>DSIM</h1>
+                <div class="subtitle">
+                    Dispositivo de Segurança Inteligente para Monitoramento<br/>
+                    Tecnologia avançada para cuidado e proteção 24 horas
+                </div>
+                <a href="pages/login.html" class="btn-start">
+                    <i class="fas fa-play-circle"></i> Começar Agora
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section style="padding: 6rem 0; background: white;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 2.5rem; color: #111827; margin-bottom: 1rem;">Recursos Principais</h2>
+                <p style="font-size: 1.1rem; color: #6b7280; max-width: 600px; margin: 0 auto;">
+                    Conheça as funcionalidades que tornam o DSIM a melhor escolha para monitoramento inteligente
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="feature-title">Monitoramento Cardíaco</h3>
+                    <p>Acompanhamento contínuo dos batimentos cardíacos com alertas inteligentes em tempo real.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lungs"></i>
+                    </div>
+                    <h3 class="feature-title">Saturação de O₂</h3>
+                    <p>Medição precisa dos níveis de oxigenação no sangue para detecção precoce de problemas.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <h3 class="feature-title">Temperatura Corporal</h3>
+                    <p>Controle térmico automatizado com notificações instantâneas para variações anormais.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Alertas Inteligentes</h3>
+                    <p>Sistema avançado de notificações que identifica emergências e comunica automaticamente.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Controle Remoto</h3>
+                    <p>Acesso completo via aplicativo com interface intuitiva para familiares e cuidadores.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Relatórios Detalhados</h3>
+                    <p>Análises completas do histórico de saúde com gráficos e tendências personalizadas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Device Info Section -->
+    <section class="device-showcase">
+        <div class="container">
+            <div class="device-info">
+                <div>
+                    <h2 style="font-size: 2.5rem; color: #111827; margin-bottom: 2rem;">
+                        Tecnologia de Ponta
+                    </h2>
+                    <p style="font-size: 1.1rem; color: #6b7280; margin-bottom: 2rem;">
+                        O DSIM utiliza sensores de alta precisão e inteligência artificial para garantir 
+                        monitoramento confiável e detecção precoce de emergências médicas.
+                    </p>
+                    
+                    <ul class="device-specs">
+                        <li>
+                            <i class="fas fa-check icon"></i>
+                            <span>Sensores médicos certificados</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check icon"></i>
+                            <span>Conectividade 4G/WiFi integrada</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check icon"></i>
+                            <span>Bateria de longa duração (72h)</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check icon"></i>
+                            <span>Design ergonômico e resistente à água</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check icon"></i>
+                            <span>Sincronização em nuvem automática</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check icon"></i>
+                            <span>Aplicativo para iOS e Android</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="width: 300px; height: 300px; background: linear-gradient(135deg, #2563eb, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                        <i class="fas fa-heartbeat" style="font-size: 6rem; color: white;"></i>
+                    </div>
+                    <h3 style="color: #111827; margin-top: 2rem; font-size: 1.5rem;">DSIM Pro</h3>
+                    <p style="color: #6b7280;">Dispositivo de monitoramento inteligente</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #111827; color: white; padding: 4rem 0 2rem;">
+        <div class="container">
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">
+                    <i class="fas fa-heartbeat"></i> DSIM
+                </div>
+                <p style="margin-bottom: 2rem; opacity: 0.8;">
+                    Inovação em monitoramento de saúde para uma vida mais segura
+                </p>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; opacity: 0.6;">
+                    <p>© 2025 DSIM - Dispositivo de Segurança Inteligente para Monitoramento</p>
+                    <p>Desenvolvido para LP2 - IFSP</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

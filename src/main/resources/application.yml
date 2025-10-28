@@ -1,0 +1,48 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: sistema-monitoramento-pacientes
+  
+  # Configuração do banco H2
+  datasource:
+    url: jdbc:h2:mem:dsimdb
+    driverClassName: org.h2.Driver
+    username: dsim
+    password:
+    
+  # Console H2 (para desenvolvimento)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+      
+  # JPA/Hibernate
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  
+  # SQL Initialization
+  sql:
+    init:
+      mode: always
+        
+
+    
+# Logging
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    teste: DEBUG
