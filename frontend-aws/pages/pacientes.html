@@ -77,7 +77,56 @@
 </head>
 
 <body>
-    <!-- Navbar será inserido automaticamente pelo script -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-heartbeat"></i> DSIM
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">
+                            <i class="fas fa-home"></i> Início
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="pacientes.html">
+                            <i class="fas fa-users"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="adicionar-paciente.html">
+                            <i class="fas fa-user-plus"></i> Adicionar Paciente
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="usuarios.html">
+                            <i class="fas fa-user-cog"></i> Usuários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="configurar-alertas.html">
+                            <i class="fas fa-bell-slash"></i> Configurar Alertas
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span id="userName">Usuário</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -200,6 +249,12 @@
                                 <input type="text" id="editAllergies" name="allergies" class="form-input">
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Deficiência/Necessidades Especiais</label>
+                                <textarea id="editDeficiencia" name="deficiencia" class="form-input" rows="2" placeholder="Descreva as deficiências ou necessidades especiais"></textarea>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="form-label">Condições Médicas</label>
                             <textarea id="editMedicalConditions" name="medicalConditions" class="form-textarea"></textarea>
@@ -214,11 +269,29 @@
                                 <input type="text" id="editEmergencyName" name="emergencyName" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Telefone de Emergência</label>
-                                <input type="tel" id="editEmergencyPhone" name="emergencyPhone" class="form-input">
+                                <label class="form-label">Parentesco</label>
+                                <select id="editParentesco" name="parentesco" class="form-select">
+                                    <option value="">Selecione o parentesco</option>
+                                    <option value="pai">Pai</option>
+                                    <option value="mae">Mãe</option>
+                                    <option value="filho">Filho(a)</option>
+                                    <option value="conjuge">Cônjuge</option>
+                                    <option value="irmao">Irmão(ã)</option>
+                                    <option value="avô">Avô(ó)</option>
+                                    <option value="tio">Tio(a)</option>
+                                    <option value="primo">Primo(a)</option>
+                                    <option value="amigo">Amigo(a)</option>
+                                    <option value="vizinho">Vizinho(a)</option>
+                                    <option value="cuidador">Cuidador(a)</option>
+                                    <option value="outro">Outro</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Telefone de Emergência</label>
+                                <input type="tel" id="editEmergencyPhone" name="emergencyPhone" class="form-input">
+                            </div>
                             <div class="form-group">
                                 <label class="form-label">Email de Emergência</label>
                                 <input type="email" id="editEmergencyEmail" name="emergencyEmail" class="form-input">
@@ -229,6 +302,9 @@
                     <div class="modal-actions">
                         <button type="button" class="btn-secondary" onclick="closeModal('editModal')">
                             <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='../index.html'">
+                            <i class="fas fa-home"></i> Sair
                         </button>
                         <button type="submit" class="btn-primary">
                             <i class="fas fa-save"></i> Salvar Alterações
@@ -246,7 +322,21 @@
         // Função para buscar pacientes do backend
         async function carregarPacientes() {
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes`);
+                // Obter usuário logado do localStorage
+                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                if (!usuarioLogado || !usuarioLogado.email) {
+                    console.error('Usuário não encontrado no localStorage');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch('/api/pacientes', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Usuario-Email': usuarioLogado.email
+                    }
+                });
                 if (response.ok) {
                     const pacientesData = await response.json();
                     
@@ -430,7 +520,14 @@
         // Função para buscar dados completos do paciente do backend
         async function buscarPacienteCompleto(id) {
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${id}`);
+                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                const response = await fetch(`/api/pacientes/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Usuario-Email': usuarioLogado.email
+                    }
+                });
                 if (response.ok) {
                     return await response.json();
                 }
@@ -467,8 +564,10 @@
             document.getElementById('editRoom').value = '';
             document.getElementById('editBloodType').value = info.tipoSangue || '';
             document.getElementById('editAllergies').value = ''; // Campo de alergias (não mapeado no backend)
+            document.getElementById('editDeficiencia').value = info.deficiencia || '';
             document.getElementById('editMedicalConditions').value = info.problemasEspecificos || '';
             document.getElementById('editEmergencyName').value = contato.nome || '';
+            document.getElementById('editParentesco').value = contato.parentesco || '';
             document.getElementById('editEmergencyPhone').value = contato.telefone || '';
             document.getElementById('editEmergencyEmail').value = contato.email || '';
 
@@ -506,8 +605,13 @@
             }
 
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${id}`, {
-                    method: 'DELETE'
+                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                const response = await fetch(`/api/pacientes/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Usuario-Email': usuarioLogado.email
+                    }
                 });
 
                 if (response.ok) {
@@ -546,11 +650,12 @@
                     nome: data.emergencyName || null,
                     telefone: data.emergencyPhone || null,
                     email: data.emergencyEmail || null,
+                    parentesco: data.parentesco || null,
                     instagram: null
                 },
                 informacaoMedica: {
                     tipoSangue: data.bloodType || null,
-                    deficiencia: data.allergies || null,
+                    deficiencia: data.deficiencia || null,
                     problemasEspecificos: data.medicalConditions || null
                 },
                 sinaisVitais: {
@@ -564,10 +669,12 @@
             };
 
             try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${currentPatientId}`, {
+                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                const response = await fetch(`/api/pacientes/${currentPatientId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Usuario-Email': usuarioLogado.email,
                     },
                     body: JSON.stringify(pacienteData)
                 });
@@ -602,6 +709,16 @@
 
         // Inicializar página
         document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar se usuário está logado
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+            if (!usuarioLogado || !usuarioLogado.email) {
+                alert('Você precisa fazer login para acessar esta página.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            console.log('Usuário logado:', usuarioLogado.nome, usuarioLogado.email);
+
             // Carregar pacientes do backend
             await carregarPacientes();
             renderPatients();
@@ -614,9 +731,29 @@
                 updateStats();
             }, 30000); // Atualizar a cada 30 segundos
         });
+
+        // Função para exibir nome do usuário no navbar
+        function atualizarNavbar() {
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+            if (usuarioLogado) {
+                document.getElementById('userName').textContent = usuarioLogado.nome || 'Usuário';
+            }
+        }
+
+        // Função de logout
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                localStorage.removeItem('usuario');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Atualizar navbar ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarNavbar();
+        });
     </script>
 
-    <!-- Navbar Script -->
-    <script src="../js/navbar.js"></script>
+
 </body>
 </html>
