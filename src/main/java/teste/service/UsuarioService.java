@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import teste.model.Usuario;
-import teste.model.Usuario.TipoCargo;
 import teste.repository.UsuarioRepository;
 
 @Service
@@ -29,7 +28,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
     
-    public Usuario cadastrarUsuario(String nome, String email, String senha, TipoCargo cargo) {
+    public Usuario cadastrarUsuario(String nome, String email, String senha) {
         // Verificar se email já existe
         if (usuarioRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email já cadastrado no sistema");
@@ -39,7 +38,6 @@ public class UsuarioService {
         usuario.setNome(nome);
         usuario.setEmail(email);
         usuario.setSenha(senha);
-        usuario.setCargo(cargo);
         usuario.setAtivo(true);
         
         return salvar(usuario);
@@ -84,11 +82,6 @@ public class UsuarioService {
     }
     
     @Transactional(readOnly = true)
-    public List<Usuario> buscarPorCargo(TipoCargo cargo) {
-        return usuarioRepository.findByCargo(cargo);
-    }
-    
-    @Transactional(readOnly = true)
     public List<Usuario> buscarPorNome(String nome) {
         return usuarioRepository.findByNomeContaining(nome);
     }
@@ -109,5 +102,9 @@ public class UsuarioService {
             return passwordEncoder.matches(senha, usuario.getSenha());
         }
         return false;
+    }
+    
+    public void excluirPermanentemente(Long id) {
+        usuarioRepository.deleteById(id);
     }
 }

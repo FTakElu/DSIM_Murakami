@@ -1,0 +1,60 @@
+/* ===== COMPONENTES LEGACY ===== */
+/* Este arquivo foi mantido para compatibilidade com páginas não migradas */
+/* As novas páginas devem usar main.css */
+
+/* Importar estilos principais */
+@import url('main.css');
+
+/* Aliases para compatibilidade */
+.btn-add {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    background: #2563eb;
+    color: white;
+}
+
+.btn-add:hover {
+    background: #1e40af;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-users {
+    background: #6b7280;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    margin-right: 0.5rem;
+}
+
+.btn-users:hover {
+    background: #4b5563;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.header-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}

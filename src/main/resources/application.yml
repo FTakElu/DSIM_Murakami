@@ -2,6 +2,9 @@ server:
   port: 8080
   servlet:
     context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
 
 spring:
   application:
@@ -27,22 +30,23 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
     defer-datasource-initialization: true
   
   # SQL Initialization
   sql:
     init:
-      mode: always
+      mode: never
         
 
     
 # Logging
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    teste: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    teste: INFO
+    root: INFO

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import teste.model.Paciente;
@@ -20,7 +21,7 @@ import teste.service.ManterPacienteService;
 
 @RestController
 @RequestMapping("/api/pacientes")
-@CrossOrigin(origins = "*") // Permite requisições do frontend
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class PacienteController {
 
     @Autowired
@@ -70,13 +71,74 @@ public class PacienteController {
         try {
             Paciente pacienteExistente = pacienteService.buscarPeloCodigo(id);
             if (pacienteExistente != null) {
-                paciente.setId(id);
-                Paciente pacienteAtualizado = pacienteService.salvar(paciente);
+                // Preservar dados existentes e atualizar apenas os campos fornecidos
+                pacienteExistente.setNome(paciente.getNome());
+                pacienteExistente.setDataNascimento(paciente.getDataNascimento());
+                pacienteExistente.setGenero(paciente.getGenero());
+                pacienteExistente.setRelacionamento(paciente.getRelacionamento());
+                pacienteExistente.setTelefone(paciente.getTelefone());
+                
+                // Atualizar contato de emergência se fornecido
+                if (paciente.getContatoEmergencial() != null) {
+                    if (pacienteExistente.getContatoEmergencial() != null) {
+                        var contato = pacienteExistente.getContatoEmergencial();
+                        contato.setNome(paciente.getContatoEmergencial().getNome());
+                        contato.setTelefone(paciente.getContatoEmergencial().getTelefone());
+                        contato.setEmail(paciente.getContatoEmergencial().getEmail());
+                        contato.setInstagram(paciente.getContatoEmergencial().getInstagram());
+                    } else {
+                        pacienteExistente.setContatoEmergencial(paciente.getContatoEmergencial());
+                    }
+                }
+                
+                // Atualizar informações médicas se fornecidas
+                if (paciente.getInformacaoMedica() != null) {
+                    if (pacienteExistente.getInformacaoMedica() != null) {
+                        var info = pacienteExistente.getInformacaoMedica();
+                        info.setTipoSangue(paciente.getInformacaoMedica().getTipoSangue());
+                        info.setDeficiencia(paciente.getInformacaoMedica().getDeficiencia());
+                        info.setProblemasEspecificos(paciente.getInformacaoMedica().getProblemasEspecificos());
+                    } else {
+                        pacienteExistente.setInformacaoMedica(paciente.getInformacaoMedica());
+                    }
+                }
+                
+                // Atualizar sinais vitais se fornecidos (mas preservar existentes se não fornecidos)
+                if (paciente.getSinaisVitais() != null) {
+                    if (pacienteExistente.getSinaisVitais() != null) {
+                        var sinais = pacienteExistente.getSinaisVitais();
+                        if (paciente.getSinaisVitais().getOxigenio() != null) {
+                            sinais.setOxigenio(paciente.getSinaisVitais().getOxigenio());
+                        }
+                        if (paciente.getSinaisVitais().getTemperatura() != null) {
+                            sinais.setTemperatura(paciente.getSinaisVitais().getTemperatura());
+                        }
+                        if (paciente.getSinaisVitais().getBatimentos() != null) {
+                            sinais.setBatimentos(paciente.getSinaisVitais().getBatimentos());
+                        }
+                        // Manter status existentes ou usar os novos
+                        if (paciente.getSinaisVitais().getStatusOxigenio() != null) {
+                            sinais.setStatusOxigenio(paciente.getSinaisVitais().getStatusOxigenio());
+                        }
+                        if (paciente.getSinaisVitais().getStatusTemperatura() != null) {
+                            sinais.setStatusTemperatura(paciente.getSinaisVitais().getStatusTemperatura());
+                        }
+                        if (paciente.getSinaisVitais().getStatusBatimentos() != null) {
+                            sinais.setStatusBatimentos(paciente.getSinaisVitais().getStatusBatimentos());
+                        }
+                    } else {
+                        pacienteExistente.setSinaisVitais(paciente.getSinaisVitais());
+                    }
+                }
+                
+                Paciente pacienteAtualizado = pacienteService.salvar(pacienteExistente);
                 return ResponseEntity.ok(pacienteAtualizado);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            System.err.println("Erro ao atualizar paciente: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

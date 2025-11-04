@@ -1,178 +1,283 @@
-# 🏥 Sistema de Monitoramento de Pacientes DSIM
 
-> **Sistema completo de monitoramento e gerenciamento de pacientes para ambiente hospitalar**
+# 🏥 Sistema de Monitoramento de Pacientes — **DSIM**
 
-## 📚 Contexto Acadêmico
-
-Como havíamos alinhado com o professor, estamos inscritos na disciplina **LP2** (Linguagem de Programação 2). Neste caso, foi pedido para que deixássemos apenas nosso diagrama no repositório e nosso código, e fizéssemos um cronograma para que fôssemos acompanhando o desenvolvimento.
-
-## 📅 Cronograma de Desenvolvimento
-
-### ✅ **28/10/2025 - ENTREGUE**
-- ✅ **Caso de Uso**: Cadastrar Paciente 
-localhost:8080/pages/adicionar-paciente.html
-- ✅ **Caso de Uso**: Visualizar Painel do Paciente localhost:8080/pages/pacientes.html 
-- ✅ **Repositório**: Criar repositório no GitHub
-- ✅ **Diagramas**: Correção dos diagramas de classe, arquitetura e caso de uso
-
-### 🔄 **04/11/2025 - EM DESENVOLVIMENTO**
-- 🔄 **Caso de Uso**: Cadastrar Usuário
-- 🔄 **Caso de Uso**: Detalhes de Paciente
-- 🔄 **Frontend**: Ajustar e melhorar interface
-
-### ⏳ **11/11/2025 - PLANEJADO**
-- ⏳ **Caso de Uso**: Configurar Alarmes
-- ⏳ **Deploy**: Subir projeto no Amplify da AWS
-- ⏳ **Qualidade**: Implementar testes automatizados
+> **Dispositivo de Segurança Inteligente para Monitoramento**  
+> Sistema completo de **monitoramento e gerenciamento de pacientes** em ambiente hospitalar.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Java](https://img.shields.io/badge/Java-21-orange.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen.svg)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![Version](https://img.shields.io/badge/version-2.1.0-success.svg)
 
-## 📋 Sobre o Projeto
+---
 
-O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é um sistema moderno e completo para monitoramento de pacientes em ambientes hospitalares. Desenvolvido com foco na usabilidade, performance e compatibilidade, oferece interfaces intuitivas para cadastro, monitoramento e gestão de pacientes.
+## 👥 **Integrantes do Grupo**
 
-### ✨ Principais Características
-- 🎨 **Interface Moderna**: Design responsivo e intuitivo
-- 🔧 **Tecnologia Pura**: HTML/CSS/JavaScript para máxima compatibilidade
-- 📊 **Monitoramento Real**: Simulação de sinais vitais em tempo real
-- 👥 **Multi-usuário**: Sistema de autenticação e perfis de usuário
-- 📱 **Responsivo**: Funciona perfeitamente em desktop e mobile
+| Nome                                |
+| ----------------------------------- | 
+| **Arthur Barboza Mostaço**          |
+| **Flávia Alessandra Elugo da Silva** | 
+| **Sara Maria Falcão**               |
+| **Stephany Caroline Carvalho**      | 
 
-## 🚀 Funcionalidades Implementadas
+---
 
-### 🏠 **Página Inicial**
-- Apresentação do sistema DSIM
-- Design moderno com gradientes e animações
-- Navegação intuitiva para login e cadastro
+## 🚀 **EXECUÇÃO RÁPIDA (PROFESSOR)**
+
+### **📋 Pré-requisitos**
+- ☕ **Java 21+** instalado
+- 🔧 **Maven 3.6+** instalado
+
+### **⚡ Execução em 3 passos**
+```bash
+# 1. Navegue até a pasta do projeto
+cd DSIM_Murakami
+
+# 2. Execute o sistema
+mvn spring-boot:run
+
+# 3. Aguarde a mensagem de inicialização e acesse:
+# 🌐 http://localhost:8080
+```
+
+### **� Credenciais de Acesso**
+- **Email**: `admin@sistema.com`
+- **Senha**: `senha123`
+
+### **🛠️ Solução de Problemas**
+Se der erro de porta ocupada:
+```bash
+# Windows - Mata processo na porta 8080
+taskkill /F /PID <número_do_processo>
+
+# Ou execute o script automático (se existir)
+start-server.bat
+```
+
+---
+
+## �📚 **Contexto Acadêmico**
+
+Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (LP2)**, com foco em:
+- **Arquitetura MVC** completa
+- **Integração Frontend-Backend**
+- **Boas práticas de desenvolvimento**
+- **Interface responsiva e moderna**
+
+---
+
+## 📅 **Cronograma de Desenvolvimento**
+
+### ✅ **FASE 1 - 28/10/2025 (CONCLUÍDA)**
+- ✅ **Caso de Uso**: Cadastrar Paciente (`/pages/adicionar-paciente.html`)
+- ✅ **Caso de Uso**: Dashboard de Pacientes (`/pages/pacientes.html`) 
+- ✅ **Repositório**: Criado no GitHub
+- ✅ **Diagramas**: Caso de uso, classe e arquitetura
+
+### ✅ **FASE 2 - 04/11/2025 (CONCLUÍDA)**
+- ✅ **Caso de Uso**: Gerenciar Usuários
+- ✅ **Caso de Uso**: Detalhes de Paciente
+- ✅ **Frontend**: Interface aprimorada e responsiva
+- ✅ **Sistema de Alertas**: Configuração personalizada
+
+### 🚀 **FASE 3 - 11/11/2025 (EM ANDAMENTO)**
+- ✅ **Código Organizado**: CSS centralizado e componentes reutilizáveis
+- ✅ **Navbar Universal**: Sistema de navegação unificado
+- ✅ **Documentação**: README completo e instruções claras
+- 🔄 **Deploy**: Preparação para AWS Amplify
+
+---
+
+## 📋 **Sobre o Projeto**
+
+O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma aplicação web moderna que permite **monitorar sinais vitais de pacientes** de forma digital e acessível. O sistema foi projetado com **foco na experiência do usuário, segurança e eficiência**.
+
+### ✨ **Características Principais**
+
+* 🎨 **Interface Moderna e Responsiva** — Layout limpo, intuitivo e adaptável
+* ⚙️ **Arquitetura MVC Completa** — Integração robusta entre frontend e backend
+* 📊 **Monitoramento em Tempo Real** — Temperatura, batimentos cardíacos e oxigenação
+* 👥 **Gestão Completa de Usuários** — CRUD completo com autenticação segura
+* 🔔 **Sistema de Alertas Configurável** — Personalização por paciente e prioridade
+* 💾 **Banco H2 em Memória** — Ideal para desenvolvimento e testes
+* 🔐 **Segurança BCrypt** — Criptografia de senhas e validações rigorosas
+
+---
+
+## 🚀 **Funcionalidades Implementadas**
+
+### 🏠 **Dashboard Principal**
+- ✅ **Painel interativo** com estatísticas em tempo real
+- ✅ **Cards de pacientes** com sinais vitais atualizados
+- ✅ **Indicadores visuais** (normal, atenção, crítico)
+- ✅ **Navegação intuitiva** entre seções
 
 ### 🔐 **Sistema de Autenticação**
-- Login com validação de credenciais
-- Cadastro de novos usuários
-- Diferentes perfis: Familiar, Cuidador, Médico, Administrador
-- Usuários de teste pré-configurados
+- ✅ **Login seguro** com validação de credenciais
+- ✅ **Cadastro simplificado** de usuários
+- ✅ **Criptografia BCrypt** para senhas
+- ✅ **Validação de email único**
 
-### 👥 **Gestão de Pacientes**
-- **Dashboard de Pacientes**: Visão geral com estatísticas
-- **Cadastro Completo**: Informações pessoais, médicas e de emergência
-- **Monitoramento**: Sinais vitais em tempo real
-- **Cards Informativos**: Visualização organizada dos dados
+### 👥 **Gestão de Usuários**
+- ✅ **CRUD completo**: criar, visualizar, editar, excluir
+- ✅ **Busca e filtros** por nome e status
+- ✅ **Ativação/Desativação** de contas
+- ✅ **Interface responsiva** com modais
+
+### 🏥 **Gestão de Pacientes**
+- ✅ **Cadastro completo** (dados pessoais, médicos, emergência)
+- ✅ **Campo deficiência** nas informações médicas
+- ✅ **Edição preservando dados** (correção de bug de sinais vitais zerados)
+- ✅ **Exclusão com dupla confirmação** (correção de bug de exclusão)
+
+### 🔔 **Sistema de Alertas**
+- ✅ **Configuração por paciente** com limites personalizados
+- ✅ **Múltiplos tipos**: oxigenação, temperatura, batimentos
+- ✅ **Níveis de prioridade**: baixa, média, alta, crítica
+- ✅ **Interface completa** para criação, edição e exclusão
+- ✅ **Validações robustas** de valores
 
 ### 📊 **Monitoramento Avançado**
-- Simulação de sinais vitais (oxigenação, temperatura, batimentos)
-- Indicadores visuais de status (normal, atenção, crítico)
-- Atualização em tempo real dos dados
-- Interface intuitiva para acompanhamento
+- ✅ **Simulação em tempo real** de sinais vitais
+- ✅ **Feedback visual dinâmico** baseado em status
+- ✅ **Alertas automáticos** conforme configurações
+- ✅ **Atualização sem refresh** da página
 
-## 🏗️ Arquitetura do Sistema
+---
 
-### **Padrão MVC Implementado Corretamente**
+## 🛠️ **Tecnologias Utilizadas**
 
-O projeto segue rigorosamente o padrão **Model-View-Controller (MVC)**:
+### ⚙️ **Backend**
+| Tecnologia | Versão | Função |
+|------------|--------|---------|
+| ☕ **Java** | 21 | Linguagem principal |
+| 🌱 **Spring Boot** | 3.1.5 | Framework web |
+| 📊 **Spring Data JPA** | 3.1.5 | Persistência |
+| 🌐 **Spring Web** | 3.1.5 | APIs REST |
+| 🔐 **Spring Security** | BCrypt | Criptografia |
+| 🗃️ **H2 Database** | Embutido | Banco em memória |
+| 📦 **Lombok** | 1.18.30 | Redução de código |
+| 🔧 **Maven** | 3.6+ | Build e dependências |
+
+### 💻 **Frontend**
+| Tecnologia | Versão | Função |
+|------------|--------|---------|
+| 🌐 **HTML5** | Padrão | Estrutura |
+| 🎨 **CSS3** | Padrão | Estilização moderna |
+| ⚡ **JavaScript** | ES2020+ | Interatividade |
+| 📱 **Bootstrap** | 5.1.3 | Framework responsivo |
+| 🎯 **Font Awesome** | 6.4.0 | Ícones |
+| 📖 **Google Fonts** | Inter | Tipografia |
+
+---
+
+## 📁 **Estrutura do Projeto**
 
 ```
-#### **📂 MODEL** - `src/main/java/teste/model/`
+DSIM_Murakami/
+├── 📂 src/main/java/teste/
+│   ├── 🎯 controller/          # Controladores REST
+│   ├── 🏗️ model/              # Entidades JPA
+│   ├── 📊 repository/          # Repositórios de dados
+│   ├── ⚙️ service/            # Lógica de negócio
+│   └── 🔧 config/             # Configurações
+├── 📂 src/main/resources/
+│   ├── 📄 application.yml     # Configurações da aplicação
+│   └── 📊 data.sql           # Dados iniciais
+├── 📂 src/main/webapp/view/
+│   ├── 🎨 css/               # Estilos centralizados
+│   ├── ⚡ js/                # Scripts reutilizáveis
+│   └── 📱 pages/             # Páginas HTML
+├── 📂 Diagramas/             # Documentação técnica
+└── 📋 README.md              # Este arquivo
 ```
-├── 📁 model/                    # Entidades de Dados (JPA)
-│   ├── Paciente.java           # Entidade principal do paciente
-│   ├── Usuario.java            # Usuários do sistema
-│   ├── ContatoEmergencial.java # Contatos de emergência
-│   ├── InformacaoMedica.java   # Dados médicos
-│   └── SinaisVitais.java       # Monitoramento vital
+---
+
+## 📊 **Acesso ao Banco (Opcional)**
+
+Para inspecionar dados durante desenvolvimento:
+- **URL**: http://localhost:8080/h2-console
+- **JDBC URL**: `jdbc:h2:mem:dsimdb`
+- **Usuário**: `dsim`
+- **Senha**: (vazio)
+
+---
+
+## 🔧 **Comandos Úteis**
+
+```bash
+# 🚀 Executar aplicação
+mvn spring-boot:run
+
+# 🧹 Limpar e compilar
+mvn clean compile  
+
+# 📦 Gerar JAR
+mvn package -DskipTests
+
+# ⚡ Compilação rápida
+mvn compile
+
+# 🔍 Debug completo
+mvn spring-boot:run -X
+
+# 💀 Matar processo (Windows)
+taskkill /F /IM java.exe
 ```
 
-#### **🎮 CONTROLLER** - `src/main/java/teste/controller/`
-```
-├── 📁 controller/              # Controladores REST (Lógica de Controle)
-│   ├── PacienteController.java # API de pacientes
-│   ├── UsuarioController.java  # API de usuários
-│   ├── DashboardController.java# API do dashboard
-│   └── HomeController.java     # Controlador principal
-```
+---
 
-#### **🖥️ VIEW** - `src/main/webapp/view/`
-```
-├── 📁 view/                    # Interface do Usuário (Apresentação)
-│   ├── index.html             # Página inicial
-│   ├── 📁 pages/              # Páginas da aplicação
-│   │   ├── login.html         # Tela de login
-│   │   ├── cadastro.html      # Cadastro de usuários
-│   │   ├── pacientes.html     # Dashboard de pacientes
-│   │   └── adicionar-paciente.html # Cadastro de paciente
-│   ├── 📁 assets/             # Recursos estáticos
-│   └── 📁 css/               # Estilos CSS
-```
+## 🧪 **Dados de Teste**
 
-#### **⚙️ CAMADAS DE APOIO**
-```
-├── 📁 service/                # Lógica de Negócio
-│   ├── ManterPacienteService.java
-│   └── UsuarioService.java
-│
-├── 📁 repository/             # Acesso a Dados (Spring Data JPA)  
-│   ├── PacienteRepository.java
-│   └── UsuarioRepository.java
-│
-└── 📁 config/                 # Configurações
-    └── WebConfig.java         # Configuração MVC
-```
+O sistema inicializa automaticamente com:
 
-#### **🎮 CONTROLLER** - `src/main/java/teste/controller/`
-```java
-├── 📁 controller/     # Controladores REST (Lógica de Controle)
-│   ├── PacienteController.java  # API de pacientes
-│   ├── UsuarioController.java   # API de usuários
-│   ├── DashboardController.java # API do dashboard
-│   └── HomeController.java      # Controlador principal
-```
+### 👤 **Usuários**
+- **Admin**: `admin@sistema.com` | `senha123`
+- **Médico**: `joao.silva@hospital.com` | `senha123`
+- **Enfermeira**: `maria.santos@email.com` | `senha123`
 
-#### **🖥️ VIEW** - `src/main/webapp/view/`
-```html
-├── 📁 view/           # Interface do Usuário (Apresentação)
-│   ├── index.html           # Página inicial
-│   ├── 📁 pages/           # Páginas da aplicação
-│   │   ├── login.html      # Tela de login
-│   │   ├── cadastro.html   # Cadastro de usuários
-│   │   ├── pacientes.html  # Dashboard de pacientes
-│   │   └── adicionar-paciente.html # Cadastro de paciente
-│   ├── 📁 assets/          # Recursos estáticos
-│   └── 📁 css/            # Estilos CSS
-```
+### 🏥 **Pacientes**
+- **Carlos Eduardo Silva** (85 anos, sinais estáveis)
+- **Márcia dos Santos** (32 anos, atenção necessária)
 
-#### **⚙️ CAMADAS DE APOIO**
-```java
-├── 📁 service/        # Lógica de Negócio
-│   ├── ManterPacienteService.java
-│   └── UsuarioService.java
-│
-├── 📁 repository/     # Acesso a Dados (Spring Data JPA)  
-│   ├── PacienteRepository.java
-│   └── UsuarioRepository.java
-│
-└── 📁 config/         # Configurações
-    └── WebConfig.java  # Configuração MVC
-```
-```
+### 🔔 **Alertas**
+- Oxigenação baixa para Márcia
+- Temperatura elevada para Márcia
 
-## 🛠️ Tecnologias Utilizadas
+---
 
-### **Backend**
-- ☕ **Java 21** - Linguagem principal
-- 🌱 **Spring Boot 3.1.5** - Framework principal  
-- 📊 **Spring Data JPA** - Persistência de dados
-- 🌐 **Spring Web** - APIs REST
-- 🗃️ **H2 Database** - Banco em memória para desenvolvimento
-- 🔧 **Maven** - Gerenciamento de dependências
+## 📱 **URLs Principais**
 
-### **Frontend** 
-- 🌐 **HTML5** - Estrutura das páginas
-- 🎨 **CSS3** - Estilização moderna com Flexbox e Grid
-- ⚡ **JavaScript ES6+** - Interatividade e validações
-- 📱 **Design Responsivo** - Compatível com todos os dispositivos
-- 🎯 **Font Awesome** - Ícones modernos
-- 🔤 **Google Fonts** - Tipografia (Inter)
+| Funcionalidade | URL |
+|----------------|-----|
+| 🏠 **Início** | `http://localhost:8080/` |
+| 📊 **Dashboard** | `http://localhost:8080/pages/pacientes.html` |
+| 👥 **Usuários** | `http://localhost:8080/pages/usuarios.html` |
+| ➕ **Novo Paciente** | `http://localhost:8080/pages/adicionar-paciente.html` |
+| 🔔 **Alertas** | `http://localhost:8080/pages/configurar-alertas.html` |
+| 🔐 **Login** | `http://localhost:8080/pages/login.html` |
 
-## � Status Detalhado das Entregas
+---
 
+## 📝 **Status do Projeto**
+
+### 🎯 **PROJETO COMPLETO E FUNCIONAL** ✅
+
+- ✅ **Todas as funcionalidades** implementadas
+- ✅ **Bugs corrigidos** e testados
+- ✅ **Interface moderna** e responsiva
+- ✅ **Código organizado** e documentado
+- ✅ **Pronto para apresentação**
+
+---
+
+## 🧾 **Licença**
+
+Este projeto é distribuído sob a licença [**MIT**](https://opensource.org/licenses/MIT).
+
+**Desenvolvido com ❤️ por**: Arthur, Flávia, Sara e Stephany  
+**Disciplina**: Linguagem de Programação 2 (LP2)  
+**Ano**: 2025
+
+---

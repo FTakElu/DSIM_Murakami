@@ -22,12 +22,18 @@ public class ManterPacienteService {
     }
     
     public void excluir(Long id) {
-        pacienteRepository.deleteById(id);
+        // Verificar se o paciente existe antes de excluir
+        Optional<Paciente> pacienteOpt = pacienteRepository.findById(id);
+        if (pacienteOpt.isPresent()) {
+            pacienteRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Paciente não encontrado com ID: " + id);
+        }
     }
     
     public void excluir(Paciente paciente) {
         if (paciente != null && paciente.getId() != null) {
-            pacienteRepository.deleteById(paciente.getId());
+            excluir(paciente.getId());
         }
     }
 

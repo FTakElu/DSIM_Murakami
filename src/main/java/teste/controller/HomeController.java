@@ -8,46 +8,51 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "redirect:/index.xhtml";
+        return "redirect:/index.html";
     }
     
     @GetMapping("/login")
     public String login() {
-        return "redirect:/pages/login.xhtml";
+        return "redirect:/pages/login.html";
     }
     
     @GetMapping("/cadastro")
     public String cadastro() {
-        return "redirect:/pages/cadastro.xhtml";
-    }
-    
-    @GetMapping("/admin")
-    public String admin() {
-        return "redirect:/pages/admin.xhtml";
+        return "redirect:/pages/cadastro.html";
     }
     
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "redirect:/pages/dashboard.xhtml";
+        return "redirect:/index.html";
     }
     
     @GetMapping("/pacientes")
     public String pacientes() {
-        return "redirect:/pages/pacientes.xhtml";
+        return "redirect:/pages/pacientes.html";
     }
     
     @GetMapping("/pacientes/adicionar")
     public String adicionarPaciente() {
-        return "redirect:/pages/cadastrar-paciente.xhtml";
+        return "redirect:/pages/adicionar-paciente.html";
     }
     
     @GetMapping("/pacientes/detalhes")
     public String detalhesPaciente() {
-        return "redirect:/pages/detalhes-paciente.xhtml";
+        return "redirect:/pages/detalhes-paciente.html";
     }
     
-    @GetMapping("/configurar-alarme")
-    public String configurarAlarme() {
-        return "redirect:/pages/configurar-alarme.xhtml";
+    @GetMapping("/configurar-alertas")
+    public String configurarAlertas() {
+        return "redirect:/pages/configurar-alertas.html";
+    }
+    
+    @GetMapping("/usuarios")
+    public String usuarios() {
+        return "redirect:/pages/usuarios.html";
+    }
+    
+    @GetMapping("/usuarios/editar")
+    public String editarUsuario() {
+        return "redirect:/pages/editar-usuario.html";
     }
 }

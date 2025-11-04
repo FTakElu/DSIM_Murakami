@@ -6,6 +6,7 @@
     <title>Dashboard de Pacientes - DSIM</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
+    <script src="../js/api-config.js"></script>
     <style>
         /* Estilos específicos da página de pacientes */
         .patients-grid {
@@ -245,7 +246,7 @@
         // Função para buscar pacientes do backend
         async function carregarPacientes() {
             try {
-                const response = await fetch('/api/pacientes');
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes`);
                 if (response.ok) {
                     const pacientesData = await response.json();
                     
@@ -429,7 +430,7 @@
         // Função para buscar dados completos do paciente do backend
         async function buscarPacienteCompleto(id) {
             try {
-                const response = await fetch(`/api/pacientes/${id}`);
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${id}`);
                 if (response.ok) {
                     return await response.json();
                 }
@@ -505,7 +506,7 @@
             }
 
             try {
-                const response = await fetch(`/api/pacientes/${id}`, {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${id}`, {
                     method: 'DELETE'
                 });
 
@@ -563,7 +564,7 @@
             };
 
             try {
-                const response = await fetch(`/api/pacientes/${currentPatientId}`, {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${currentPatientId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

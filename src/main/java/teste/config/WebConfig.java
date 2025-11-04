@@ -33,10 +33,20 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addViewController("/").setViewName("forward:/index.html");
         registry.addViewController("/index").setViewName("forward:/index.html");
         
-        // Páginas específicas
+        // Páginas de autenticação
         registry.addViewController("/login").setViewName("forward:/pages/login.html");
         registry.addViewController("/cadastro").setViewName("forward:/pages/cadastro.html");
+        
+        // Páginas de pacientes
         registry.addViewController("/pacientes").setViewName("forward:/pages/pacientes.html");
         registry.addViewController("/adicionar-paciente").setViewName("forward:/pages/adicionar-paciente.html");
+        registry.addViewController("/detalhes-paciente").setViewName("forward:/pages/detalhes-paciente.html");
+        
+        // Páginas de usuários
+        registry.addViewController("/usuarios").setViewName("forward:/pages/usuarios.html");
+        registry.addViewController("/editar-usuario").setViewName("forward:/pages/editar-usuario.html");
+        
+        // Páginas de configuração
+        registry.addViewController("/configurar-alertas").setViewName("forward:/pages/configurar-alertas.html");
     }
 }

@@ -6,6 +6,7 @@
     <title>Detalhes do Paciente - DSIM</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
+    <script src="../js/api-config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -429,7 +430,7 @@
         // Função para buscar dados completos do paciente
         async function buscarPacienteCompleto(id) {
             try {
-                const response = await fetch(`http://localhost:8080/api/pacientes/${id}`);
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${id}`);
                 if (!response.ok) {
                     throw new Error('Paciente não encontrado');
                 }
@@ -443,7 +444,7 @@
         // Função para buscar dados históricos da API
         async function buscarDadosHistoricos(pacienteId, periodo) {
             try {
-                const response = await fetch(`http://localhost:8080/api/pacientes/${pacienteId}/historico-sinais/${periodo}`);
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/pacientes/${pacienteId}/historico-sinais/${periodo}`);
                 if (!response.ok) {
                     throw new Error('Erro ao buscar histórico');
                 }

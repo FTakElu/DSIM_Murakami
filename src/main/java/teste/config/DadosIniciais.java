@@ -1,0 +1,152 @@
+package teste.config;
+
+import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import teste.model.Alerta;
+import teste.model.ContatoEmergencial;
+import teste.model.InformacaoMedica;
+import teste.model.Paciente;
+import teste.model.SinaisVitais;
+import teste.model.Usuario;
+import teste.repository.AlertaRepository;
+import teste.repository.PacienteRepository;
+import teste.repository.UsuarioRepository;
+
+@Component
+public class DadosIniciais implements CommandLineRunner {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private PacienteRepository pacienteRepository;
+    
+    @Autowired
+    private AlertaRepository alertaRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (usuarioRepository.count() == 0) {
+            // Criar usuário inicial
+            Usuario admin = new Usuario();
+            admin.setNome("Administrador Sistema");
+            admin.setEmail("admin@sistema.com");
+            admin.setSenha(passwordEncoder.encode("senha123"));
+            admin.setAtivo(true);
+            usuarioRepository.save(admin);
+            
+            Usuario medico = new Usuario();
+            medico.setNome("Dr. João Silva");
+            medico.setEmail("joao.silva@hospital.com");
+            medico.setSenha(passwordEncoder.encode("senha123"));
+            medico.setAtivo(true);
+            usuarioRepository.save(medico);
+            
+            Usuario enfermeira = new Usuario();
+            enfermeira.setNome("Maria Santos");
+            enfermeira.setEmail("maria.santos@email.com");
+            enfermeira.setSenha(passwordEncoder.encode("senha123"));
+            enfermeira.setAtivo(true);
+            usuarioRepository.save(enfermeira);
+        }
+        
+        if (pacienteRepository.count() == 0) {
+            // Criar pacientes de exemplo
+            
+            // Paciente 1
+            ContatoEmergencial contato1 = new ContatoEmergencial();
+            contato1.setNome("Maria Silva");
+            contato1.setTelefone("(11) 98765-4321");
+            contato1.setEmail("maria@email.com");
+            contato1.setInstagram("@maria_silva");
+            
+            InformacaoMedica info1 = new InformacaoMedica();
+            info1.setTipoSangue("O+");
+            info1.setDeficiencia("Nenhuma");
+            info1.setProblemasEspecificos("Diabetes, Hipertensão");
+            
+            SinaisVitais sinais1 = new SinaisVitais();
+            sinais1.setOxigenio(98.5);
+            sinais1.setStatusOxigenio("stable");
+            sinais1.setTemperatura(36.8);
+            sinais1.setStatusTemperatura("stable");
+            sinais1.setBatimentos(75);
+            sinais1.setStatusBatimentos("stable");
+            
+            Paciente paciente1 = new Paciente();
+            paciente1.setNome("Carlos Eduardo Silva");
+            paciente1.setDataNascimento(LocalDate.of(1985, 3, 15));
+            paciente1.setGenero("Homem");
+            paciente1.setRelacionamento("Casado(a)");
+            paciente1.setTelefone("(11) 99999-8888");
+            paciente1.setImageUrl("/assets/carlos-eduardo.jpg");
+            paciente1.setContatoEmergencial(contato1);
+            paciente1.setInformacaoMedica(info1);
+            paciente1.setSinaisVitais(sinais1);
+            
+            pacienteRepository.save(paciente1);
+            
+            // Paciente 2
+            ContatoEmergencial contato2 = new ContatoEmergencial();
+            contato2.setNome("João Santos");
+            contato2.setTelefone("(11) 95555-1234");
+            contato2.setEmail("joao@email.com");
+            contato2.setInstagram("@joao_santos");
+            
+            InformacaoMedica info2 = new InformacaoMedica();
+            info2.setTipoSangue("A+");
+            info2.setDeficiencia("Visual leve");
+            info2.setProblemasEspecificos("Nenhum");
+            
+            SinaisVitais sinais2 = new SinaisVitais();
+            sinais2.setOxigenio(95.2);
+            sinais2.setStatusOxigenio("warning");
+            sinais2.setTemperatura(37.2);
+            sinais2.setStatusTemperatura("warning");
+            sinais2.setBatimentos(90);
+            sinais2.setStatusBatimentos("warning");
+            
+            Paciente paciente2 = new Paciente();
+            paciente2.setNome("Márcia dos Santos");
+            paciente2.setDataNascimento(LocalDate.of(1992, 7, 22));
+            paciente2.setGenero("Mulher");
+            paciente2.setRelacionamento("Solteiro(a)");
+            paciente2.setTelefone("(11) 88888-7777");
+            paciente2.setImageUrl("/assets/marcia-dos-santos.png");
+            paciente2.setContatoEmergencial(contato2);
+            paciente2.setInformacaoMedica(info2);
+            paciente2.setSinaisVitais(sinais2);
+            
+            pacienteRepository.save(paciente2);
+            
+            // Criar alertas de exemplo
+            Alerta alerta1 = new Alerta();
+            alerta1.setPaciente(paciente2);
+            alerta1.setTipo(Alerta.TipoAlerta.OXIGENIO_BAIXO);
+            alerta1.setMensagem("Oxigenação baixa detectada: 95.2%. Paciente: Márcia dos Santos");
+            alerta1.setPrioridade(Alerta.NivelPrioridade.ALTA);
+            alerta1.setLido(false);
+            alerta1.setAtivo(true);
+            
+            alertaRepository.save(alerta1);
+            
+            Alerta alerta2 = new Alerta();
+            alerta2.setPaciente(paciente2);
+            alerta2.setTipo(Alerta.TipoAlerta.TEMPERATURA_ALTA);
+            alerta2.setMensagem("Temperatura elevada detectada: 37.2°C. Paciente: Márcia dos Santos");
+            alerta2.setPrioridade(Alerta.NivelPrioridade.MEDIA);
+            alerta2.setLido(false);
+            alerta2.setAtivo(true);
+            
+            alertaRepository.save(alerta2);
+        }
+    }
+}

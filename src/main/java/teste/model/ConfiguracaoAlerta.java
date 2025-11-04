@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -21,8 +23,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "usuarios")
-public class Usuario implements Serializable {
+@Table(name = "configuracao_alertas")
+public class ConfiguracaoAlerta implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,19 +33,29 @@ public class Usuario implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false, length = 100)
-    private String nome;
+    @ManyToOne
+    @JoinColumn(name = "paciente_id", nullable = false)
+    private Paciente paciente;
     
-    @Column(nullable = false, unique = true, length = 150)
-    private String email;
+    @Column(name = "tipo_sinal", nullable = false, length = 50)
+    private String tipoSinal; // "OXIGENIO", "TEMPERATURA", "BATIMENTOS"
     
-    @Column(nullable = false)
-    private String senha;
+    @Column(name = "valor_minimo")
+    private Double valorMinimo;
+    
+    @Column(name = "valor_maximo")
+    private Double valorMaximo;
+    
+    @Column(name = "prioridade", nullable = false, length = 20)
+    private String prioridade; // "BAIXA", "MEDIA", "ALTA", "CRITICA"
     
     @Column(name = "ativo")
     private Boolean ativo = true;
     
-    @Column(name = "data_criacao")
+    @Column(name = "observacoes", columnDefinition = "TEXT")
+    private String observacoes;
+    
+    @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
     
     @Column(name = "data_atualizacao")

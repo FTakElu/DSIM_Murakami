@@ -1,0 +1,15 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Preparando frontend para deploy"
+    build:
+      commands:
+        - echo "Frontend estático - sem build necessário"
+  artifacts:
+    baseDirectory: /
+    files:
+      - '**/*'
+  cache:
+    paths: []
