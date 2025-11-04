@@ -3,12 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Preparando frontend para deploy"
+        - echo "Preparando frontend DSIM para deploy"
+        - cd frontend-aws
     build:
       commands:
-        - echo "Frontend estático - sem build necessário"
+        - echo "Frontend estático - build concluído"
   artifacts:
-    baseDirectory: /
+    baseDirectory: frontend-aws
     files:
       - '**/*'
   cache:
