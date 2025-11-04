@@ -40,7 +40,21 @@ window.apiRequest = async function(endpoint, options = {}) {
         }
     };
     
+    // Adicionar header do usuário logado se existir
+    const usuarioLogado = sessionStorage.getItem('usuarioLogado');
+    if (usuarioLogado) {
+        const usuario = JSON.parse(usuarioLogado);
+        if (usuario && usuario.email) {
+            defaultOptions.headers['X-Usuario-Email'] = usuario.email;
+        }
+    }
+    
     const requestOptions = { ...defaultOptions, ...options };
+    
+    // Mesclar headers se fornecidos nas opções
+    if (options.headers) {
+        requestOptions.headers = { ...defaultOptions.headers, ...options.headers };
+    }
     
     try {
         const response = await fetch(url, requestOptions);

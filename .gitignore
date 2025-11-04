@@ -35,6 +35,7 @@ logs/
 
 # Banco H2
 *.db
+data/
 
 # Node (se usar)
 node_modules/
@@ -46,3 +47,11 @@ yarn-error.log*
 *.bak
 *.backup
 *~
+
+# Scripts locais de desenvolvimento
+*.bat
+*.sh
+
+# Chaves SSH
+*.pem
+*.key

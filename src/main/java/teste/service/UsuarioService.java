@@ -21,8 +21,8 @@ public class UsuarioService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     public Usuario salvar(Usuario usuario) {
-        // Criptografar senha se for nova ou alterada
-        if (usuario.getId() == null || usuario.getSenha() != null) {
+        // Criptografar senha apenas se não estiver já criptografada
+        if (usuario.getSenha() != null && !usuario.getSenha().startsWith("$2a$")) {
             usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         }
         return usuarioRepository.save(usuario);

@@ -5,32 +5,46 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import teste.model.Paciente;
+import teste.model.Usuario;
+import teste.repository.PacienteRepository;
 import teste.service.ManterPacienteService;
+import teste.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api/pacientes")
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class PacienteController {
 
-    @Autowired
-    private ManterPacienteService pacienteService;
+	@Autowired
+	private ManterPacienteService pacienteService;
 
-    @GetMapping
-    public ResponseEntity<List<Paciente>> listarTodos() {
+	@Autowired
+	private PacienteRepository pacienteRepository;
+
+	@Autowired
+	private UsuarioService usuarioService;
+
+	@GetMapping
+    public ResponseEntity<List<Paciente>> listarTodos(@RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
-            List<Paciente> pacientes = pacienteService.buscarTodos();
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Buscar apenas os pacientes do usuário logado
+            List<Paciente> pacientes = pacienteRepository.findByUsuarioResponsavel(usuario);
             return ResponseEntity.ok(pacientes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -38,8 +52,19 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id, @RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Verificar se o paciente existe e pertence ao usuário
+            if (!pacienteRepository.existsByIdAndUsuarioResponsavelId(id, usuario.getId())) {
+                return ResponseEntity.notFound().build();
+            }
+
             Paciente paciente = pacienteService.buscarPeloCodigo(id);
             if (paciente != null) {
                 return ResponseEntity.ok(paciente);
@@ -52,10 +77,19 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Paciente> criarPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<Paciente> criarPaciente(@RequestBody Paciente paciente, @RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
             // Remove o ID para garantir que seja um novo registro
             paciente.setId(null);
+            
+            // Definir o usuário responsável
+            paciente.setUsuarioResponsavel(usuario);
             
             Paciente pacienteSalvo = pacienteService.salvar(paciente);
             return ResponseEntity.status(HttpStatus.CREATED).body(pacienteSalvo);
@@ -67,8 +101,19 @@ public class PacienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Paciente> atualizarPaciente(@PathVariable Long id, @RequestBody Paciente paciente) {
+    public ResponseEntity<Paciente> atualizarPaciente(@PathVariable Long id, @RequestBody Paciente paciente, @RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Verificar se o paciente existe e pertence ao usuário
+            if (!pacienteRepository.existsByIdAndUsuarioResponsavelId(id, usuario.getId())) {
+                return ResponseEntity.notFound().build();
+            }
+
             Paciente pacienteExistente = pacienteService.buscarPeloCodigo(id);
             if (pacienteExistente != null) {
                 // Preservar dados existentes e atualizar apenas os campos fornecidos
@@ -144,8 +189,19 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirPaciente(@PathVariable Long id) {
+    public ResponseEntity<Void> excluirPaciente(@PathVariable Long id, @RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Verificar se o paciente existe e pertence ao usuário
+            if (!pacienteRepository.existsByIdAndUsuarioResponsavelId(id, usuario.getId())) {
+                return ResponseEntity.notFound().build();
+            }
+
             Paciente pacienteExistente = pacienteService.buscarPeloCodigo(id);
             if (pacienteExistente != null) {
                 pacienteService.excluir(id);
@@ -159,9 +215,16 @@ public class PacienteController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Long> contarPacientes() {
+    public ResponseEntity<Long> contarPacientes(@RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
-            List<Paciente> pacientes = pacienteService.buscarTodos();
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Contar apenas os pacientes do usuário logado
+            List<Paciente> pacientes = pacienteRepository.findByUsuarioResponsavel(usuario);
             return ResponseEntity.ok((long) pacientes.size());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -169,8 +232,19 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}/historico-sinais/{periodo}")
-    public ResponseEntity<?> obterHistoricoSinaisVitais(@PathVariable Long id, @PathVariable String periodo) {
+    public ResponseEntity<?> obterHistoricoSinaisVitais(@PathVariable Long id, @PathVariable String periodo, @RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
+            // Buscar o usuário pelo email
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            // Verificar se o paciente existe e pertence ao usuário
+            if (!pacienteRepository.existsByIdAndUsuarioResponsavelId(id, usuario.getId())) {
+                return ResponseEntity.notFound().build();
+            }
+
             Paciente paciente = pacienteService.buscarPeloCodigo(id);
             if (paciente == null) {
                 return ResponseEntity.notFound().build();

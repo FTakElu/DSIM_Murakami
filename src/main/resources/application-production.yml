@@ -1,0 +1,72 @@
+# Configuração específica para produção
+# Profile: production
+
+server:
+  port: 8080
+  address: 0.0.0.0
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  shutdown: graceful
+  connection-timeout: 20000
+  tomcat:
+    connection-timeout: 20000
+
+spring:
+  # Configuração do banco H2 para produção (persistente)
+  datasource:
+    url: jdbc:h2:file:/opt/dsim/data/dsimdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=MySQL
+    driverClassName: org.h2.Driver
+    username: dsim_prod
+    password: ${DB_PASSWORD:dsim_prod_2025}
+    
+  # Console H2 desabilitado em produção (por segurança)
+  h2:
+    console:
+      enabled: false
+      
+  # JPA/Hibernate para produção
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    defer-datasource-initialization: false
+  
+  # SQL Initialization
+  sql:
+    init:
+      mode: always
+
+# Logging para produção
+# CORS Configuration
+cors:
+  allowed-origins: https://main.dd3d0c3znbvkh.amplifyapp.com,http://localhost:3000
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging para produção
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: ERROR
+    teste: INFO
+    root: WARN
+  file:
+    name: /opt/dsim/logs/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

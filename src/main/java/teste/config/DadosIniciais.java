@@ -34,14 +34,27 @@ public class DadosIniciais implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        Usuario admin = null;
+        
         if (usuarioRepository.count() == 0) {
-            // Criar usuário administrativo
-            Usuario admin = new Usuario();
+            // Criar usuário administrativo usando o UsuarioService
+            admin = new Usuario();
             admin.setNome("Administrador Sistema");
             admin.setEmail("admin@sistema.com");
-            admin.setSenha(passwordEncoder.encode("admin123"));
+            admin.setSenha(passwordEncoder.encode("admin123")); // Criptografar diretamente aqui
             admin.setAtivo(true);
-            usuarioRepository.save(admin);
+            admin = usuarioRepository.save(admin);
+            System.out.println("*** USUÁRIO ADMIN CRIADO: admin@sistema.com / admin123 ***");
+        } else {
+            // Buscar o usuário admin existente
+            admin = usuarioRepository.findByEmail("admin@sistema.com").orElse(null);
+            
+            // Se o admin existe mas pode ter senha incorreta, vamos atualizá-la
+            if (admin != null) {
+                admin.setSenha(passwordEncoder.encode("admin123")); // Criptografar diretamente
+                admin = usuarioRepository.save(admin);
+                System.out.println("*** SENHA DO ADMIN ATUALIZADA: admin@sistema.com / admin123 ***");
+            }
         }
         
         if (pacienteRepository.count() == 0) {
@@ -77,6 +90,7 @@ public class DadosIniciais implements CommandLineRunner {
             paciente1.setContatoEmergencial(contato1);
             paciente1.setInformacaoMedica(info1);
             paciente1.setSinaisVitais(sinais1);
+            paciente1.setUsuarioResponsavel(admin);
             
             pacienteRepository.save(paciente1);
             
@@ -110,6 +124,7 @@ public class DadosIniciais implements CommandLineRunner {
             paciente2.setContatoEmergencial(contato2);
             paciente2.setInformacaoMedica(info2);
             paciente2.setSinaisVitais(sinais2);
+            paciente2.setUsuarioResponsavel(admin);
             
             pacienteRepository.save(paciente2);
             
