@@ -350,8 +350,4 @@ sudo systemctl status dsim
 
 Este projeto é distribuído sob a licença [**MIT**](https://opensource.org/licenses/MIT).
 
-**Desenvolvido com ❤️ por**: Arthur, Flávia, Sara e Stephany  
-**Disciplina**: Linguagem de Programação 2 (LP2)  
-**Ano**: 2025
-
 ---
