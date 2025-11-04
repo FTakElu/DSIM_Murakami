@@ -8,7 +8,9 @@
 ![Java](https://img.shields.io/badge/Java-21-orange.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen.svg)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
-![Version](https://img.shields.io/badge/version-2.1.0-success.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-success.svg)
+![AWS](https://img.shields.io/badge/AWS-Amplify%20%2B%20EC2-orange.svg)
+![Deploy](https://img.shields.io/badge/deploy-Production-brightgreen.svg)
 
 ---
 
@@ -41,9 +43,9 @@ mvn spring-boot:run
 # 🌐 http://localhost:8080
 ```
 
-### **� Credenciais de Acesso**
+### **🔑 Credenciais de Acesso**
 - **Email**: `admin@sistema.com`
-- **Senha**: `senha123`
+- **Senha**: `admin123`
 
 ### **🛠️ Solução de Problemas**
 Se der erro de porta ocupada:
@@ -54,6 +56,32 @@ taskkill /F /PID <número_do_processo>
 # Ou execute o script automático (se existir)
 start-server.bat
 ```
+
+---
+
+## 🌐 **SISTEMA EM PRODUÇÃO (AWS)**
+
+### **🚀 URLs de Acesso**
+- **🌐 Frontend (Amplify)**: https://main.dd3d0c3znbvkh.amplifyapp.com
+- **🖥️ Backend API (EC2)**: http://54.237.230.21:8080
+- **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + Banco H2
+
+### **🏗️ Arquitetura AWS**
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   AWS AMPLIFY   │───▶│     AWS EC2     │───▶│    Banco H2     │
+│   (Frontend)    │    │   (Backend)     │    │   (Em memória)  │
+│     HTTPS       │    │  Spring Boot    │    │                 │
+│  Static Hosting │    │   Java 21       │    │    Localhost    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### **⚙️ Tecnologias de Deploy**
+- ✅ **Frontend**: AWS Amplify (deploy automático via GitHub)
+- ✅ **Backend**: AWS EC2 t3.micro (Amazon Linux 2023)
+- ✅ **CI/CD**: Integração GitHub → Amplify automática
+- ✅ **SSL**: HTTPS no frontend via Amplify
+- ✅ **Monitoramento**: CloudWatch logs habilitado
 
 ---
 
@@ -81,11 +109,13 @@ Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (
 - ✅ **Frontend**: Interface aprimorada e responsiva
 - ✅ **Sistema de Alertas**: Configuração personalizada
 
-### 🚀 **FASE 3 - 11/11/2025 (EM ANDAMENTO)**
+### 🚀 **FASE 3 - 04/11/2025 (CONCLUÍDA)**
 - ✅ **Código Organizado**: CSS centralizado e componentes reutilizáveis
 - ✅ **Navbar Universal**: Sistema de navegação unificado
 - ✅ **Documentação**: README completo e instruções claras
-- 🔄 **Deploy**: Preparação para AWS Amplify
+- ✅ **Deploy AWS**: Frontend no Amplify + Backend no EC2
+- ✅ **Produção**: Sistema funcionando em ambiente cloud
+- ✅ **Integração**: Frontend HTTPS conectado ao backend HTTP via proxy CORS
 
 ---
 
@@ -170,6 +200,15 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 | 🎯 **Font Awesome** | 6.4.0 | Ícones |
 | 📖 **Google Fonts** | Inter | Tipografia |
 
+### ☁️ **Tecnologias AWS (Produção)**
+| Tecnologia | Versão | Descrição |
+|------------|--------|-----------|
+| ☁️ **AWS Amplify** | - | Hospedagem frontend com CI/CD |
+| 🖥️ **AWS EC2** | t3.micro | Servidor backend Linux |
+| 🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático Amplify |
+| 📊 **CloudWatch** | - | Logs e monitoramento |
+| 🌐 **Proxy CORS** | - | Resolução Mixed Content |
+
 ---
 
 ## 📁 **Estrutura do Projeto**
@@ -185,9 +224,16 @@ DSIM_Murakami/
 ├── 📂 src/main/resources/
 │   ├── 📄 application.yml     # Configurações da aplicação
 │   └── 📊 data.sql           # Dados iniciais
-├── 📂 src/main/webapp/view/
+├── 📂 src/main/webapp/view/   # Frontend local
 │   ├── 🎨 css/               # Estilos centralizados
 │   ├── ⚡ js/                # Scripts reutilizáveis
+│   └── 📄 pages/             # Páginas HTML
+├── 📂 frontend-aws/          # Frontend para produção (Amplify)
+│   ├── 🎨 css/               # Estilos otimizados
+│   ├── ⚡ js/                # Scripts com API config
+│   ├── 📄 pages/             # Páginas HTML
+│   ├── ⚙️ amplify.yml        # Config deploy Amplify
+│   └── 🔄 _redirects         # Redirecionamentos SPA
 │   └── 📱 pages/             # Páginas HTML
 ├── 📂 Diagramas/             # Documentação técnica
 └── 📋 README.md              # Este arquivo
@@ -233,9 +279,7 @@ taskkill /F /IM java.exe
 O sistema inicializa automaticamente com:
 
 ### 👤 **Usuários**
-- **Admin**: `admin@sistema.com` | `senha123`
-- **Médico**: `joao.silva@hospital.com` | `senha123`
-- **Enfermeira**: `maria.santos@email.com` | `senha123`
+- **Admin**: `admin@sistema.com` | `admin123`
 
 ### 🏥 **Pacientes**
 - **Carlos Eduardo Silva** (85 anos, sinais estáveis)
@@ -272,7 +316,37 @@ O sistema inicializa automaticamente com:
 
 ---
 
-## 🧾 **Licença**
+## 🚀 **Como Fazer Deploy**
+
+### **Frontend (AWS Amplify)**
+```bash
+# 1. O deploy é automático via GitHub
+# 2. Cada push na branch main dispara novo deploy
+# 3. Amplify detecta automaticamente o amplify.yml
+# 4. Build e deploy em ~3 minutos
+```
+
+### **Backend (AWS EC2)**
+```bash
+# 1. SSH na instância EC2
+ssh -i "sua-chave.pem" ec2-user@IP-PUBLICO
+
+# 2. Executar script de deploy
+curl -O https://raw.githubusercontent.com/FTakElu/DSIM_Murakami/main/deploy-ec2.sh
+chmod +x deploy-ec2.sh && ./deploy-ec2.sh
+
+# 3. Verificar se está rodando
+sudo systemctl status dsim
+```
+
+### **Configuração Completa**
+1. **Frontend**: Alterar `API_BASE_URL` em `js/api-config-cors.js`
+2. **Backend**: Configurar CORS para URL do Amplify
+3. **Integração**: Testar comunicação frontend ↔ backend
+
+---
+
+## 📄 **Licença**
 
 Este projeto é distribuído sob a licença [**MIT**](https://opensource.org/licenses/MIT).
 
