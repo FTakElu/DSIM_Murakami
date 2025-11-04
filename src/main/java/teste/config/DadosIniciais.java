@@ -35,27 +35,13 @@ public class DadosIniciais implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (usuarioRepository.count() == 0) {
-            // Criar usuário inicial
+            // Criar usuário administrativo
             Usuario admin = new Usuario();
             admin.setNome("Administrador Sistema");
             admin.setEmail("admin@sistema.com");
-            admin.setSenha(passwordEncoder.encode("senha123"));
+            admin.setSenha(passwordEncoder.encode("admin123"));
             admin.setAtivo(true);
             usuarioRepository.save(admin);
-            
-            Usuario medico = new Usuario();
-            medico.setNome("Dr. João Silva");
-            medico.setEmail("joao.silva@hospital.com");
-            medico.setSenha(passwordEncoder.encode("senha123"));
-            medico.setAtivo(true);
-            usuarioRepository.save(medico);
-            
-            Usuario enfermeira = new Usuario();
-            enfermeira.setNome("Maria Santos");
-            enfermeira.setEmail("maria.santos@email.com");
-            enfermeira.setSenha(passwordEncoder.encode("senha123"));
-            enfermeira.setAtivo(true);
-            usuarioRepository.save(enfermeira);
         }
         
         if (pacienteRepository.count() == 0) {
@@ -63,10 +49,10 @@ public class DadosIniciais implements CommandLineRunner {
             
             // Paciente 1
             ContatoEmergencial contato1 = new ContatoEmergencial();
-            contato1.setNome("Maria Silva");
+            contato1.setNome("Ana Silva");
             contato1.setTelefone("(11) 98765-4321");
-            contato1.setEmail("maria@email.com");
-            contato1.setInstagram("@maria_silva");
+            contato1.setEmail("ana@email.com");
+            contato1.setInstagram("@ana_silva");
             
             InformacaoMedica info1 = new InformacaoMedica();
             info1.setTipoSangue("O+");
@@ -96,10 +82,10 @@ public class DadosIniciais implements CommandLineRunner {
             
             // Paciente 2
             ContatoEmergencial contato2 = new ContatoEmergencial();
-            contato2.setNome("João Santos");
+            contato2.setNome("Pedro Santos");
             contato2.setTelefone("(11) 95555-1234");
-            contato2.setEmail("joao@email.com");
-            contato2.setInstagram("@joao_santos");
+            contato2.setEmail("pedro@email.com");
+            contato2.setInstagram("@pedro_santos");
             
             InformacaoMedica info2 = new InformacaoMedica();
             info2.setTipoSangue("A+");
