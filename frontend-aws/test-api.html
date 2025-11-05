@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste API Mock - DSIM</title>
+    <script src="js/api-config-cors.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { background: #f5f5f5; padding: 10px; margin-top: 10px; border-radius: 3px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste do Sistema API Mock</h1>
+    
+    <div class="test-section">
+        <h3>1. Teste de Login</h3>
+        <button onclick="testLogin()">Testar Login (admin@sistema.com)</button>
+        <div id="login-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Teste de Listar Pacientes</h3>
+        <button onclick="testListPacientes()">Listar Pacientes</button>
+        <div id="pacientes-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Teste de Buscar Paciente por ID</h3>
+        <button onclick="testGetPaciente()">Buscar Paciente ID=1</button>
+        <div id="get-paciente-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Teste de Adicionar Paciente</h3>
+        <button onclick="testAddPaciente()">Adicionar Paciente Teste</button>
+        <div id="add-paciente-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. Teste de Atualizar Paciente</h3>
+        <button onclick="testUpdatePaciente()">Atualizar Paciente ID=1</button>
+        <div id="update-paciente-result" class="result"></div>
+    </div>
+    
+    <script>
+        async function testLogin() {
+            const resultDiv = document.getElementById('login-result');
+            try {
+                const result = await apiRequest('/api/usuarios/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: 'admin@sistema.com',
+                        senha: 'admin123'
+                    })
+                });
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `✅ Login bem-sucedido!<br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Erro no login: ${error.message}`;
+            }
+        }
+        
+        async function testListPacientes() {
+            const resultDiv = document.getElementById('pacientes-result');
+            try {
+                const result = await apiRequest('/api/pacientes', { method: 'GET' });
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `✅ ${result.length} pacientes encontrados!<br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Erro ao listar pacientes: ${error.message}`;
+            }
+        }
+        
+        async function testGetPaciente() {
+            const resultDiv = document.getElementById('get-paciente-result');
+            try {
+                const result = await apiRequest('/api/pacientes/1', { method: 'GET' });
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `✅ Paciente encontrado!<br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Erro ao buscar paciente: ${error.message}`;
+            }
+        }
+        
+        async function testAddPaciente() {
+            const resultDiv = document.getElementById('add-paciente-result');
+            try {
+                const novoPaciente = {
+                    nome: 'Paciente Teste ' + Date.now(),
+                    dataNascimento: '1990-01-01',
+                    genero: 'Masculino',
+                    telefone: '(11) 99999-0000',
+                    email: 'teste@email.com'
+                };
+                const result = await apiRequest('/api/pacientes', {
+                    method: 'POST',
+                    body: JSON.stringify(novoPaciente)
+                });
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `✅ Paciente adicionado!<br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Erro ao adicionar paciente: ${error.message}`;
+            }
+        }
+        
+        async function testUpdatePaciente() {
+            const resultDiv = document.getElementById('update-paciente-result');
+            try {
+                const dadosAtualizacao = {
+                    nome: 'Carlos Eduardo Silva (ATUALIZADO)',
+                    telefone: '(11) 88888-9999'
+                };
+                const result = await apiRequest('/api/pacientes/1', {
+                    method: 'PUT',
+                    body: JSON.stringify(dadosAtualizacao)
+                });
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `✅ Paciente atualizado!<br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Erro ao atualizar paciente: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

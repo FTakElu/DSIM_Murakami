@@ -255,6 +255,29 @@ window.apiRequest = async function(endpoint, options = {}) {
             });
         }
         
+        // HISTÓRICO DE SINAIS VITAIS
+        if (endpoint.includes('/historico-sinais/')) {
+            console.log('✅ Histórico de sinais vitais simulado');
+            const agora = new Date();
+            const historico = [];
+            
+            // Gerar dados das últimas 24 horas
+            for (let i = 23; i >= 0; i--) {
+                const hora = new Date(agora.getTime() - (i * 60 * 60 * 1000));
+                historico.push({
+                    timestamp: hora.toISOString(),
+                    oxigenio: 95 + Math.random() * 5,
+                    temperatura: 36.0 + Math.random() * 2,
+                    batimentos: 60 + Math.random() * 40,
+                    pressaoSistolica: 110 + Math.random() * 30,
+                    pressaoDiastolica: 70 + Math.random() * 20,
+                    frequenciaRespiratoria: 12 + Math.random() * 8
+                });
+            }
+            
+            return historico;
+        }
+        
         // ALERTAS (genérico)
         if (endpoint.includes('/api/alertas')) {
             console.log('✅ Operação de alertas');
