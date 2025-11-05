@@ -564,10 +564,33 @@
                 // Buscar dados históricos da API
                 const historico = await buscarDadosHistoricos(currentPatient.id, currentPeriod);
 
+                // Verificar se historico é array (do mock) ou objeto com labels
+                let labels, batimentos, oxigenio, temperatura;
+                
+                if (Array.isArray(historico)) {
+                    // Dados do mock - converter para formato do gráfico
+                    labels = historico.map((_, index) => {
+                        if (currentPeriod === '1day') {
+                            return `${String(index).padStart(2, '0')}:00`;
+                        } else {
+                            return `${index + 1}`;
+                        }
+                    });
+                    batimentos = historico.map(h => h.batimentos);
+                    oxigenio = historico.map(h => h.oxigenio);
+                    temperatura = historico.map(h => h.temperatura);
+                } else {
+                    // Formato antigo
+                    labels = historico.labels;
+                    batimentos = historico.batimentos;
+                    oxigenio = historico.oxigenio;
+                    temperatura = historico.temperatura;
+                }
+
                 // Criar dados no formato esperado pelo Chart.js
-                const heartbeatData = { labels: historico.labels, data: historico.batimentos };
-                const oxygenData = { labels: historico.labels, data: historico.oxigenio };
-                const temperatureData = { labels: historico.labels, data: historico.temperatura };
+                const heartbeatData = { labels, data: batimentos };
+                const oxygenData = { labels, data: oxigenio };
+                const temperatureData = { labels, data: temperatura };
 
                 // Criar gráficos
                 createChart('heartbeatChart', 'Batimentos (bpm)', heartbeatData, '#e74c3c', 'rgba(231, 76, 60, 0.1)');
@@ -625,22 +648,28 @@
 
             // Informações médicas
             const medicalInfo = document.getElementById('medicalInfo');
-            if (paciente.informacaoMedica) {
-                medicalInfo.innerHTML = `
-                    <div class="info-item">
-                        <span class="info-label">Tipo Sanguíneo:</span>
-                        <span class="info-value">${paciente.informacaoMedica.tipoSangue}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Deficiência:</span>
-                        <span class="info-value">${paciente.informacaoMedica.deficiencia || 'Nenhuma'}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Problemas Específicos:</span>
-                        <span class="info-value">${paciente.informacaoMedica.problemasEspecificos || 'Nenhum'}</span>
-                    </div>
-                `;
-            }
+            medicalInfo.innerHTML = `
+                <div class="info-item">
+                    <span class="info-label">Tipo Sanguíneo:</span>
+                    <span class="info-value">${paciente.tipoSanguineo || 'Não informado'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Alergias:</span>
+                    <span class="info-value">${paciente.alergias || 'Nenhuma conhecida'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Condições Médicas:</span>
+                    <span class="info-value">${paciente.condicoesMedicas || 'Nenhuma'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Medicamentos Atuais:</span>
+                    <span class="info-value">${paciente.medicamentosAtuais || 'Nenhum'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Quarto:</span>
+                    <span class="info-value">${paciente.quarto || 'Não informado'}</span>
+                </div>
+            `;
 
             // Contato de emergência
             const emergencyInfo = document.getElementById('emergencyInfo');
@@ -651,16 +680,16 @@
                         <span class="info-value">${paciente.contatoEmergencial.nome}</span>
                     </div>
                     <div class="info-item">
+                        <span class="info-label">Parentesco:</span>
+                        <span class="info-value">${paciente.contatoEmergencial.parentesco}</span>
+                    </div>
+                    <div class="info-item">
                         <span class="info-label">Telefone:</span>
                         <span class="info-value">${paciente.contatoEmergencial.telefone}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Email:</span>
                         <span class="info-value">${paciente.contatoEmergencial.email || 'Não informado'}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Instagram:</span>
-                        <span class="info-value">${paciente.contatoEmergencial.instagram || 'Não informado'}</span>
                     </div>
                 `;
             }

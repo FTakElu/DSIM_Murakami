@@ -497,7 +497,7 @@
         }
 
         // Processar cadastro
-        document.getElementById('patientForm').addEventListener('submit', function(e) {
+        document.getElementById('patientForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
@@ -561,25 +561,31 @@
                 return;
             }
 
-            apiRequest('/api/pacientes', {
-                method: 'POST',
-                headers: {
-                    'X-Usuario-Email': usuarioLogado.email,
-                },
-                body: JSON.stringify(pacienteData)
-            })
-            .then(data => {
-                showMessage('Paciente cadastrado com sucesso! Redirecionando...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'pacientes.html';
-                }, 2000);
-            })
-            .catch(error => {
+            try {
+                const data = await apiRequest('/api/pacientes', {
+                    method: 'POST',
+                    headers: {
+                        'X-Usuario-Email': usuarioLogado.email,
+                    },
+                    body: JSON.stringify(pacienteData)
+                });
+                
+                if (data && data.success) {
+                    showMessage('Paciente cadastrado com sucesso! Redirecionando...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'pacientes.html';
+                    }, 2000);
+                } else {
+                    showMessage('Erro ao cadastrar paciente. Tente novamente.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Paciente';
+                }
+            } catch (error) {
                 console.error('Erro:', error);
                 showMessage('Erro ao cadastrar paciente. Tente novamente.', 'error');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Paciente';
-            });
+            }
         });
 
         // Esconder mensagem ao focar nos inputs

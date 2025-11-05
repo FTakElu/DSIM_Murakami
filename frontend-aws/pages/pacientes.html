@@ -552,21 +552,20 @@
 
             currentPatientId = id;
             const contato = paciente.contatoEmergencial || {};
-            const info = paciente.informacaoMedica || {};
 
-            // Preencher formulário de edição
+            // Preencher formulário de edição com dados corretos do mock
             document.getElementById('editName').value = paciente.nome || '';
             document.getElementById('editBirthdate').value = paciente.dataNascimento || '';
             document.getElementById('editGender').value = paciente.genero || '';
             document.getElementById('editPhone').value = paciente.telefone || '';
-            document.getElementById('editRelationship').value = paciente.relacionamento || '';
-            document.getElementById('editRoom').value = '';
-            document.getElementById('editBloodType').value = info.tipoSangue || '';
-            document.getElementById('editAllergies').value = ''; // Campo de alergias (não mapeado no backend)
-            document.getElementById('editDeficiencia').value = info.deficiencia || '';
-            document.getElementById('editMedicalConditions').value = info.problemasEspecificos || '';
+            document.getElementById('editRelationship').value = contato.parentesco || '';
+            document.getElementById('editRoom').value = paciente.quarto || '';
+            document.getElementById('editBloodType').value = paciente.tipoSanguineo || '';
+            document.getElementById('editAllergies').value = paciente.alergias || '';
+            document.getElementById('editMedicalConditions').value = paciente.condicoesMedicas || '';
             document.getElementById('editEmergencyName').value = contato.nome || '';
             document.getElementById('editParentesco').value = contato.parentesco || '';
+            document.getElementById('editEmergencyPhone').value = contato.telefone || '';
             document.getElementById('editEmergencyPhone').value = contato.telefone || '';
             document.getElementById('editEmergencyEmail').value = contato.email || '';
 

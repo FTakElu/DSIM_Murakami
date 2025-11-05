@@ -247,8 +247,98 @@
         }
 
         // Função para editar usuário
-        function editarUsuario(id) {
-            window.location.href = `editar-usuario.html?id=${id}`;
+        async function editarUsuario(id) {
+            try {
+                // Buscar dados do usuário
+                const usuarios = await apiRequest('/api/usuarios', { method: 'GET' });
+                const usuario = usuarios.find(u => u.id === id);
+                
+                if (!usuario) {
+                    alert('Usuário não encontrado');
+                    return;
+                }
+                
+                // Criar modal de edição dinamicamente
+                const modalHtml = `
+                    <div class="modal fade" id="editUserModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editar Usuário</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editUserForm">
+                                        <div class="mb-3">
+                                            <label for="editNome" class="form-label">Nome</label>
+                                            <input type="text" class="form-control" id="editNome" value="${usuario.nome}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editEmail" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="editEmail" value="${usuario.email}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editTipo" class="form-label">Tipo</label>
+                                            <select class="form-control" id="editTipo">
+                                                <option value="ADMIN" ${usuario.tipo === 'ADMIN' ? 'selected' : ''}>Administrador</option>
+                                                <option value="MEDICO" ${usuario.tipo === 'MEDICO' ? 'selected' : ''}>Médico</option>
+                                                <option value="ENFERMEIRO" ${usuario.tipo === 'ENFERMEIRO' ? 'selected' : ''}>Enfermeiro</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-primary" onclick="salvarEdicaoUsuario(${id})">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Adicionar modal ao body
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                // Mostrar modal
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+                
+                // Remover modal quando fechado
+                document.getElementById('editUserModal').addEventListener('hidden.bs.modal', function() {
+                    this.remove();
+                });
+                
+            } catch (error) {
+                console.error('Erro ao editar usuário:', error);
+                alert('Erro ao carregar dados do usuário');
+            }
+        }
+        
+        // Função para salvar edição do usuário
+        async function salvarEdicaoUsuario(id) {
+            try {
+                const nome = document.getElementById('editNome').value;
+                const email = document.getElementById('editEmail').value;
+                const tipo = document.getElementById('editTipo').value;
+                
+                const dadosAtualizados = { nome, email, tipo };
+                
+                const result = await apiRequest(`/api/usuarios/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(dadosAtualizados)
+                });
+                
+                if (result && result.success) {
+                    alert('Usuário atualizado com sucesso!');
+                    bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+                    carregarUsuarioLogado(); // Recarregar dados
+                } else {
+                    alert('Erro ao atualizar usuário');
+                }
+            } catch (error) {
+                console.error('Erro ao salvar usuário:', error);
+                alert('Erro ao salvar alterações');
+            }
         }
 
         // Função para alterar status do usuário
