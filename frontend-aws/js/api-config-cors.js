@@ -3,10 +3,10 @@
 
 const API_CONFIG = {
     // Usar proxy CORS temporário
-    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://54.237.230.21:8080',
+    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://18.232.149.49:8080',
     
     // URLs originais (para referência)
-    // BASE_URL: 'http://54.237.230.21:8080', // Direto (bloqueado por Mixed Content)
+    // BASE_URL: 'http://18.232.149.49:8080', // Direto (bloqueado por Mixed Content)
     
     // Endpoints da API
     ENDPOINTS: {
