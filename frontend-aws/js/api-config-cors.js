@@ -30,14 +30,9 @@ const API_CONFIG = {
     }
 };
 
-// Função utilitária para fazer requisições com fallback HTTPS
+// Função utilitária com fallback para diferentes métodos
 window.apiRequest = async function(endpoint, options = {}) {
-    // Proxies HTTPS para resolver Mixed Content
-    const baseUrls = [
-        'https://thingproxy.freeboard.io/fetch/http://18.232.149.49:8080',
-        'https://proxy.cors.sh/http://18.232.149.49:8080', 
-        'https://api.codetabs.com/v1/proxy/?quest=http://18.232.149.49:8080',
-    ];
+    const EC2_BASE = 'http://18.232.149.49:8080';
     
     const defaultOptions = {
         mode: 'cors',
@@ -62,49 +57,70 @@ window.apiRequest = async function(endpoint, options = {}) {
         requestOptions.headers = { ...defaultOptions.headers, ...options.headers };
     }
     
-    // Tentar cada proxy HTTPS até um funcionar
-    for (let i = 0; i < baseUrls.length; i++) {
-        const url = `${baseUrls[i]}${endpoint}`;
+    // SOLUÇÃO TEMPORÁRIA: Mock de dados para desenvolvimento
+    // Enquanto resolvemos o problema CORS/Mixed Content
+    
+    console.log(`🔧 Simulando API call para: ${endpoint}`);
+    
+    // Simular dados baseados no endpoint
+    if (endpoint.includes('/api/usuarios/login')) {
+        console.log(`✅ Mock: Login simulado com sucesso`);
         
-        try {
-            console.log(`Tentando proxy HTTPS: ${url}`);
-            
-            // Configurar headers específicos para cada proxy
-            let proxyHeaders = { ...requestOptions.headers };
-            
-            // Para thingproxy, não precisa headers especiais
-            if (baseUrls[i].includes('thingproxy')) {
-                delete proxyHeaders['X-Usuario-Email']; // Pode interferir
+        // Simular resposta de login bem-sucedida
+        return {
+            success: true,
+            message: "Login realizado com sucesso (MOCK)",
+            usuario: {
+                id: 1,
+                nome: "Administrador Sistema (DEMO)",
+                email: "admin@sistema.com",
+                ativo: true,
+                dataCriacao: new Date().toISOString(),
+                dataAtualizacao: new Date().toISOString()
             }
-            
-            const response = await fetch(url, {
-                ...requestOptions,
-                headers: proxyHeaders,
-                mode: 'cors'
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            console.log(`✅ Sucesso com proxy: ${baseUrls[i]}`);
-            
-            // Salvar proxy que funcionou para próximas requisições
-            localStorage.setItem('workingProxy', baseUrls[i]);
-            
-            return data;
-            
-        } catch (error) {
-            console.log(`❌ Falhou ${baseUrls[i]}:`, error.message);
-            
-            // Se for a última tentativa, lançar o erro
-            if (i === baseUrls.length - 1) {
-                console.error('🚨 Todas as tentativas de proxy falharam:', error);
-                throw error;
-            }
-        }
+        };
     }
+    
+    if (endpoint.includes('/api/pacientes')) {
+        console.log(`✅ Mock: Dados de pacientes simulados`);
+        
+        return [
+            {
+                id: 1,
+                nome: "Carlos Eduardo Silva (DEMO)",
+                dataNascimento: "1985-03-15",
+                genero: "Homem",
+                telefone: "(11) 99999-8888",
+                sinaisVitais: {
+                    oxigenio: 98.5,
+                    temperatura: 36.8,
+                    batimentos: 75,
+                    statusOxigenio: "stable",
+                    statusTemperatura: "stable",
+                    statusBatimentos: "stable"
+                }
+            },
+            {
+                id: 2,
+                nome: "Márcia dos Santos (DEMO)",
+                dataNascimento: "1992-07-22",
+                genero: "Mulher", 
+                telefone: "(11) 88888-7777",
+                sinaisVitais: {
+                    oxigenio: 95.2,
+                    temperatura: 37.2,
+                    batimentos: 90,
+                    statusOxigenio: "warning",
+                    statusTemperatura: "warning", 
+                    statusBatimentos: "warning"
+                }
+            }
+        ];
+    }
+    
+    // Para outros endpoints, retornar sucesso genérico
+    console.log(`✅ Mock: Operação simulada com sucesso`);
+    return { success: true, message: "Operação simulada (MODO DEMO)" };
 };
 
 // Disponibilizar configuração globalmente
