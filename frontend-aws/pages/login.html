@@ -291,7 +291,7 @@
                 
                 if (data) {
                     // Salvar dados do usuário no localStorage
-                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    localStorage.setItem('usuario', JSON.stringify(data));
                     
                     showMessage('Login realizado com sucesso! Redirecionando...', 'success');
                     
@@ -300,7 +300,7 @@
                         window.location.href = 'pacientes.html';
                     }, 1500);
                 } else {
-                    showMessage(data.message, 'error');
+                    showMessage('Credenciais inválidas', 'error');
                 }
                 
             } catch (error) {

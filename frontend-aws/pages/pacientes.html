@@ -337,7 +337,8 @@
                         'X-Usuario-Email': usuarioLogado.email
                     }
                 });
-                if (pacientesData) {
+                
+                if (pacientesData && Array.isArray(pacientesData)) {
                     
                     // Converter dados do backend para formato usado no frontend
                     patients = pacientesData.map(paciente => {
@@ -348,7 +349,7 @@
                             id: paciente.id,
                             name: paciente.nome,
                             age: idade,
-                            room: formatarEstadoCivil(paciente.relacionamento),
+                            room: paciente.quarto || 'N/A',
                             heartRate: sinais.batimentos || 0,
                             oxygen: sinais.oxigenio || 0,
                             temperature: sinais.temperatura || 0,
