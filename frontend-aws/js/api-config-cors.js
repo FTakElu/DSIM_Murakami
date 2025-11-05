@@ -2,11 +2,12 @@
 // Use este serviço temporariamente para desenvolvimento
 
 const API_CONFIG = {
-    // Usar proxy CORS temporário
-    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://18.232.149.49:8080',
+    // Tentar direto primeiro (pode funcionar em alguns casos)
+    BASE_URL: 'http://18.232.149.49:8080',
     
-    // URLs originais (para referência)
-    // BASE_URL: 'http://18.232.149.49:8080', // Direto (bloqueado por Mixed Content)
+    // Alternativas se não funcionar
+    // BASE_URL: 'https://api.allorigins.win/raw?url=http://18.232.149.49:8080', 
+    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://18.232.149.49:8080',
     
     // Endpoints da API
     ENDPOINTS: {
@@ -29,14 +30,19 @@ const API_CONFIG = {
     }
 };
 
-// Função utilitária para fazer requisições
+// Função utilitária para fazer requisições com fallback
 window.apiRequest = async function(endpoint, options = {}) {
-    const url = `${API_CONFIG.BASE_URL}${endpoint}`;
+    // Tentar diferentes proxies
+    const baseUrls = [
+        'http://18.232.149.49:8080', // Direto
+        'https://api.allorigins.win/raw?url=http://18.232.149.49:8080', // Proxy AllOrigins
+        'https://corsproxy.io/?http://18.232.149.49:8080', // Proxy alternativo
+    ];
     
     const defaultOptions = {
+        mode: 'cors',
         headers: {
             'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', // Para CORS proxy
         }
     };
     
@@ -56,17 +62,31 @@ window.apiRequest = async function(endpoint, options = {}) {
         requestOptions.headers = { ...defaultOptions.headers, ...options.headers };
     }
     
-    try {
-        const response = await fetch(url, requestOptions);
+    // Tentar cada URL até uma funcionar
+    for (let i = 0; i < baseUrls.length; i++) {
+        const url = `${baseUrls[i]}${endpoint}`;
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            console.log(`Tentando: ${url}`);
+            const response = await fetch(url, requestOptions);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log(`Sucesso com: ${baseUrls[i]}`);
+            return data;
+            
+        } catch (error) {
+            console.log(`Falhou ${baseUrls[i]}:`, error.message);
+            
+            // Se for a última tentativa, lançar o erro
+            if (i === baseUrls.length - 1) {
+                console.error('Todas as tentativas falharam:', error);
+                throw error;
+            }
         }
-        
-        return await response.json();
-    } catch (error) {
-        console.error('Erro na requisição:', error);
-        throw error;
     }
 };
 
