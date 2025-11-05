@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Pacientes - DSIM</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
     <script src="../js/api-config-cors.js"></script>
     <style>
@@ -330,15 +331,13 @@
                     return;
                 }
 
-                const response = await fetch('/api/pacientes', {
+                const pacientesData = await apiRequest('/api/pacientes', {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-Usuario-Email': usuarioLogado.email
                     }
                 });
-                if (response.ok) {
-                    const pacientesData = await response.json();
+                if (pacientesData) {
                     
                     // Converter dados do backend para formato usado no frontend
                     patients = pacientesData.map(paciente => {
@@ -521,15 +520,14 @@
         async function buscarPacienteCompleto(id) {
             try {
                 const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
-                const response = await fetch(`/api/pacientes/${id}`, {
+                const data = await apiRequest(`/api/pacientes/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-Usuario-Email': usuarioLogado.email
                     }
                 });
-                if (response.ok) {
-                    return await response.json();
+                if (data) {
+                    return data;
                 }
             } catch (error) {
                 console.error('Erro ao buscar paciente:', error);
@@ -606,15 +604,14 @@
 
             try {
                 const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
-                const response = await fetch(`/api/pacientes/${id}`, {
+                const data = await apiRequest(`/api/pacientes/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-Usuario-Email': usuarioLogado.email
                     }
                 });
 
-                if (response.ok) {
+                if (data) {
                     alert('Paciente excluído com sucesso!');
                     await carregarPacientes();
                     renderPatients();
@@ -670,16 +667,15 @@
 
             try {
                 const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
-                const response = await fetch(`/api/pacientes/${currentPatientId}`, {
+                const data = await apiRequest(`/api/pacientes/${currentPatientId}`, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-Usuario-Email': usuarioLogado.email,
                     },
                     body: JSON.stringify(pacienteData)
                 });
 
-                if (response.ok) {
+                if (data) {
                     closeModal('editModal');
                     await carregarPacientes();
                     renderPatients();
@@ -754,6 +750,7 @@
         });
     </script>
 
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

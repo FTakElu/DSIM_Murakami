@@ -3,176 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Usuário - DSIM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cadastro - DSIM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        
-        .register-container {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .register-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .register-header .icon {
-            font-size: 3rem;
-            color: #2563eb;
-            margin-bottom: 1rem;
-        }
-        
-        .register-header h1 {
-            color: #111827;
-            margin-bottom: 0.5rem;
-            font-size: 1.5rem;
-        }
-        
-        .register-header p {
-            color: #6b7280;
-            margin: 0;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #374151;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .form-select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-select:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .btn-register {
-            width: 100%;
-            background: #2563eb;
-            color: white;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-register:hover {
-            background: #1e40af;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-        
-        .btn-register:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .back-link {
-            text-align: center;
-            margin-top: 1rem;
-        }
-        
-        .back-link a {
-            color: #2563eb;
-            text-decoration: none;
-            font-size: 0.875rem;
-        }
-        
-        .back-link a:hover {
-            text-decoration: underline;
-        }
-        
-        .message {
-            padding: 0.75rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-        }
-        
-        .message.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border-left: 4px solid #dc2626;
-        }
-        
-        .message.success {
-            background: #d1fae5;
-            color: #047857;
-            border-left: 4px solid #059669;
-        }
-        
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link href="../css/style.css" rel="stylesheet">
+    <script src="../js/api-config-cors.js"></script>
 </head>
 
 <body>
@@ -244,7 +79,7 @@
                 <i class="fas fa-sign-in-alt"></i> Já tem uma conta? Fazer login
             </a>
             <br><br>
-            <a href="../index.html">
+            <a href="index.html">
                 <i class="fas fa-arrow-left"></i> Voltar ao Início
             </a>
         </div>
@@ -289,27 +124,24 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
             
             try {
-                const response = await fetch('/api/usuarios/cadastrar', {
+            try {
+                const data = await apiRequest('/api/usuarios/cadastrar', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
-                        nome: data.name,
-                        email: data.email,
-                        senha: data.password
+                        nome: nome,
+                        email: email,
+                        senha: senha,
+                        tipo: tipo
                     })
                 });
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
+                if (data) {
                     showMessage('Cadastro realizado com sucesso! Redirecionando para login...', 'success');
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 2000);
                 } else {
-                    showMessage(result.message || 'Erro ao realizar cadastro', 'error');
+                    showMessage('Erro ao realizar cadastro', 'error');
                 }
             } catch (error) {
                 console.error('Erro:', error);
