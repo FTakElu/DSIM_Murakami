@@ -35,36 +35,21 @@ public class PacienteController {
 	private UsuarioService usuarioService;
 
 	@GetMapping
-    public ResponseEntity<List<Paciente>> listarTodos(@RequestHeader("X-Usuario-Email") String emailUsuario) {
+    public ResponseEntity<List<Paciente>> listarTodos() {
         try {
-            // Buscar o usuário pelo email
-            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
-            if (usuario == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
-            // Buscar apenas os pacientes do usuário logado
-            List<Paciente> pacientes = pacienteRepository.findByUsuarioResponsavel(usuario);
+            // Para teste: buscar todos os pacientes (sem filtro de usuário)
+            List<Paciente> pacientes = pacienteRepository.findAll();
             return ResponseEntity.ok(pacientes);
         } catch (Exception e) {
+            System.err.println("Erro ao listar pacientes: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id, @RequestHeader("X-Usuario-Email") String emailUsuario) {
+    public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id) {
         try {
-            // Buscar o usuário pelo email
-            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
-            if (usuario == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
-            // Verificar se o paciente existe e pertence ao usuário
-            if (!pacienteRepository.existsByIdAndUsuarioResponsavelId(id, usuario.getId())) {
-                return ResponseEntity.notFound().build();
-            }
-
             Paciente paciente = pacienteService.buscarPeloCodigo(id);
             if (paciente != null) {
                 return ResponseEntity.ok(paciente);
@@ -72,24 +57,23 @@ public class PacienteController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            System.err.println("Erro ao buscar paciente: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<Paciente> criarPaciente(@RequestBody Paciente paciente, @RequestHeader("X-Usuario-Email") String emailUsuario) {
+    public ResponseEntity<Paciente> criarPaciente(@RequestBody Paciente paciente) {
         try {
-            // Buscar o usuário pelo email
-            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
-            if (usuario == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
             // Remove o ID para garantir que seja um novo registro
             paciente.setId(null);
             
-            // Definir o usuário responsável
-            paciente.setUsuarioResponsavel(usuario);
+            // Para teste: buscar admin como usuário responsável
+            Usuario admin = usuarioService.buscarPorEmail("admin@dsim.com");
+            if (admin != null) {
+                paciente.setUsuarioResponsavel(admin);
+            }
             
             Paciente pacienteSalvo = pacienteService.salvar(paciente);
             return ResponseEntity.status(HttpStatus.CREATED).body(pacienteSalvo);

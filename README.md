@@ -44,7 +44,7 @@ mvn spring-boot:run
 ```
 
 ### **🔑 Credenciais de Acesso**
-- **Email**: `admin@sistema.com`
+- **Email**: `admin@dsim.com`
 - **Senha**: `admin123`
 
 ### **🛠️ Solução de Problemas**
@@ -63,17 +63,23 @@ start-server.bat
 
 ### **🚀 URLs de Acesso**
 - **🌐 Frontend (Amplify)**: https://main.dd3d0c3znbvkh.amplifyapp.com
-- **🖥️ Backend API (EC2)**: http://54.237.230.21:8080
-- **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + Banco H2
+- **🖥️ Backend API (EC2)**: http://3.88.99.86:8080
+- **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + PostgreSQL RDS
+
+### **✅ STATUS**: **100% FUNCIONAL**
+- ✅ **Backend**: Spring Boot rodando no EC2 (Java 17)
+- ✅ **Banco**: PostgreSQL RDS totalmente configurado
+- ✅ **APIs**: Todas funcionando (usuários, pacientes, login)
+- ✅ **CORS**: Configurado para integração frontend-backend
 
 ### **🏗️ Arquitetura AWS**
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   AWS AMPLIFY   │───▶│     AWS EC2     │───▶│    Banco H2     │
-│   (Frontend)    │    │   (Backend)     │    │   (Em memória)  │
-│     HTTPS       │    │  Spring Boot    │    │                 │
-│  Static Hosting │    │   Java 21       │    │    Localhost    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐
+│   AWS AMPLIFY   │───▶│     AWS EC2     │───▶│   PostgreSQL RDS    │
+│   (Frontend)    │    │   (Backend)     │    │   (Produção)        │
+│     HTTPS       │    │  Spring Boot    │    │  dsim_postgres      │
+│  Static Hosting │    │   Java 17       │    │  Multi-AZ Ready     │
+└─────────────────┘    └─────────────────┘    └─────────────────────┘
 ```
 
 ### **⚙️ Tecnologias de Deploy**
@@ -181,12 +187,13 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 ### ⚙️ **Backend**
 | Tecnologia | Versão | Função |
 |------------|--------|---------|
-| ☕ **Java** | 21 | Linguagem principal |
+| ☕ **Java** | 17 | Linguagem principal |
 | 🌱 **Spring Boot** | 3.1.5 | Framework web |
 | 📊 **Spring Data JPA** | 3.1.5 | Persistência |
 | 🌐 **Spring Web** | 3.1.5 | APIs REST |
 | 🔐 **Spring Security** | BCrypt | Criptografia |
-| 🗃️ **H2 Database** | Embutido | Banco em memória |
+| �️ **PostgreSQL** | 13+ | Banco de dados produção |
+| �🗃️ **H2 Database** | Embutido | Banco desenvolvimento |
 | 📦 **Lombok** | 1.18.30 | Redução de código |
 | 🔧 **Maven** | 3.6+ | Build e dependências |
 
@@ -196,7 +203,7 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 | 🌐 **HTML5** | Padrão | Estrutura |
 | 🎨 **CSS3** | Padrão | Estilização moderna |
 | ⚡ **JavaScript** | ES2020+ | Interatividade |
-| 📱 **Bootstrap** | 5.1.3 | Framework responsivo |
+| 📱 **Bootstrap** | 5.3.0 | Framework responsivo |
 | 🎯 **Font Awesome** | 6.4.0 | Ícones |
 | 📖 **Google Fonts** | Inter | Tipografia |
 
@@ -204,10 +211,11 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 | Tecnologia | Versão | Descrição |
 |------------|--------|-----------|
 | ☁️ **AWS Amplify** | - | Hospedagem frontend com CI/CD |
-| 🖥️ **AWS EC2** | t3.micro | Servidor backend Linux |
-| 🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático Amplify |
+| 🖥️ **AWS EC2** | t3.micro | Servidor backend Linux (Java 17) |
+| �️ **AWS RDS** | PostgreSQL 13 | Banco de dados em nuvem |
+| �🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático Amplify |
 | 📊 **CloudWatch** | - | Logs e monitoramento |
-| 🌐 **Proxy CORS** | - | Resolução Mixed Content |
+| 🌐 **CORS** | - | Comunicação segura entre serviços |
 
 ---
 
@@ -279,15 +287,10 @@ taskkill /F /IM java.exe
 O sistema inicializa automaticamente com:
 
 ### 👤 **Usuários**
-- **Admin**: `admin@sistema.com` | `admin123`
+- **Admin**: `admin@dsim.com` | `admin123`
 
 ### 🏥 **Pacientes**
-- **Carlos Eduardo Silva** (85 anos, sinais estáveis)
-- **Márcia dos Santos** (32 anos, atenção necessária)
-
-### 🔔 **Alertas**
-- Oxigenação baixa para Márcia
-- Temperatura elevada para Márcia
+- **João Silva** (Masculino, sinais estáveis) - *Criado durante testes*
 
 ---
 

@@ -2,12 +2,12 @@
 // Use este serviço temporariamente para desenvolvimento
 
 const API_CONFIG = {
-    // Tentar direto primeiro (pode funcionar em alguns casos)
-    BASE_URL: 'http://18.232.149.49:8080',
+    // Novo IP do EC2 AWS - atualizado automaticamente
+    BASE_URL: 'http://3.88.99.86:8080',
     
     // Alternativas se não funcionar
-    // BASE_URL: 'https://api.allorigins.win/raw?url=http://18.232.149.49:8080', 
-    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://18.232.149.49:8080',
+    // BASE_URL: 'https://api.allorigins.win/raw?url=http://3.88.99.86:8080', 
+    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://3.88.99.86:8080',
     
     // Endpoints da API
     ENDPOINTS: {
