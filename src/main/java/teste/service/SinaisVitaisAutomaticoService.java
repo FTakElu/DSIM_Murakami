@@ -98,16 +98,16 @@ public class SinaisVitaisAutomaticoService {
         // Definir valores
         vitais.setOxigenio(Math.round(oxigenio * 10.0) / 10.0); // 1 casa decimal
         vitais.setTemperatura(Math.round(temperatura * 10.0) / 10.0); // 1 casa decimal
-        vitais.setBatimentos((double)batimentos);
-        vitais.setPressaoSistolica((double)pressaoSistolica);
-        vitais.setPressaoDiastolica((double)pressaoDiastolica);
-        vitais.setFrequenciaRespiratoria((double)frequenciaRespiratoria);
+        vitais.setBatimentos(batimentos);
+        vitais.setPressaoSistolica(pressaoSistolica);
+        vitais.setPressaoDiastolica(pressaoDiastolica);
+        vitais.setFrequenciaRespiratoria((int)frequenciaRespiratoria);
         
         // Calcular status baseado nos valores
         vitais.setStatusOxigenio(calcularStatusOxigenio(vitais.getOxigenio()));
         vitais.setStatusTemperatura(calcularStatusTemperatura(vitais.getTemperatura()));
-        vitais.setStatusBatimentos(calcularStatusBatimentos(vitais.getBatimentos()));
-        vitais.setStatusPressao(calcularStatusPressao(vitais.getPressaoSistolica(), vitais.getPressaoDiastolica()));
+        vitais.setStatusBatimentos(calcularStatusBatimentos((double)vitais.getBatimentos()));
+        vitais.setStatusPressao(calcularStatusPressao((double)vitais.getPressaoSistolica(), (double)vitais.getPressaoDiastolica()));
         
         return vitais;
     }

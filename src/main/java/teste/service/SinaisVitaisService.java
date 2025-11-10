@@ -6,6 +6,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import teste.model.Alerta;
 import teste.model.Paciente;
 import teste.model.SinaisVitais;
 import teste.repository.PacienteRepository;
@@ -149,18 +150,20 @@ public class SinaisVitaisService {
             // Verificar oxigênio baixo
             if (sinaisVitais.getOxigenio() < 90.0) {
                 alertaService.criarAlerta(
-                    paciente.getId(),
+                    paciente,
+                    Alerta.TipoAlerta.SINAIS_VITAIS,
                     "Saturação de oxigênio crítica: " + String.format("%.1f%%", sinaisVitais.getOxigenio()),
-                    "CRÍTICO"
+                    Alerta.NivelPrioridade.CRITICO
                 );
             }
             
             // Verificar temperatura alta
             if (sinaisVitais.getTemperatura() > 38.5) {
                 alertaService.criarAlerta(
-                    paciente.getId(),
+                    paciente,
+                    Alerta.TipoAlerta.SINAIS_VITAIS,
                     "Febre alta detectada: " + String.format("%.1f°C", sinaisVitais.getTemperatura()),
-                    "ALTO"
+                    Alerta.NivelPrioridade.ALTO
                 );
             }
             
@@ -168,9 +171,10 @@ public class SinaisVitaisService {
             if (sinaisVitais.getBatimentos() < 50 || sinaisVitais.getBatimentos() > 120) {
                 String tipo = sinaisVitais.getBatimentos() < 50 ? "Bradicardia severa" : "Taquicardia severa";
                 alertaService.criarAlerta(
-                    paciente.getId(),
+                    paciente,
+                    Alerta.TipoAlerta.SINAIS_VITAIS,
                     tipo + ": " + sinaisVitais.getBatimentos() + " bpm",
-                    "ALTO"
+                    Alerta.NivelPrioridade.ALTO
                 );
             }
         } catch (Exception e) {

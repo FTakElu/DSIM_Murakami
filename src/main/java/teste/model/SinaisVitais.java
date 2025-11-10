@@ -42,4 +42,19 @@ public class SinaisVitais implements Serializable {
     
     @Column(name = "status_batimentos")
     private String statusBatimentos;
+    
+    @Column(name = "pressao_sistolica")
+    private Integer pressaoSistolica;
+    
+    @Column(name = "pressao_diastolica")
+    private Integer pressaoDiastolica;
+    
+    @Column(name = "status_pressao")
+    private String statusPressao;
+    
+    @Column(name = "frequencia_respiratoria")
+    private Integer frequenciaRespiratoria;
+    
+    @Column(name = "status_respiracao")
+    private String statusRespiracao;
 }
