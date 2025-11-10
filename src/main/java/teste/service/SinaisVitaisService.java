@@ -151,9 +151,9 @@ public class SinaisVitaisService {
             if (sinaisVitais.getOxigenio() < 90.0) {
                 alertaService.criarAlerta(
                     paciente,
-                    Alerta.TipoAlerta.SINAIS_VITAIS,
+                    Alerta.TipoAlerta.OXIGENIO_BAIXO,
                     "Saturação de oxigênio crítica: " + String.format("%.1f%%", sinaisVitais.getOxigenio()),
-                    Alerta.NivelPrioridade.CRITICO
+                    Alerta.NivelPrioridade.CRITICA
                 );
             }
             
@@ -161,20 +161,22 @@ public class SinaisVitaisService {
             if (sinaisVitais.getTemperatura() > 38.5) {
                 alertaService.criarAlerta(
                     paciente,
-                    Alerta.TipoAlerta.SINAIS_VITAIS,
+                    Alerta.TipoAlerta.TEMPERATURA_ALTA,
                     "Febre alta detectada: " + String.format("%.1f°C", sinaisVitais.getTemperatura()),
-                    Alerta.NivelPrioridade.ALTO
+                    Alerta.NivelPrioridade.ALTA
                 );
             }
             
             // Verificar batimentos anômalos
             if (sinaisVitais.getBatimentos() < 50 || sinaisVitais.getBatimentos() > 120) {
                 String tipo = sinaisVitais.getBatimentos() < 50 ? "Bradicardia severa" : "Taquicardia severa";
+                Alerta.TipoAlerta tipoAlerta = sinaisVitais.getBatimentos() < 50 ? 
+                    Alerta.TipoAlerta.BATIMENTOS_BAIXO : Alerta.TipoAlerta.BATIMENTOS_ALTO;
                 alertaService.criarAlerta(
                     paciente,
-                    Alerta.TipoAlerta.SINAIS_VITAIS,
+                    tipoAlerta,
                     tipo + ": " + sinaisVitais.getBatimentos() + " bpm",
-                    Alerta.NivelPrioridade.ALTO
+                    Alerta.NivelPrioridade.ALTA
                 );
             }
         } catch (Exception e) {
