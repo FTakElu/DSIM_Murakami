@@ -3,11 +3,11 @@
 
 const API_CONFIG = {
     // Novo IP do EC2 AWS - ATUALIZADO
-    BASE_URL: 'http://52.200.154.67:8080',
+    BASE_URL: 'http://98.93.94.17:8080',
     
     // Alternativas se não funcionar
-    // BASE_URL: 'https://api.allorigins.win/raw?url=http://52.200.154.67:8080', 
-    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://52.200.154.67:8080',
+    // BASE_URL: 'https://api.allorigins.win/raw?url=http://98.93.94.17:8080', 
+    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://98.93.94.17:8080',
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {

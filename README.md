@@ -63,7 +63,7 @@ start-server.bat
 
 ### **🚀 URLs de Acesso**
 - **🌐 Frontend (Amplify)**: https://main.dd3d0c3znbvkh.amplifyapp.com
-- **🖥️ Backend API (EC2)**: http://52.200.154.67:8080
+- **🖥️ Backend API (EC2)**: http://98.93.94.17:8080
 - **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + PostgreSQL RDS
 
 ### **✅ STATUS**: **100% FUNCIONAL**

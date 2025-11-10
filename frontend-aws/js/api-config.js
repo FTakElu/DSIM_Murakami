@@ -1,7 +1,7 @@
 // Configuração da API para produção
 const API_CONFIG = {
     // URL do backend no EC2
-    BASE_URL: 'http://54.237.230.21:8080', // IP do EC2 em produção
+    BASE_URL: 'http://98.93.94.17:8080', // IP do EC2 em produção
     
     // Endpoints da API
     ENDPOINTS: {

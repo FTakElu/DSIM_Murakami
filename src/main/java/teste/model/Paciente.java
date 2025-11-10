@@ -52,6 +52,9 @@ public class Paciente implements Serializable {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
     
+    @Column(name = "ativo", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean ativo = true;
+    
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contato_emergencial_id")
     private ContatoEmergencial contatoEmergencial;
