@@ -13,7 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOriginPatterns(
-                    "https://main.dd3d0c3znbvkh.amplifyapp.com", // Seu Amplify URL
+                    "https://main.dblah84pn391d.amplifyapp.com", // URL atual do Amplify
+                    "https://main.dd3d0c3znbvkh.amplifyapp.com", // URL antiga para compatibilidade
+                    "https://cors-anywhere.herokuapp.com", // Proxy CORS
                     "http://localhost:*",
                     "http://127.0.0.1:*"
                 )

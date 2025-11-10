@@ -40,7 +40,8 @@ spring:
 # CORS para produção
 cors:
   allowed-origins: 
-    - https://main.d2j8k6x4m0x5j5.amplifyapp.com
+    - https://main.dblah84pn391d.amplifyapp.com
+    - https://main.dd3d0c3znbvkh.amplifyapp.com
     - http://localhost:3000
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: "*"

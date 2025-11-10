@@ -16,26 +16,37 @@ server:
     connection-timeout: 20000
 
 spring:
-  # Configuração do banco H2 para produção (persistente)
+  # Configuração PostgreSQL para produção (em vez de H2)
   datasource:
-    url: jdbc:h2:file:/opt/dsim/data/dsimdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=MySQL
-    driverClassName: org.h2.Driver
-    username: dsim_prod
-    password: ${DB_PASSWORD:dsim_prod_2025}
+    url: jdbc:postgresql://${DB_HOST:dsim-postgres.cluster-xyz.us-east-1.rds.amazonaws.com}:5432/${DB_NAME:dsim_clean}
+    username: ${DB_USER:dsim_admin}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
     
-  # Console H2 desabilitado em produção (por segurança)
+    # Connection Pool Settings
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      leak-detection-threshold: 60000
+    
+  # Console H2 desabilitado (usando PostgreSQL)
   h2:
     console:
       enabled: false
       
-  # JPA/Hibernate para produção
+  # JPA/Hibernate para PostgreSQL
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # Mantém dados existentes
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
     defer-datasource-initialization: false
   
@@ -47,7 +58,13 @@ spring:
 # Logging para produção
 # CORS Configuration
 cors:
-  allowed-origins: https://main.dd3d0c3znbvkh.amplifyapp.com,http://localhost:3000
+  allowed-origins: 
+    - https://main.dblah84pn391d.amplifyapp.com
+    - https://main.dd3d0c3znbvkh.amplifyapp.com
+    - http://localhost:3000
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
 
 # Management endpoints
 management:
