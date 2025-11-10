@@ -2,31 +2,31 @@
 // Use este serviço temporariamente para desenvolvimento
 
 const API_CONFIG = {
-    // Novo IP do EC2 AWS - atualizado automaticamente
-    BASE_URL: 'http://3.88.99.86:8080',
+    // Novo IP do EC2 AWS - ATUALIZADO
+    BASE_URL: 'http://52.200.154.67:8080',
     
     // Alternativas se não funcionar
-    // BASE_URL: 'https://api.allorigins.win/raw?url=http://3.88.99.86:8080', 
-    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://3.88.99.86:8080',
+    // BASE_URL: 'https://api.allorigins.win/raw?url=http://52.200.154.67:8080', 
+    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://52.200.154.67:8080',
     
-    // Endpoints da API
+    // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
         // Pacientes
         PACIENTES: '/api/pacientes',
-        PACIENTE_BY_ID: '/api/pacientes',
-        ADICIONAR_PACIENTE: '/api/pacientes/adicionar',
-        ATUALIZAR_PACIENTE: '/api/pacientes/atualizar',
-        DELETAR_PACIENTE: '/api/pacientes/deletar',
+        PACIENTE_BY_ID: '/api/pacientes', // GET /api/pacientes/{id}
+        ADICIONAR_PACIENTE: '/api/pacientes', // POST /api/pacientes
+        ATUALIZAR_PACIENTE: '/api/pacientes', // PUT /api/pacientes/{id}
+        DELETAR_PACIENTE: '/api/pacientes', // DELETE /api/pacientes/{id}
         
         // Usuários
         USUARIOS: '/api/usuarios',
-        LOGIN: '/api/usuarios/login',
-        CADASTRO: '/api/usuarios/cadastrar',
-        ATUALIZAR_USUARIO: '/api/usuarios/atualizar',
+        LOGIN: '/api/usuarios/login', // POST
+        CADASTRO: '/api/usuarios', // POST
+        ATUALIZAR_USUARIO: '/api/usuarios', // PUT /{id}
         
         // Alertas
         ALERTAS: '/api/alertas',
-        CONFIGURAR_ALERTAS: '/api/alertas/configurar'
+        CONFIGURAR_ALERTAS: '/api/alertas'
     }
 };
 
@@ -125,13 +125,52 @@ let mockData = {
     alertas: []
 };
 
-// Função utilitária com sistema mock completo
+// Função utilitária para chamar APIs reais (não mock)
 window.apiRequest = async function(endpoint, options = {}) {
+    const url = API_CONFIG.BASE_URL + endpoint;
+    
+    // Configurar headers padrão
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+    
+    const config = {
+        method: options.method || 'GET',
+        headers: { ...defaultHeaders, ...(options.headers || {}) },
+        ...options
+    };
+    
+    console.log(`🌐 API Real: ${config.method} ${url}`);
+    
+    try {
+        const response = await fetch(url, config);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Resposta da API real recebida');
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Erro na API real:', error.message);
+        
+        // Fallback para mock em caso de erro
+        console.log('🔄 Tentando fallback para sistema mock...');
+        return await apiRequestMock(endpoint, options);
+    }
+};
+
+// Sistema Mock mantido como fallback
+window.apiRequestMock = async function(endpoint, options = {}) {
     // Simular delay de rede
     await new Promise(resolve => setTimeout(resolve, 200));
     
     const method = options.method || 'GET';
-    console.log(`🔧 Mock API: ${method} ${endpoint}`);
+    console.log(`🔧 Mock API (Fallback): ${method} ${endpoint}`);
     
     try {
         // LOGIN

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Integração Backend - DSIM</title>
+    <script src="frontend-aws/js/api-config-cors.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Teste de Integração Frontend-Backend DSIM</h1>
+    <p><strong>Backend URL:</strong> <span id="backend-url">http://52.200.154.67:8080</span></p>
+    
+    <div style="margin: 20px 0;">
+        <button onclick="testarUsuarios()">Testar API Usuários</button>
+        <button onclick="testarLogin()">Testar Login</button>
+        <button onclick="testarPacientes()">Testar API Pacientes</button>
+        <button onclick="testarCriarPaciente()">Criar Paciente Teste</button>
+        <button onclick="limparResultados()">Limpar</button>
+    </div>
+    
+    <div id="resultados"></div>
+
+    <script>
+        // Mostrar URL do backend
+        document.getElementById('backend-url').textContent = API_CONFIG.BASE_URL;
+        
+        function adicionarResultado(teste, status, dados) {
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            div.innerHTML = `
+                <h3>${teste} - ${status.toUpperCase()} (${timestamp})</h3>
+                <pre>${JSON.stringify(dados, null, 2)}</pre>
+            `;
+            
+            document.getElementById('resultados').appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function adicionarCarregando(teste) {
+            const div = document.createElement('div');
+            div.className = 'test-result loading';
+            div.id = `loading-${teste}`;
+            div.innerHTML = `<h3>${teste} - CARREGANDO...</h3>`;
+            
+            document.getElementById('resultados').appendChild(div);
+            return div;
+        }
+        
+        function removerCarregando(teste) {
+            const div = document.getElementById(`loading-${teste}`);
+            if (div) div.remove();
+        }
+        
+        async function testarUsuarios() {
+            const loading = adicionarCarregando('API Usuários');
+            try {
+                const usuarios = await apiRequest('/api/usuarios');
+                removerCarregando('API Usuários');
+                adicionarResultado('API Usuários', 'success', usuarios);
+            } catch (error) {
+                removerCarregando('API Usuários');
+                adicionarResultado('API Usuários', 'error', { error: error.message });
+            }
+        }
+        
+        async function testarLogin() {
+            const loading = adicionarCarregando('Login');
+            try {
+                const loginData = {
+                    email: "admin@dsim.com",
+                    senha: "admin123"
+                };
+                
+                const resultado = await apiRequest('/api/usuarios/login', {
+                    method: 'POST',
+                    body: JSON.stringify(loginData)
+                });
+                
+                removerCarregando('Login');
+                adicionarResultado('Login', 'success', resultado);
+            } catch (error) {
+                removerCarregando('Login');
+                adicionarResultado('Login', 'error', { error: error.message });
+            }
+        }
+        
+        async function testarPacientes() {
+            const loading = adicionarCarregando('API Pacientes');
+            try {
+                const pacientes = await apiRequest('/api/pacientes');
+                removerCarregando('API Pacientes');
+                adicionarResultado('API Pacientes', 'success', pacientes);
+            } catch (error) {
+                removerCarregando('API Pacientes');
+                adicionarResultado('API Pacientes', 'error', { error: error.message });
+            }
+        }
+        
+        async function testarCriarPaciente() {
+            const loading = adicionarCarregando('Criar Paciente');
+            try {
+                const pacienteData = {
+                    nome: "Teste Frontend " + new Date().getTime(),
+                    dataNascimento: "1990-01-01",
+                    genero: "Masculino",
+                    telefone: "(11)99999-0000",
+                    email: "teste@frontend.com",
+                    endereco: "Rua Teste, 123",
+                    cidade: "São Paulo",
+                    estado: "SP",
+                    cep: "01234-567"
+                };
+                
+                const resultado = await apiRequest('/api/pacientes', {
+                    method: 'POST',
+                    body: JSON.stringify(pacienteData)
+                });
+                
+                removerCarregando('Criar Paciente');
+                adicionarResultado('Criar Paciente', 'success', resultado);
+            } catch (error) {
+                removerCarregando('Criar Paciente');
+                adicionarResultado('Criar Paciente', 'error', { error: error.message });
+            }
+        }
+        
+        function limparResultados() {
+            document.getElementById('resultados').innerHTML = '';
+        }
+        
+        // Teste automático na inicialização
+        window.addEventListener('load', () => {
+            console.log('🔧 Página de teste carregada');
+            console.log('📋 Backend configurado em:', API_CONFIG.BASE_URL);
+        });
+    </script>
+</body>
+</html>
