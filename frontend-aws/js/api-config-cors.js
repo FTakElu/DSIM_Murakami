@@ -2,12 +2,11 @@
 // Use este serviço temporariamente para desenvolvimento
 
 const API_CONFIG = {
-    // Novo IP do EC2 AWS - ATUALIZADO
-    BASE_URL: 'http://98.93.94.17:8080',
+    // Configuração temporária - usar proxy CORS para resolver Mixed Content
+    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://98.93.94.17:8080',
     
-    // Alternativas se não funcionar
-    // BASE_URL: 'https://api.allorigins.win/raw?url=http://98.93.94.17:8080', 
-    // BASE_URL: 'https://cors-anywhere.herokuapp.com/http://98.93.94.17:8080',
+    // URL direta como fallback
+    FALLBACK_URL: 'http://98.93.94.17:8080',
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
@@ -33,16 +32,7 @@ const API_CONFIG = {
 // Sistema Mock completo para desenvolvimento
 let mockData = {
     usuarios: [
-        {
-            id: 1,
-            nome: "Administrador Sistema",
-            email: "admin@sistema.com",
-            senha: "admin123",
-            tipo: "ADMIN",
-            ativo: true,
-            dataCriacao: new Date().toISOString(),
-            dataAtualizacao: new Date().toISOString()
-        }
+        // Mock sem usuários pré-cadastrados - force uso do backend real
     ],
     pacientes: [
         {
@@ -127,7 +117,8 @@ let mockData = {
 
 // Função utilitária para chamar APIs reais (não mock)
 window.apiRequest = async function(endpoint, options = {}) {
-    const url = API_CONFIG.BASE_URL + endpoint;
+    // Primeiro tenta o proxy CORS para resolver Mixed Content
+    let url = API_CONFIG.BASE_URL + endpoint;
     
     // Configurar headers padrão
     const defaultHeaders = {
@@ -141,7 +132,7 @@ window.apiRequest = async function(endpoint, options = {}) {
         ...options
     };
     
-    console.log(`🌐 API Real: ${config.method} ${url}`);
+    console.log(`🌐 API Real (Proxy CORS): ${config.method} ${url}`);
     
     try {
         const response = await fetch(url, config);
@@ -152,15 +143,37 @@ window.apiRequest = async function(endpoint, options = {}) {
         }
         
         const data = await response.json();
-        console.log('✅ Resposta da API real recebida');
+        console.log('✅ Resposta da API real recebida (Proxy CORS)');
         return data;
         
     } catch (error) {
-        console.error('❌ Erro na API real:', error.message);
+        console.warn('⚠️ Proxy CORS falhou, tentando conexão direta:', error.message);
         
-        // Fallback para mock em caso de erro
-        console.log('🔄 Tentando fallback para sistema mock...');
-        return await apiRequestMock(endpoint, options);
+        // Tenta conexão direta como fallback (pode falhar por Mixed Content)
+        url = API_CONFIG.FALLBACK_URL + endpoint;
+        console.log(`🌐 API Real (Direto): ${config.method} ${url}`);
+        
+        try {
+            const response = await fetch(url, config);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+            }
+            
+            const data = await response.json();
+            console.log('✅ Resposta da API real recebida (Direto)');
+            return data;
+            
+        } catch (directError) {
+            console.error('❌ Erro na API real (Direto):', directError.message);
+            console.error('ℹ️ Isso é esperado devido ao Mixed Content (HTTPS → HTTP)');
+            
+            // Se tudo falhar, informa ao usuário e usa mock temporariamente
+            console.log('🔄 Usando sistema mock temporariamente...');
+            console.log('💡 Para resolver permanentemente, configure HTTPS no backend EC2');
+            return await apiRequestMock(endpoint, options);
+        }
     }
 };
 
