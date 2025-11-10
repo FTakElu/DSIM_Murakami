@@ -21,7 +21,7 @@ const API_CONFIG = {
         // Usuários
         USUARIOS: '/api/usuarios',
         LOGIN: '/api/usuarios/login', // POST
-        CADASTRO: '/api/usuarios', // POST
+        CADASTRO: '/api/usuarios/cadastrar', // POST
         ATUALIZAR_USUARIO: '/api/usuarios', // PUT /{id}
         
         // Alertas
