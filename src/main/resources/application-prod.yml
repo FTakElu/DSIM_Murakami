@@ -6,11 +6,11 @@ spring:
   profiles:
     active: prod
 
-  # PostgreSQL Configuration - Banco limpo sem dados antigos
+  # PostgreSQL Configuration - Banco correto
   datasource:
-    url: jdbc:postgresql://${DB_HOST:dsim-postgres.cluster-xyz.us-east-1.rds.amazonaws.com}:5432/${DB_NAME:dsim_clean}
-    username: ${DB_USER:dsim_admin}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com:5432/dsim_database
+    username: dsim_user
+    password: dsim2024
     driver-class-name: org.postgresql.Driver
     
     # Connection Pool Settings
