@@ -6,28 +6,23 @@
     <title>Cadastro de Usuário - DSIM</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+            background: var(--gradient-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: var(--spacing-xl);
         }
         
         .register-container {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: var(--white);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
             width: 100%;
             max-width: 500px;
             max-height: 90vh;
@@ -36,55 +31,61 @@
         
         .register-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: var(--spacing-xl);
         }
         
         .register-header .icon {
             font-size: 3rem;
-            color: #2563eb;
-            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            margin-bottom: var(--spacing-md);
         }
         
         .register-header h1 {
-            color: #111827;
-            margin-bottom: 0.5rem;
+            color: var(--black);
+            margin-bottom: var(--spacing-sm);
             font-size: 1.5rem;
+            font-weight: 600;
         }
         
         .register-header p {
-            color: #6b7280;
+            color: var(--secondary-gray);
             margin: 0;
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-lg);
         }
         
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: var(--spacing-md);
         }
         
         .form-label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--spacing-sm);
             font-weight: 500;
-            color: #374151;
+            color: var(--dark-gray);
+        }
+        
+        .form-label i {
+            margin-right: var(--spacing-xs);
+            color: var(--primary-blue);
         }
         
         .form-input {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: var(--transition-normal);
         }
         
         .form-input:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--primary-blue);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         
@@ -92,33 +93,33 @@
             width: 100%;
             padding: 0.75rem;
             border: 2px solid #e5e7eb;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             font-size: 1rem;
-            background: white;
-            transition: border-color 0.3s ease;
+            background: var(--white);
+            transition: var(--transition-normal);
         }
         
         .form-select:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--primary-blue);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         
         .btn-register {
             width: 100%;
-            background: #2563eb;
-            color: white;
+            background: var(--primary-blue);
+            color: var(--white);
             padding: 0.75rem;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition-normal);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
         }
         
         .btn-register:hover {
@@ -135,13 +136,14 @@
         
         .back-link {
             text-align: center;
-            margin-top: 1rem;
+            margin-top: var(--spacing-md);
         }
         
         .back-link a {
-            color: #2563eb;
+            color: var(--primary-blue);
             text-decoration: none;
             font-size: 0.875rem;
+            transition: var(--transition-fast);
         }
         
         .back-link a:hover {
@@ -150,24 +152,32 @@
         
         .message {
             padding: 0.75rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-md);
             font-size: 0.875rem;
         }
         
         .message.error {
             background: #fee2e2;
             color: #991b1b;
-            border-left: 4px solid #dc2626;
+            border-left: 4px solid var(--danger-color);
         }
         
         .message.success {
             background: #d1fae5;
             color: #047857;
-            border-left: 4px solid #059669;
+            border-left: 4px solid var(--success-color);
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: var(--spacing-md);
+            }
+            
+            .register-container {
+                padding: var(--spacing-xl);
+            }
+            
             .form-row {
                 grid-template-columns: 1fr;
             }
