@@ -2,18 +2,15 @@
 // NGINX configurado como proxy reverso HTTPS no EC2
 
 const API_CONFIG = {
-    // Proxy CORS funcional (testado e aprovado)
-    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',
+    // APENAS URLs HTTPS - sem mixed content
+    BASE_URL: 'https://54.82.30.167',
     
-    // Backups CORS (caso necessário)
-    BACKUP_PROXY: 'https://thingproxy.freeboard.io/fetch/http://54.82.30.167:8080',
-    THIRD_PROXY: 'https://api.codetabs.com/v1/proxy/?quest=http://54.82.30.167:8080',
+    // Backup HTTPS funcionais
+    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',
+    THIRD_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
     
-    // NGINX HTTPS como alternativa
-    NGINX_URL: 'https://54.82.30.167',
-    
-    // URL direta como último fallback  
-    FALLBACK_URL: 'http://54.82.30.167:8080',
+    // URLs HTTP removidas para evitar Mixed Content
+    // FALLBACK_URL: 'http://54.82.30.167:8080', // REMOVIDO
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
@@ -139,14 +136,13 @@ let mockData = {
     alertas: []
 };
 
-// Função utilitária para chamar APIs REAIS (PostgreSQL RDS)
+// Função para conectar APENAS ao PostgreSQL RDS via HTTPS
 window.apiRequest = async function(endpoint, options = {}) {
-    // URLs diretas para o sistema real (sem mock!)
+    // APENAS URLs HTTPS para evitar Mixed Content
     const proxies = [
-        { name: 'NGINX HTTP', url: `http://54.82.30.167${endpoint}` },
-        { name: 'Backend Direto', url: `http://54.82.30.167:8080${endpoint}` },
         { name: 'NGINX HTTPS', url: `https://54.82.30.167${endpoint}` },
-        { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}` }
+        { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}` },
+        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` }
     ];
     
     // Configurar headers padrão
@@ -236,10 +232,17 @@ window.apiRequest = async function(endpoint, options = {}) {
                     console.log('⚠️ Conexão direta também falhou');
                 }
                 
-                console.error('❌ SISTEMA REAL INDISPONÍVEL!');
-                console.error('� USANDO APENAS POSTGRESQL RDS - SEM MOCK!');
-                console.error('� SOLUÇÃO: Aceite certificado NGINX ou configure API Gateway');
-                throw new Error('Sistema indisponível. Conecte-se ao PostgreSQL RDS.');
+                console.error('❌ CERTIFICADO NGINX NÃO ACEITO!');
+                console.error('🔐 SOLUÇÃO OBRIGATÓRIA:');
+                console.error('1. Abra nova aba: https://54.82.30.167/api/usuarios');
+                console.error('2. Clique "Avançado" → "Continuar para 54.82.30.167"');
+                console.error('3. Volte aqui e tente novamente');
+                console.error('💾 Sistema conecta apenas ao PostgreSQL RDS!');
+                
+                // Criar link clicável no console
+                console.log('🔗 CLIQUE AQUI:', 'https://54.82.30.167/api/usuarios');
+                
+                throw new Error('CERTIFICADO NGINX NECESSÁRIO! Abra https://54.82.30.167/api/usuarios e aceite o certificado.');
             }
         }
     }
@@ -432,3 +435,19 @@ window.apiRequestMock = async function(endpoint, options = {}) {
 
 // Disponibilizar configuração globalmente
 window.API_CONFIG = API_CONFIG;
+
+// Função helper para aceitar certificado NGINX
+window.aceitarCertificado = function() {
+    console.log('🔐 Abrindo página para aceitar certificado...');
+    const newWindow = window.open('https://54.82.30.167/api/usuarios', '_blank');
+    
+    setTimeout(() => {
+        console.log('💡 INSTRUÇÕES:');
+        console.log('1. Na nova aba, clique "Avançado"');
+        console.log('2. Clique "Continuar para 54.82.30.167 (não seguro)"');
+        console.log('3. Feche a aba e volte aqui');
+        console.log('4. Tente cadastrar/logar novamente');
+    }, 2000);
+    
+    return 'Certificado sendo configurado...';
+};
