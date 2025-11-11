@@ -1,13 +1,13 @@
-// Configuração de API - Direto para Spring Boot HTTP
-// Backend Spring Boot rodando na porta 8080 do EC2
+// Configuração de API - Proxy CORS para resolver Mixed Content
+// Frontend HTTPS + Proxy HTTPS + Backend HTTP
 
 const API_CONFIG = {
-    // IP direto para Spring Boot (sem NGINX proxy)
-    BASE_URL: 'http://54.82.30.167:8080',
+    // Proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
+    BASE_URL: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
     
-    // Backup URLs caso necessário
+    // URLs backup
     BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',
-    THIRD_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
+    DIRECT_HTTP: 'http://54.82.30.167:8080',  // Para uso local/desenvolvimento
     
     // URLs HTTP removidas para evitar Mixed Content
     // FALLBACK_URL: 'http://54.82.30.167:8080', // REMOVIDO
@@ -136,12 +136,12 @@ let mockData = {
     alertas: []
 };
 
-// Função para Spring Boot HTTP direto
+// Função para proxy CORS HTTPS
 window.apiRequest = async function(endpoint, options = {}) {
-    // URL HTTP direta para Spring Boot na porta 8080
-    const url = `http://54.82.30.167:8080${endpoint}`;
+    // URL com proxy CORS para resolver Mixed Content
+    const url = `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}`;
     
-    console.log(`🌐 Spring Boot HTTP: ${options.method || 'GET'} ${url}`);
+    console.log(`🌐 Spring Boot HTTP via Proxy: ${options.method || 'GET'} ${url}`);
     
     const config = {
         method: options.method || 'GET',
@@ -175,14 +175,14 @@ window.apiRequest = async function(endpoint, options = {}) {
             }
         }
         
-        console.log(`✅ Spring Boot HTTP - Sucesso!`);
+        console.log(`✅ Spring Boot via Proxy - Sucesso!`);
         return data;
         
     } catch (error) {
-        console.error(`❌ Spring Boot HTTP - Falhou:`, error.message);
+        console.error(`❌ Spring Boot via Proxy - Falhou:`, error.message);
         
-        if (error.message.includes('CORS')) {
-            console.error('🔐 CORS ERROR: Verifique configuração Spring Boot');
+        if (error.message.includes('Mixed Content')) {
+            console.error('🔐 MIXED CONTENT: Usando proxy CORS para resolver');
         }
         
         throw error;
