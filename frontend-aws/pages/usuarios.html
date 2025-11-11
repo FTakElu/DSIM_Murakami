@@ -288,15 +288,6 @@
                                             <label for="editSenha" class="form-label">Nova Senha (deixe em branco para manter atual)</label>
                                             <input type="password" class="form-control" id="editSenha" placeholder="Digite uma nova senha ou deixe em branco">
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="editTipo" class="form-label">Tipo</label>
-                                            <select class="form-control" id="editTipo" disabled>
-                                                <option value="ADMIN" ${usuario.tipo === 'ADMIN' ? 'selected' : ''}>Administrador</option>
-                                                <option value="MEDICO" ${usuario.tipo === 'MEDICO' ? 'selected' : ''}>Médico</option>
-                                                <option value="ENFERMEIRO" ${usuario.tipo === 'ENFERMEIRO' ? 'selected' : ''}>Enfermeiro</option>
-                                            </select>
-                                            <small class="form-text text-muted">O tipo de usuário não pode ser alterado.</small>
-                                        </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
