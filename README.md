@@ -2,15 +2,16 @@
 # 🏥 Sistema de Monitoramento de Pacientes — **DSIM**
 
 > **Dispositivo de Segurança Inteligente para Monitoramento**  
-> Sistema completo de **monitoramento e gerenciamento de pacientes** em ambiente hospitalar.
+> Sistema completo de **monitoramento e gerenciamento de pacientes** em ambiente hospitalar com geração automática de sinais vitais.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Java](https://img.shields.io/badge/Java-21-orange.svg)
+![Java](https://img.shields.io/badge/Java-17-orange.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen.svg)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
-![Version](https://img.shields.io/badge/version-3.0.0-success.svg)
-![AWS](https://img.shields.io/badge/AWS-Amplify%20%2B%20EC2-orange.svg)
-![Deploy](https://img.shields.io/badge/deploy-Production-brightgreen.svg)
+![Version](https://img.shields.io/badge/version-4.0.0-success.svg)
+![AWS](https://img.shields.io/badge/AWS-Amplify%20%2B%20EC2%20%2B%20RDS-orange.svg)
+![Deploy](https://img.shields.io/badge/deploy-Production%20Active-brightgreen.svg)
 
 ---
 
@@ -34,7 +35,7 @@
 ### **⚡ Execução em 3 passos**
 ```bash
 # 1. Navegue até a pasta do projeto
-cd DSIM_Murakami
+cd teste
 
 # 2. Execute o sistema
 mvn spring-boot:run
@@ -46,6 +47,12 @@ mvn spring-boot:run
 ### **🔑 Credenciais de Acesso**
 - **Email**: `admin@dsim.com`
 - **Senha**: `admin123`
+
+### **🔑 Credenciais PostgreSQL RDS (Produção)**
+- **Host**: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
+- **Usuário**: `dsim_admin`
+- **Senha**: `DSIM2025!Postgres`
+- **Banco**: `dsim_postgres`
 
 ### **🛠️ Solução de Problemas**
 Se der erro de porta ocupada:
@@ -66,28 +73,36 @@ start-server.bat
 - **🖥️ Backend API (EC2)**: http://98.93.94.17:8080
 - **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + PostgreSQL RDS
 
-### **✅ STATUS**: **100% FUNCIONAL**
-- ✅ **Backend**: Spring Boot rodando no EC2 (Java 17)
-- ✅ **Banco**: PostgreSQL RDS totalmente configurado
-- ✅ **APIs**: Todas funcionando (usuários, pacientes, login)
+### **✅ STATUS**: **SISTEMA OPERACIONAL EM PRODUÇÃO**
+- ✅ **Backend**: Spring Boot ativo no EC2 IP 98.93.94.17:8080
+- ✅ **Banco**: PostgreSQL RDS conectado e operacional
+- ✅ **Geração Automática**: Sinais vitais sendo gerados a cada minuto
+- ✅ **APIs**: Todas funcionando (usuários, pacientes, login, sinais vitais)
 - ✅ **CORS**: Configurado para integração frontend-backend
+- ✅ **Logs**: CloudWatch ativo com monitoramento completo
 
 ### **🏗️ Arquitetura AWS**
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐
 │   AWS AMPLIFY   │───▶│     AWS EC2     │───▶│   PostgreSQL RDS    │
 │   (Frontend)    │    │   (Backend)     │    │   (Produção)        │
-│     HTTPS       │    │  Spring Boot    │    │  dsim_postgres      │
-│  Static Hosting │    │   Java 17       │    │  Multi-AZ Ready     │
+│     HTTPS       │    │  IP: 98.93.94.17│    │  Auto Sinais Vitais │
+│  Static Hosting │    │   Java 17       │    │  dsim_postgres      │
 └─────────────────┘    └─────────────────┘    └─────────────────────┘
+          │                       │                       │
+          │                       │                       │
+      📱 Frontend              🖥️ Backend             🗄️ Database
+   Bootstrap + CSS         Spring Boot 3.1.5      PostgreSQL 13+
+   Responsive Design       Maven 3.8.8            HikariCP Pool
 ```
 
-### **⚙️ Tecnologias de Deploy**
-- ✅ **Frontend**: AWS Amplify (deploy automático via GitHub)
-- ✅ **Backend**: AWS EC2 t3.micro (Amazon Linux 2023)
-- ✅ **CI/CD**: Integração GitHub → Amplify automática
-- ✅ **SSL**: HTTPS no frontend via Amplify
-- ✅ **Monitoramento**: CloudWatch logs habilitado
+### **⚙️ Recursos em Produção**
+- ✅ **Sistema de Geração Automática**: Sinais vitais criados automaticamente
+- ✅ **Backend Robusto**: Spring Boot com conexão HikariCP ao PostgreSQL
+- ✅ **Frontend Responsivo**: AWS Amplify com HTTPS automático
+- ✅ **CORS Configurado**: Comunicação segura entre domínios
+- ✅ **Logs CloudWatch**: Monitoramento completo da aplicação
+- ✅ **Auto-Deploy**: GitHub → Amplify integração automática
 
 ---
 
@@ -115,13 +130,14 @@ Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (
 - ✅ **Frontend**: Interface aprimorada e responsiva
 - ✅ **Sistema de Alertas**: Configuração personalizada
 
-### 🚀 **FASE 3 - 04/11/2025 (CONCLUÍDA)**
+### 🚀 **FASE 3 - 11/11/2025 (CONCLUÍDA)**
 - ✅ **Código Organizado**: CSS centralizado e componentes reutilizáveis
 - ✅ **Navbar Universal**: Sistema de navegação unificado
-- ✅ **Documentação**: README completo e instruções claras
-- ✅ **Deploy AWS**: Frontend no Amplify + Backend no EC2
-- ✅ **Produção**: Sistema funcionando em ambiente cloud
-- ✅ **Integração**: Frontend HTTPS conectado ao backend HTTP via proxy CORS
+- ✅ **Deploy AWS**: Frontend no Amplify + Backend no EC2 + RDS PostgreSQL
+- ✅ **Produção Completa**: Sistema 100% operacional em AWS
+- ✅ **Integração Full-Stack**: Frontend HTTPS ↔ Backend HTTP ↔ PostgreSQL RDS
+- ✅ **Geração Automática**: Sistema de sinais vitais automático implementado
+- ✅ **Documentação**: README atualizado com configurações reais de produção
 
 ---
 
@@ -131,13 +147,14 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 
 ### ✨ **Características Principais**
 
-* 🎨 **Interface Moderna e Responsiva** — Layout limpo, intuitivo e adaptável
-* ⚙️ **Arquitetura MVC Completa** — Integração robusta entre frontend e backend
-* 📊 **Monitoramento em Tempo Real** — Temperatura, batimentos cardíacos e oxigenação
-* 👥 **Gestão Completa de Usuários** — CRUD completo com autenticação segura
-* 🔔 **Sistema de Alertas Configurável** — Personalização por paciente e prioridade
-* 💾 **Banco H2 em Memória** — Ideal para desenvolvimento e testes
-* 🔐 **Segurança BCrypt** — Criptografia de senhas e validações rigorosas
+* 🎨 **Interface Moderna e Responsiva** — Layout limpo, intuitivo e adaptável a qualquer dispositivo
+* ⚙️ **Arquitetura Full-Stack AWS** — Integração completa Frontend (Amplify) + Backend (EC2) + Database (RDS)
+* 📊 **Geração Automática de Sinais Vitais** — Sistema inteligente que gera dados realistas a cada minuto
+* � **Monitoramento em Tempo Real** — Temperatura, batimentos cardíacos e oxigenação atualizados automaticamente
+* 👥 **Gestão Completa de Usuários** — CRUD completo com autenticação segura e criptografia BCrypt
+* 🔔 **Sistema de Alertas Configurável** — Personalização por paciente e prioridade com notificações automáticas
+* �️ **PostgreSQL RDS em Produção** — Banco de dados robusto na nuvem AWS com alta disponibilidade
+* 🔐 **Segurança Empresarial** — CORS configurado, HTTPS no frontend e validações rigorosas
 
 ---
 
@@ -175,10 +192,11 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 - ✅ **Validações robustas** de valores
 
 ### 📊 **Monitoramento Avançado**
-- ✅ **Simulação em tempo real** de sinais vitais
-- ✅ **Feedback visual dinâmico** baseado em status
-- ✅ **Alertas automáticos** conforme configurações
-- ✅ **Atualização sem refresh** da página
+- ✅ **Geração Automática de Dados** — Sistema de sinais vitais que gera valores realistas automaticamente
+- ✅ **Atualização em Tempo Real** — Interface se atualiza automaticamente sem necessidade de refresh
+- ✅ **Feedback Visual Dinâmico** baseado em status dos pacientes (normal, atenção, crítico)
+- ✅ **Alertas Automáticos** conforme configurações personalizadas por paciente
+- ✅ **Persistência PostgreSQL** — Todos os dados são salvos permanentemente na nuvem AWS RDS
 
 ---
 
@@ -192,10 +210,11 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 | 📊 **Spring Data JPA** | 3.1.5 | Persistência |
 | 🌐 **Spring Web** | 3.1.5 | APIs REST |
 | 🔐 **Spring Security** | BCrypt | Criptografia |
-| �️ **PostgreSQL** | 13+ | Banco de dados produção |
-| �🗃️ **H2 Database** | Embutido | Banco desenvolvimento |
+| 🐘 **PostgreSQL** | 13+ | Banco de dados produção (AWS RDS) |
+| 🗃️ **H2 Database** | Embutido | Banco desenvolvimento (local) |
 | 📦 **Lombok** | 1.18.30 | Redução de código |
-| 🔧 **Maven** | 3.6+ | Build e dependências |
+| 🔧 **Maven** | 3.8.8 | Build e dependências |
+| ⚡ **HikariCP** | - | Pool de conexões PostgreSQL |
 
 ### 💻 **Frontend**
 | Tecnologia | Versão | Função |
@@ -210,51 +229,56 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 ### ☁️ **Tecnologias AWS (Produção)**
 | Tecnologia | Versão | Descrição |
 |------------|--------|-----------|
-| ☁️ **AWS Amplify** | - | Hospedagem frontend com CI/CD |
-| 🖥️ **AWS EC2** | t3.micro | Servidor backend Linux (Java 17) |
-| �️ **AWS RDS** | PostgreSQL 13 | Banco de dados em nuvem |
-| �🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático Amplify |
-| 📊 **CloudWatch** | - | Logs e monitoramento |
-| 🌐 **CORS** | - | Comunicação segura entre serviços |
+| ☁️ **AWS Amplify** | - | Hospedagem frontend com CI/CD automático via GitHub |
+| 🖥️ **AWS EC2** | t3.micro | Servidor backend Amazon Linux 2023 (IP: 98.93.94.17) |
+| 🐘 **AWS RDS PostgreSQL** | 13+ | Banco de dados gerenciado (dsim-postgres-20251109083108...) |
+| 🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático AWS (frontend) |
+| 📊 **CloudWatch** | - | Logs e monitoramento completo da aplicação |
+| 🌐 **CORS** | - | Comunicação segura HTTPS frontend → HTTP backend |
+| 🔄 **Auto-Deploy** | - | GitHub push → Amplify deploy automático |
 
 ---
 
 ## 📁 **Estrutura do Projeto**
 
 ```
-DSIM_Murakami/
+teste/
 ├── 📂 src/main/java/teste/
 │   ├── 🎯 controller/          # Controladores REST
 │   ├── 🏗️ model/              # Entidades JPA
 │   ├── 📊 repository/          # Repositórios de dados
 │   ├── ⚙️ service/            # Lógica de negócio
-│   └── 🔧 config/             # Configurações
+│   └── 🔧 config/             # Configurações (CORS, segurança)
 ├── 📂 src/main/resources/
-│   ├── 📄 application.yml     # Configurações da aplicação
-│   └── 📊 data.sql           # Dados iniciais
+│   ├── 📄 application.yml     # Configurações locais (H2)
+│   ├── 📄 application-prod.yml # Configurações produção (PostgreSQL)
+│   └── 📊 data.sql           # Dados iniciais (usuário admin)
 ├── 📂 src/main/webapp/view/   # Frontend local
 │   ├── 🎨 css/               # Estilos centralizados
 │   ├── ⚡ js/                # Scripts reutilizáveis
 │   └── 📄 pages/             # Páginas HTML
-├── 📂 frontend-aws/          # Frontend para produção (Amplify)
-│   ├── 🎨 css/               # Estilos otimizados
-│   ├── ⚡ js/                # Scripts com API config
-│   ├── 📄 pages/             # Páginas HTML
-│   ├── ⚙️ amplify.yml        # Config deploy Amplify
-│   └── 🔄 _redirects         # Redirecionamentos SPA
-│   └── 📱 pages/             # Páginas HTML
-├── 📂 Diagramas/             # Documentação técnica
-└── 📋 README.md              # Este arquivo
+├── 📂 Diagramas/             # Documentação técnica UML
+├── 📋 pom.xml               # Dependências Maven
+└── 📋 README.md             # Este arquivo (atualizado)
 ```
 ---
 
-## 📊 **Acesso ao Banco (Opcional)**
+## 📊 **Acesso ao Banco**
 
+### **🏠 Desenvolvimento (Local)**
 Para inspecionar dados durante desenvolvimento:
 - **URL**: http://localhost:8080/h2-console
 - **JDBC URL**: `jdbc:h2:mem:dsimdb`
 - **Usuário**: `dsim`
 - **Senha**: (vazio)
+
+### **☁️ Produção (AWS RDS PostgreSQL)**
+Banco de dados em produção (apenas para referência):
+- **Host**: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
+- **Porta**: `5432`
+- **Banco**: `dsim_postgres`
+- **Usuário**: `dsim_admin`
+- **Senha**: `DSIM2025!Postgres`
 
 ---
 
@@ -290,7 +314,14 @@ O sistema inicializa automaticamente com:
 - **Admin**: `admin@dsim.com` | `admin123`
 
 ### 🏥 **Pacientes**
-- **João Silva** (Masculino, sinais estáveis) - *Criado durante testes*
+- **João Silva** (Masculino, sinais estáveis) - Dados criados automaticamente pelo sistema
+- **Sistema Automático** gera sinais vitais realistas para todos os pacientes a cada minuto
+
+### **📊 Monitoramento Atual**
+- ✅ **Temperatura**: 36.5°C - 37.5°C (normal)
+- ✅ **Batimentos**: 70-100 bpm (normal)  
+- ✅ **Oxigenação**: 95%-100% (normal)
+- 🔄 **Atualização**: Automática a cada 60 segundos
 
 ---
 
@@ -309,13 +340,16 @@ O sistema inicializa automaticamente com:
 
 ## 📝 **Status do Projeto**
 
-### 🎯 **PROJETO COMPLETO E FUNCIONAL** ✅
+### 🎯 **PROJETO COMPLETO E OPERACIONAL EM PRODUÇÃO** ✅
 
-- ✅ **Todas as funcionalidades** implementadas
-- ✅ **Bugs corrigidos** e testados
-- ✅ **Interface moderna** e responsiva
-- ✅ **Código organizado** e documentado
-- ✅ **Pronto para apresentação**
+- ✅ **Sistema Completamente Funcional** em AWS (Amplify + EC2 + RDS)
+- ✅ **Geração Automática de Dados** — Sinais vitais gerados automaticamente a cada minuto
+- ✅ **Backend Robusto** — Spring Boot conectado ao PostgreSQL RDS com HikariCP
+- ✅ **Frontend Responsivo** — AWS Amplify com HTTPS e deploy automático via GitHub
+- ✅ **Banco de Dados Persistente** — PostgreSQL RDS 13+ com dados permanentes
+- ✅ **Monitoramento CloudWatch** — Logs e métricas em tempo real
+- ✅ **CORS Configurado** — Comunicação segura entre frontend HTTPS e backend HTTP
+- ✅ **Documentação Atualizada** — README com todas as configurações reais de produção
 
 ---
 
@@ -331,21 +365,36 @@ O sistema inicializa automaticamente com:
 
 ### **Backend (AWS EC2)**
 ```bash
-# 1. SSH na instância EC2
-ssh -i "sua-chave.pem" ec2-user@IP-PUBLICO
+# 1. SSH na instância EC2 com a nova chave
+ssh -i "dsim-keypair-us-east-1.pem" ec2-user@98.93.94.17
 
-# 2. Executar script de deploy
-curl -O https://raw.githubusercontent.com/FTakElu/DSIM_Murakami/main/deploy-ec2.sh
-chmod +x deploy-ec2.sh && ./deploy-ec2.sh
+# 2. Verificar se aplicação está rodando
+sudo ps aux | grep java
 
-# 3. Verificar se está rodando
-sudo systemctl status dsim
+# 3. Ver logs em tempo real
+tail -f nohup.out
+
+# 4. Restart se necessário
+pkill java && nohup mvn spring-boot:run > nohup.out 2>&1 &
 ```
 
 ### **Configuração Completa**
-1. **Frontend**: Alterar `API_BASE_URL` em `js/api-config-cors.js`
-2. **Backend**: Configurar CORS para URL do Amplify
-3. **Integração**: Testar comunicação frontend ↔ backend
+1. **Frontend**: Alterar `API_BASE_URL` em `js/api-config-cors.js` para `http://98.93.94.17:8080`
+2. **Backend**: CORS já configurado para URL do Amplify
+3. **PostgreSQL**: RDS conectado automaticamente
+4. **Integração**: Sistema testado e funcionando frontend ↔ backend ↔ database
+
+### **🔍 Verificação do Sistema**
+```bash
+# Testar API backend diretamente
+curl http://98.93.94.17:8080/api/usuarios
+
+# Verificar conexão PostgreSQL
+curl http://98.93.94.17:8080/api/pacientes
+
+# Status da aplicação Spring Boot
+curl http://98.93.94.17:8080/actuator/health
+```
 
 ---
 
