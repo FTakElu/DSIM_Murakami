@@ -114,13 +114,30 @@ Para resolver o problema Mixed Content definitivamente:
 
 ---
 
-## �📚 **Contexto Acadêmico**
+## 📚 **Contexto Acadêmico - LP2**
 
-Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (LP2)**, com foco em:
-- **Arquitetura MVC** completa
-- **Integração Frontend-Backend**
-- **Boas práticas de desenvolvimento**
-- **Interface responsiva e moderna**
+Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (LP2)** como trabalho acadêmico, com foco no aprendizado de:
+
+### 🎯 **Objetivos Pedagógicos**
+- **Programação Orientada a Objetos** com Java
+- **Arquitetura MVC** (Model-View-Controller)  
+- **Desenvolvimento Full-Stack** com integração frontend-backend
+- **Banco de Dados Relacionais** com PostgreSQL
+- **Boas práticas de desenvolvimento** e versionamento
+
+### 📋 **Escopo de Entrega - Acordo Acadêmico**
+Como acordado em sala de aula, para a disciplina de **LP2** será entregue:
+- ✅ **Diagramas UML** completos (Caso de Uso, Classes, Arquitetura)
+- ✅ **Código-fonte** funcional e documentado
+- ✅ **Sistema operacional** demonstrável
+
+**⚠️ Observação**: Recursos avançados de infraestrutura AWS e deploy em produção foram implementados como diferencial, mas não são obrigatórios para LP2. Estes recursos eram originalmente destinados apenas para alunos que cursam **Engenharia de Software 2**.
+
+### 👥 **Equipe de Desenvolvimento**
+- **Arthur Barboza Mostaço**
+- **Flávia Alessandra Elugo da Silva** 
+- **Sara Maria Falcão**
+- **Stephany Caroline Carvalho**
 
 ---
 
@@ -149,9 +166,30 @@ Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (
 
 ---
 
-## 📋 **Sobre o Projeto**
+## 📋 **Sobre o Projeto - DSIM**
 
-O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma aplicação web moderna que permite **monitorar sinais vitais de pacientes** de forma digital e acessível. O sistema foi projetado com **foco na experiência do usuário, segurança e eficiência**.
+O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma aplicação web completa para **monitoramento de sinais vitais de pacientes** em ambiente hospitalar. Desenvolvido especificamente para a disciplina **LP2**, o sistema demonstra **conceitos fundamentais de programação orientada a objetos** e **arquitetura de software moderna**.
+
+### 🎯 **Problema a ser Resolvido**
+- **Monitoramento manual** de sinais vitais é ineficiente e propenso a erros
+- **Falta de alertas automáticos** para situações críticas de pacientes  
+- **Documentação em papel** dificulta o acesso rápido a informações médicas
+- **Ausência de histórico digitalizado** dos sinais vitais
+
+### 💡 **Solução Implementada**
+- **Dashboard interativo** para visualização de todos os pacientes
+- **Sistema de alertas configuráveis** por tipo de sinal vital
+- **Geração automática de dados** simulando dispositivos IoT
+- **Interface responsiva** acessível de qualquer dispositivo
+- **Banco de dados robusto** para persistência de informações médicas
+
+### 🎓 **Conceitos LP2 Aplicados**
+- **Encapsulamento**: Classes modelo com getters/setters e validações
+- **Herança**: Estrutura hierárquica de entidades médicas
+- **Polimorfismo**: Interfaces de repositório com implementações específicas
+- **Abstração**: Camadas de serviço abstraindo regras de negócio
+- **SOLID**: Princípios aplicados na arquitetura de classes
+- **MVC**: Separação clara entre Model, View e Controller
 
 ### ✨ **Características Principais**
 
