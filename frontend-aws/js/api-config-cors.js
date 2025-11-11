@@ -2,9 +2,10 @@
 // Use este serviço temporariamente para desenvolvimento
 
 const API_CONFIG = {
-    // Múltiplos proxies CORS para maior confiabilidade
-    BASE_URL: 'https://corsproxy.io/?http://54.82.30.167:8080',
-    BACKUP_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
+    // Múltiplos proxies CORS robustos para resolução de Mixed Content
+    BASE_URL: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
+    BACKUP_PROXY: 'https://corsproxy.io/?http://54.82.30.167:8080',
+    THIRD_PROXY: 'https://cors-proxy.htmldriven.com/?url=http://54.82.30.167:8080',
     
     // URL direta como fallback
     FALLBACK_URL: 'http://54.82.30.167:8080',
@@ -126,10 +127,11 @@ let mockData = {
 
 // Função utilitária para chamar APIs reais (não mock)
 window.apiRequest = async function(endpoint, options = {}) {
-    // Lista de proxies para tentar em ordem
+    // Lista de proxies para tentar em ordem (mais robusta)
     const proxies = [
-        { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}` },
         { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` },
+        { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}` },
+        { name: 'HTMLDriven', url: `https://cors-proxy.htmldriven.com/?url=http://54.82.30.167:8080${endpoint}` },
         { name: 'Direto', url: `http://54.82.30.167:8080${endpoint}` }
     ];
     

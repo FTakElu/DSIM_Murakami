@@ -4,9 +4,32 @@
 
 Este guia mostra como configurar um AWS API Gateway para criar um proxy HTTPS que resolve o problema de Mixed Content entre o frontend Amplify (HTTPS) e backend EC2 (HTTP).
 
-## 🎯 **Passo a Passo**
+## ⚠️ **IMPORTANTE - Permissões AWS**
 
-### **1. 📋 Acessar AWS Console**
+**Este projeto usa AWS Academy/Learner Lab que tem limitações:**
+- ❌ **API Gateway**: Usuário sem permissões para criar APIs
+- ❌ **IAM**: Sem acesso para modificar políticas
+- ✅ **Solução Atual**: Proxies CORS públicos como fallback
+
+## 🎯 **Passo a Passo (Para conta AWS completa)**
+
+## 🔧 **Solução Atual (AWS Academy)**
+
+Como o AWS Academy tem limitações de permissões, implementamos uma solução robusta com **múltiplos proxies CORS**:
+
+### **✅ Proxies CORS Configurados:**
+1. **AllOrigins** - `https://api.allorigins.win/raw?url=`
+2. **CorsProxy.io** - `https://corsproxy.io/?`
+3. **HTMLDriven** - `https://cors-proxy.htmldriven.com/?url=`
+4. **Direto** - Conexão direta como último recurso
+
+### **🎯 Como Funciona:**
+- Sistema tenta cada proxy em sequência
+- Se todos falharem, usa mock como fallback
+- Logs detalhados no console do browser
+- Funcional para desenvolvimento e demonstração
+
+---
 1. Acesse [AWS Console](https://console.aws.amazon.com/)
 2. Entre na região **us-east-1** (Virginia)
 3. Procure por **API Gateway**
