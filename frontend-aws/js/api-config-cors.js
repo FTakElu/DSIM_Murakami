@@ -327,6 +327,23 @@ window.apiRequestMock = async function(endpoint, options = {}) {
             }
         }
         
+        // PERFIL DO USUÁRIO
+        if (endpoint.includes('/api/usuarios/perfil') && method === 'GET') {
+            const url = new URL(`http://localhost${endpoint}`);
+            const email = url.searchParams.get('email');
+            console.log('👤 Buscando perfil para:', email);
+            
+            const usuario = mockData.usuarios.find(u => u.email === email && u.ativo);
+            if (usuario) {
+                const { senha, ...usuarioSemSenha } = usuario;
+                console.log('✅ Perfil encontrado:', usuarioSemSenha);
+                return usuarioSemSenha;
+            } else {
+                console.log('❌ Usuário não encontrado:', email);
+                throw new Error('Usuário não encontrado');
+            }
+        }
+        
         // LISTAR USUÁRIOS
         if (endpoint === '/api/usuarios' && method === 'GET') {
             console.log('✅ Listando usuários');
@@ -336,7 +353,7 @@ window.apiRequestMock = async function(endpoint, options = {}) {
             });
         }
         
-        // HISTÓRICO DE SINAIS VITAIS
+        // LISTAR PACIENTES
         if (endpoint.includes('/historico-sinais/')) {
             console.log('✅ Histórico de sinais vitais simulado');
             const agora = new Date();

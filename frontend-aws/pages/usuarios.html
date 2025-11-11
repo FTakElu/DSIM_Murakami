@@ -137,16 +137,14 @@
         let usuarios = [];
         let usuariosFiltrados = [];
 
-        // Carregar usuários ao inicializar
-        document.addEventListener('DOMContentLoaded', function() {
-            carregarUsuarioLogado();
-        });
-
         // Função para carregar apenas o usuário logado
         async function carregarUsuarioLogado() {
             try {
-                // Recuperar dados do usuário logado do sessionStorage
-                const usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+                // Recuperar dados do usuário logado (primeiro sessionStorage, depois localStorage)
+                let usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+                if (!usuarioLogado) {
+                    usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                }
                 
                 if (!usuarioLogado || !usuarioLogado.email) {
                     showMessage('Usuário não logado. Redirecionando para login...', 'danger');
@@ -245,8 +243,11 @@
         // Função para editar perfil do usuário logado
         async function editarPerfil(id) {
             try {
-                // Recuperar dados do usuário logado do sessionStorage
-                const usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+                // Recuperar dados do usuário logado (primeiro sessionStorage, depois localStorage)
+                let usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+                if (!usuarioLogado) {
+                    usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                }
                 
                 if (!usuarioLogado || !usuarioLogado.email) {
                     showMessage('Usuário não logado. Redirecionando para login...', 'danger');
@@ -349,11 +350,14 @@
                 if (result && result.success) {
                     showMessage('Perfil atualizado com sucesso!', 'success');
                     
-                    // Atualizar dados no sessionStorage se o email foi alterado
-                    const usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
-                    usuarioLogado.nome = nome;
-                    usuarioLogado.email = email;
-                    sessionStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+                    // Atualizar dados em ambos os storages se o email foi alterado
+                    let usuarioLogado = JSON.parse(sessionStorage.getItem('usuario')) || JSON.parse(localStorage.getItem('usuario'));
+                    if (usuarioLogado) {
+                        usuarioLogado.nome = nome;
+                        usuarioLogado.email = email;
+                        sessionStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+                        localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+                    }
                     
                     // Fechar modal
                     bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
@@ -432,7 +436,12 @@
 
         // Função para exibir nome do usuário no navbar
         function atualizarNavbar() {
-            const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+            // Verificar primeiro sessionStorage, depois localStorage
+            let usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+            if (!usuarioLogado) {
+                usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+            }
+            
             if (usuarioLogado) {
                 document.getElementById('userName').textContent = usuarioLogado.nome || 'Usuário';
             }
@@ -441,29 +450,32 @@
         // Função de logout
         function logout() {
             if (confirm('Tem certeza que deseja sair?')) {
+                sessionStorage.removeItem('usuario');
                 localStorage.removeItem('usuario');
                 window.location.href = 'login.html';
             }
         }
 
-        // Event listener para busca por Enter
-        document.getElementById('searchNome').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                buscarUsuarios();
-            }
-        });
+        // Event listeners removidos para evitar erros (campo searchNome não existe)
 
         // Atualizar navbar ao carregar a página
         document.addEventListener('DOMContentLoaded', function() {
             atualizarNavbar();
             
-            // Verificar se usuário está logado
-            const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+            // Verificar se usuário está logado (primeiro sessionStorage, depois localStorage)
+            let usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+            if (!usuarioLogado) {
+                usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+            }
+            
             if (!usuarioLogado || !usuarioLogado.email) {
                 alert('Você precisa fazer login para acessar esta página.');
                 window.location.href = 'login.html';
                 return;
             }
+            
+            // Carregar dados do usuário se tudo estiver OK
+            carregarUsuarioLogado();
         });
     </script>
 </body>
