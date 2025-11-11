@@ -136,12 +136,17 @@ let mockData = {
     alertas: []
 };
 
-// Função para proxy CORS HTTPS
+// Função robusta com múltiplos proxies para resolver Mixed Content
 window.apiRequest = async function(endpoint, options = {}) {
-    // URL com proxy CORS para resolver Mixed Content
-    const url = `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}`;
+    // Lista de proxies HTTPS para tentar (em ordem de prioridade)
+    const proxies = [
+        `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}`,
+        `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}`,
+        `https://thingproxy.freeboard.io/fetch/http://54.82.30.167:8080${endpoint}`
+    ];
     
-    console.log(`🌐 Spring Boot HTTP via Proxy: ${options.method || 'GET'} ${url}`);
+    console.log(`🌐 Tentando proxies CORS para: ${options.method || 'GET'} ${endpoint}`);
+    
     
     const config = {
         method: options.method || 'GET',
@@ -152,42 +157,54 @@ window.apiRequest = async function(endpoint, options = {}) {
         },
         ...options
     };
-    
-    try {
-        const response = await fetch(url, config);
+
+    // Tentar cada proxy até um funcionar
+    for (let i = 0; i < proxies.length; i++) {
+        const url = proxies[i];
+        const proxyName = i === 0 ? 'CORS-Anywhere' : i === 1 ? 'AllOrigins' : 'ThingProxy';
         
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
-        }
-        
-        let data;
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-        } else {
-            const text = await response.text();
-            try {
-                data = JSON.parse(text);
-            } catch {
-                data = { message: text };
+        try {
+            console.log(`📡 Tentando ${proxyName}: ${url}`);
+            
+            const response = await fetch(url, config);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+            
+            let data;
+            const contentType = response.headers.get('content-type');
+            
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    data = { message: text };
+                }
+            }
+            
+            console.log(`✅ ${proxyName} - Sucesso!`);
+            return data;
+            
+        } catch (error) {
+            console.warn(`⚠️ ${proxyName} falhou:`, error.message);
+            
+            // Se é o último proxy, relança o erro
+            if (i === proxies.length - 1) {
+                throw error;
+            }
+            
+            // Caso contrário, tenta o próximo proxy
+            continue;
         }
-        
-        console.log(`✅ Spring Boot via Proxy - Sucesso!`);
-        return data;
-        
-    } catch (error) {
-        console.error(`❌ Spring Boot via Proxy - Falhou:`, error.message);
-        
-        if (error.message.includes('Mixed Content')) {
-            console.error('🔐 MIXED CONTENT: Usando proxy CORS para resolver');
-        }
-        
-        throw error;
     }
 };
+
+// Salvar referência original dos proxies
+window.apiRequestProxies = window.apiRequest;
 
 // Sistema Mock mantido como fallback
 window.apiRequestMock = async function(endpoint, options = {}) {
@@ -373,6 +390,23 @@ window.apiRequestMock = async function(endpoint, options = {}) {
         throw error;
     }
 };
+
+// Função principal com fallback automático
+window.apiRequestWithFallback = async function(endpoint, options = {}) {
+    try {
+        // Primeiro tenta os proxies CORS
+        return await window.apiRequestProxies(endpoint, options);
+    } catch (error) {
+        console.error(`❌ Todos os proxies falharam. Usando sistema Mock como fallback.`);
+        console.warn(`Erro dos proxies:`, error.message);
+        
+        // Fallback automático para sistema mock
+        return await window.apiRequestMock(endpoint, options);
+    }
+};
+
+// Redefinir apiRequest para usar a versão com fallback
+window.apiRequest = window.apiRequestWithFallback;
 
 // Disponibilizar configuração globalmente
 window.API_CONFIG = API_CONFIG;
