@@ -1,12 +1,11 @@
-// Configuração de API com NGINX HTTPS Proxy
-// NGINX configurado como proxy reverso HTTPS no EC2
+// Configuração de API - Direto para Spring Boot HTTP
+// Backend Spring Boot rodando na porta 8080 do EC2
 
 const API_CONFIG = {
-    // APENAS URLs HTTPS - sem mixed content
-    // Preferir hostname DNS em vez de IP direto (facilita mudança de IP)
-    BASE_URL: 'https://ec2-54-82-30-167.compute-1.amazonaws.com',
+    // IP direto para Spring Boot (sem NGINX proxy)
+    BASE_URL: 'http://54.82.30.167:8080',
     
-    // Backup HTTPS funcionais
+    // Backup URLs caso necessário
     BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',
     THIRD_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
     
@@ -137,12 +136,12 @@ let mockData = {
     alertas: []
 };
 
-// Função SIMPLES para PostgreSQL RDS via NGINX HTTPS
+// Função para Spring Boot HTTP direto
 window.apiRequest = async function(endpoint, options = {}) {
-    // APENAS NGINX HTTPS - Spring Boot gerencia CORS
-    const url = `https://54.82.30.167${endpoint}`;
+    // URL HTTP direta para Spring Boot na porta 8080
+    const url = `http://54.82.30.167:8080${endpoint}`;
     
-    console.log(`🌐 PostgreSQL RDS via NGINX: ${options.method || 'GET'} ${url}`);
+    console.log(`🌐 Spring Boot HTTP: ${options.method || 'GET'} ${url}`);
     
     const config = {
         method: options.method || 'GET',
@@ -176,18 +175,14 @@ window.apiRequest = async function(endpoint, options = {}) {
             }
         }
         
-        console.log(`✅ PostgreSQL RDS - Sucesso!`);
+        console.log(`✅ Spring Boot HTTP - Sucesso!`);
         return data;
         
     } catch (error) {
-        console.error(`❌ PostgreSQL RDS - Falhou:`, error.message);
+        console.error(`❌ Spring Boot HTTP - Falhou:`, error.message);
         
-        if (error.message.includes('ERR_CERT_AUTHORITY_INVALID')) {
-            console.error('🔐 CERTIFICADO NGINX NECESSÁRIO!');
-            console.error('1. Abra: https://54.82.30.167/api/usuarios');
-            console.error('2. Clique "Avançado" → "Continuar"');
-            console.error('3. Volte e tente novamente');
-            throw new Error('ACEITE O CERTIFICADO NGINX: https://54.82.30.167/api/usuarios');
+        if (error.message.includes('CORS')) {
+            console.error('🔐 CORS ERROR: Verifique configuração Spring Boot');
         }
         
         throw error;
