@@ -127,12 +127,12 @@ let mockData = {
     alertas: []
 };
 
-// Função utilitária para chamar APIs reais via NGINX HTTPS
+// Função utilitária para chamar APIs reais (ordem otimizada)
 window.apiRequest = async function(endpoint, options = {}) {
-    // Lista de proxies para tentar em ordem (NGINX HTTPS primeiro)
+    // Lista de proxies em ordem de prioridade (sem problemas de certificado primeiro)
     const proxies = [
-        { name: 'NGINX HTTPS', url: `https://54.82.30.167${endpoint}` },
         { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` },
+        { name: 'NGINX HTTPS', url: `https://54.82.30.167${endpoint}` },
         { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}` },
         { name: 'HTMLDriven', url: `https://cors-proxy.htmldriven.com/?url=http://54.82.30.167:8080${endpoint}` },
         { name: 'Direto', url: `http://54.82.30.167:8080${endpoint}` }
@@ -155,14 +155,47 @@ window.apiRequest = async function(endpoint, options = {}) {
         console.log(`🌐 Tentando ${proxy.name}: ${config.method} ${proxy.url}`);
         
         try {
-            const response = await fetch(proxy.url, config);
+            // Configuração especial para AllOrigins com POST
+            let fetchConfig = { ...config };
+            
+            if (proxy.name === 'AllOrigins' && config.method === 'POST') {
+                // AllOrigins requer encapsulamento para POST
+                fetchConfig = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: `http://54.82.30.167:8080${endpoint}`,
+                        method: config.method,
+                        headers: config.headers,
+                        body: config.body
+                    })
+                };
+            }
+            
+            const response = await fetch(proxy.url, fetchConfig);
             
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
             }
             
-            const data = await response.json();
+            let data;
+            const contentType = response.headers.get('content-type');
+            
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                // Tentar parsear como JSON mesmo se content-type não indicar
+                const text = await response.text();
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    data = { message: text };
+                }
+            }
+            
             console.log(`✅ Sucesso via ${proxy.name}!`);
             return data;
             
@@ -172,7 +205,7 @@ window.apiRequest = async function(endpoint, options = {}) {
             // Se for o último proxy, usar mock
             if (proxy === proxies[proxies.length - 1]) {
                 console.log('🔄 Todos os proxies falharam, usando mock temporariamente...');
-                console.log('💡 Para resolver permanentemente, configure API Gateway ou HTTPS no EC2');
+                console.log('💡 Para resolver permanentemente, aceite o certificado HTTPS do NGINX');
                 return await apiRequestMock(endpoint, options);
             }
         }
