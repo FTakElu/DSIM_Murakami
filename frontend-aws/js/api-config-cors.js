@@ -1,13 +1,15 @@
-// Proxy CORS para resolver Mixed Content
-// Use este serviço temporariamente para desenvolvimento
+// Configuração de API com NGINX HTTPS Proxy
+// NGINX configurado como proxy reverso HTTPS no EC2
 
 const API_CONFIG = {
-    // Múltiplos proxies CORS robustos para resolução de Mixed Content
-    BASE_URL: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
-    BACKUP_PROXY: 'https://corsproxy.io/?http://54.82.30.167:8080',
-    THIRD_PROXY: 'https://cors-proxy.htmldriven.com/?url=http://54.82.30.167:8080',
+    // NGINX HTTPS endpoint (solução para Mixed Content)
+    BASE_URL: 'https://54.82.30.167',
     
-    // URL direta como fallback
+    // Backups CORS (caso necessário)
+    BACKUP_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
+    THIRD_PROXY: 'https://corsproxy.io/?http://54.82.30.167:8080',
+    
+    // URL direta como último fallback
     FALLBACK_URL: 'http://54.82.30.167:8080',
     
     // Endpoints da API (corrigidos para backend real)
@@ -125,10 +127,11 @@ let mockData = {
     alertas: []
 };
 
-// Função utilitária para chamar APIs reais (não mock)
+// Função utilitária para chamar APIs reais via NGINX HTTPS
 window.apiRequest = async function(endpoint, options = {}) {
-    // Lista de proxies para tentar em ordem (mais robusta)
+    // Lista de proxies para tentar em ordem (NGINX HTTPS primeiro)
     const proxies = [
+        { name: 'NGINX HTTPS', url: `https://54.82.30.167${endpoint}` },
         { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` },
         { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}` },
         { name: 'HTMLDriven', url: `https://cors-proxy.htmldriven.com/?url=http://54.82.30.167:8080${endpoint}` },
