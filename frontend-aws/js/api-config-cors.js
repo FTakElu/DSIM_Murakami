@@ -136,18 +136,12 @@ let mockData = {
     alertas: []
 };
 
-// Função robusta com múltiplos proxies para resolver Mixed Content
+// Função para NGINX HTTPS direto (sem proxies)
 window.apiRequest = async function(endpoint, options = {}) {
-    // Lista de proxies HTTPS para tentar (em ordem de confiabilidade)
-    const proxies = [
-        `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}`,
-        `https://proxy.cors.sh/http://54.82.30.167:8080${endpoint}`,
-        `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}`,
-        `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}`
-    ];
+    // URL HTTPS direta para NGINX proxy no EC2
+    const url = `https://54.82.30.167${endpoint}`;
     
-    console.log(`🌐 Tentando proxies CORS para: ${options.method || 'GET'} ${endpoint}`);
-    
+    console.log(`🌐 NGINX HTTPS Direto: ${options.method || 'GET'} ${url}`);
     
     const config = {
         method: options.method || 'GET',
@@ -159,49 +153,37 @@ window.apiRequest = async function(endpoint, options = {}) {
         ...options
     };
 
-    // Tentar cada proxy até um funcionar
-    for (let i = 0; i < proxies.length; i++) {
-        const url = proxies[i];
-        const proxyNames = ['CorsProxy.io', 'Proxy.cors.sh', 'CORS-Anywhere', 'AllOrigins'];
-        const proxyName = proxyNames[i];
+    try {
+        const response = await fetch(url, config);
         
-        try {
-            console.log(`📡 Tentando ${proxyName}: ${url}`);
-            
-            const response = await fetch(url, config);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            let data;
-            const contentType = response.headers.get('content-type');
-            
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                try {
-                    data = JSON.parse(text);
-                } catch {
-                    data = { message: text };
-                }
-            }
-            
-            console.log(`✅ ${proxyName} - Sucesso!`);
-            return data;
-            
-        } catch (error) {
-            console.warn(`⚠️ ${proxyName} falhou:`, error.message);
-            
-            // Se é o último proxy, relança o erro
-            if (i === proxies.length - 1) {
-                throw error;
-            }
-            
-            // Caso contrário, tenta o próximo proxy
-            continue;
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
         }
+        
+        let data;
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch {
+                data = { message: text };
+            }
+        }
+        
+        console.log(`✅ NGINX HTTPS - Sucesso!`);
+        return data;
+        
+    } catch (error) {
+        console.error(`❌ NGINX HTTPS - Falhou:`, error.message);
+        
+        // Se falhar, usar Mock como fallback
+        console.warn('Usando Mock como fallback...');
+        throw error;
     }
 };
 
