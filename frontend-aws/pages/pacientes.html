@@ -323,19 +323,17 @@
         // Função para buscar pacientes do backend
         async function carregarPacientes() {
             try {
-                // Obter usuário logado do localStorage
-                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                // Obter usuário logado do sessionStorage
+                const usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado'));
                 if (!usuarioLogado || !usuarioLogado.email) {
-                    console.error('Usuário não encontrado no localStorage');
+                    console.error('Usuário não encontrado. Redirecionando para login...');
                     window.location.href = 'login.html';
                     return;
                 }
 
-                const pacientesData = await apiRequest('/api/pacientes', {
-                    method: 'GET',
-                    headers: {
-                        'X-Usuario-Email': usuarioLogado.email
-                    }
+                // Filtrar pacientes por usuário logado
+                const pacientesData = await apiRequest(`/api/pacientes?usuarioEmail=${encodeURIComponent(usuarioLogado.email)}`, {
+                    method: 'GET'
                 });
                 
                 if (pacientesData && Array.isArray(pacientesData)) {

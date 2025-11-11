@@ -298,10 +298,16 @@
                     // Se veio do backend real (com success)
                     if (response.success && response.usuario) {
                         usuario = response.usuario;
+                        // Armazenar dados do usuário logado
+                        sessionStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+                        console.log('✅ Usuário logado salvo:', usuario);
                     } 
                     // Se veio direto (mock ou retorno direto)
                     else if (response.id || response.email) {
                         usuario = response;
+                        // Armazenar dados do usuário logado
+                        sessionStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+                        console.log('✅ Usuário logado salvo:', usuario);
                     }
                     
                     if (usuario) {

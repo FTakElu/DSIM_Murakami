@@ -1,7 +1,9 @@
 package teste.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import teste.model.Paciente;
@@ -36,13 +39,23 @@ public class PacienteController {
 	private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Paciente>> listarTodos() {
+    public ResponseEntity<List<Paciente>> listarTodos(
+            @RequestParam(required = false) String usuarioEmail) {
         try {
             System.out.println("🔍 Tentando listar pacientes...");
             
-            // Buscar pacientes com estratégia de fetch adequada
-            List<Paciente> pacientes = pacienteRepository.findByAtivoTrue();
-            System.out.println("✅ Encontrados " + pacientes.size() + " pacientes");
+            List<Paciente> pacientes;
+            
+            if (usuarioEmail != null && !usuarioEmail.trim().isEmpty()) {
+                // Filtrar por usuário responsável específico
+                System.out.println("📧 Filtrando pacientes do usuário: " + usuarioEmail);
+                pacientes = pacienteRepository.findByUsuarioResponsavelEmailAndAtivoTrue(usuarioEmail);
+                System.out.println("✅ Encontrados " + pacientes.size() + " pacientes para " + usuarioEmail);
+            } else {
+                // Buscar todos os pacientes ativos (para admin)
+                pacientes = pacienteRepository.findByAtivoTrue();
+                System.out.println("✅ Encontrados " + pacientes.size() + " pacientes no total");
+            }
             
             return ResponseEntity.ok(pacientes);
         } catch (Exception e) {
@@ -250,6 +263,59 @@ public class PacienteController {
             return ResponseEntity.ok(historicoSimulado);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    /**
+     * Limpar pacientes duplicados (endpoint administrativo)
+     */
+    @PostMapping("/limpar-duplicados")
+    public ResponseEntity<?> limparDuplicados() {
+        try {
+            System.out.println("🧹 Iniciando limpeza de pacientes duplicados...");
+            
+            List<Paciente> todosPacientes = pacienteRepository.findAll();
+            Map<String, Paciente> pacientesUnicos = new HashMap<>();
+            List<Long> idsParaRemover = new ArrayList<>();
+            
+            // Identificar duplicados por nome + data nascimento
+            for (Paciente paciente : todosPacientes) {
+                String chave = paciente.getNome() + "_" + paciente.getDataNascimento();
+                
+                if (pacientesUnicos.containsKey(chave)) {
+                    // Duplicado encontrado - manter o mais recente
+                    Paciente existente = pacientesUnicos.get(chave);
+                    if (paciente.getId() > existente.getId()) {
+                        idsParaRemover.add(existente.getId());
+                        pacientesUnicos.put(chave, paciente);
+                    } else {
+                        idsParaRemover.add(paciente.getId());
+                    }
+                } else {
+                    pacientesUnicos.put(chave, paciente);
+                }
+            }
+            
+            // Remover duplicados
+            for (Long id : idsParaRemover) {
+                pacienteRepository.deleteById(id);
+                System.out.println("🗑️ Removido paciente duplicado ID: " + id);
+            }
+            
+            System.out.println("✅ Limpeza concluída. Removidos " + idsParaRemover.size() + " duplicados");
+            
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Limpeza concluída com sucesso",
+                "duplicadosRemovidos", idsParaRemover.size(),
+                "pacientesRestantes", pacientesUnicos.size()
+            ));
+            
+        } catch (Exception e) {
+            System.err.println("❌ Erro na limpeza de duplicados: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("success", false, "message", "Erro na limpeza: " + e.getMessage()));
         }
     }
 }

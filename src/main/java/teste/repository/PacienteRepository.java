@@ -17,6 +17,9 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
     // Buscar pacientes por ID do usuário responsável
     List<Paciente> findByUsuarioResponsavelId(Long usuarioId);
     
+    // Buscar pacientes por email do usuário responsável
+    List<Paciente> findByUsuarioResponsavelEmailAndAtivoTrue(String email);
+    
     // Buscar pacientes ativos
     List<Paciente> findByAtivoTrue();
     

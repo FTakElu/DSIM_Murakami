@@ -145,10 +145,10 @@
         // Função para carregar apenas o usuário logado
         async function carregarUsuarioLogado() {
             try {
-                // Recuperar dados do usuário logado do localStorage
-                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+                // Recuperar dados do usuário logado do sessionStorage
+                const usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
                 
-                if (!usuarioLogado || !usuarioLogado.id) {
+                if (!usuarioLogado || !usuarioLogado.email) {
                     showMessage('Usuário não logado. Redirecionando para login...', 'danger');
                     setTimeout(() => {
                         window.location.href = 'login.html';
@@ -156,15 +156,16 @@
                     return;
                 }
 
-                // Buscar dados atualizados do usuário no backend
-                const data = await apiRequest('/api/usuarios', { method: 'GET' });
+                // Buscar dados atualizados do usuário logado no backend usando o endpoint /perfil
+                const data = await apiRequest(`/api/usuarios/perfil?email=${encodeURIComponent(usuarioLogado.email)}`, { method: 'GET' });
                 
-                if (data && Array.isArray(data)) {
-                    usuarios = data;
-                    usuariosFiltrados = data;
+                if (data) {
+                    // Colocar apenas o usuário logado na lista
+                    usuarios = [data];
+                    usuariosFiltrados = [data];
                     renderizarTabela();
                 } else {
-                    showMessage('Erro ao carregar dados dos usuários', 'danger');
+                    showMessage('Erro ao carregar dados do usuário', 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);
@@ -177,23 +178,23 @@
             carregarUsuarioLogado();
         }
 
-        // Função para buscar usuários por nome
+        // Função para buscar usuários por nome (agora busca apenas no usuário logado)
         async function buscarUsuarios() {
             const nome = document.getElementById('searchNome').value.trim();
             
+            // Para usuário individual, apenas aplicar filtro local
             if (nome === '') {
-                carregarUsuarios();
+                usuariosFiltrados = usuarios; // Mostra o usuário logado
+                renderizarTabela();
                 return;
             }
             
-            try {
-                const data = await apiRequest(`/api/usuarios/buscar?nome=${encodeURIComponent(nome)}`, { method: 'GET' });
-                usuariosFiltrados = Array.isArray(data) ? data : [];
-                renderizarTabela();
-            } catch (error) {
-                console.error('Erro:', error);
-                showMessage('Erro ao conectar com o servidor', 'danger');
-            }
+            // Filtrar localmente o usuário logado
+            usuariosFiltrados = usuarios.filter(usuario => 
+                usuario.nome.toLowerCase().includes(nome.toLowerCase()) ||
+                usuario.email.toLowerCase().includes(nome.toLowerCase())
+            );
+            renderizarTabela();
         }
 
         // Função para renderizar tabela
@@ -226,14 +227,14 @@
                     <td>
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-sm btn-outline-primary" 
-                                    onclick="editarUsuario(${usuario.id})"
-                                    title="Editar Perfil">
-                                <i class="bi bi-pencil"></i>
+                                    onclick="editarPerfil(${usuario.id})"
+                                    title="Editar Meu Perfil">
+                                <i class="bi bi-pencil"></i> Editar Perfil
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-danger" 
                                     onclick="excluirMinhaConta(${usuario.id})"
                                     title="Excluir Minha Conta">
-                                <i class="bi bi-trash"></i>
+                                <i class="bi bi-trash"></i> Excluir Conta
                             </button>
                         </div>
                     </td>
@@ -241,25 +242,35 @@
             `).join('');
         }
 
-        // Função para editar usuário
-        async function editarUsuario(id) {
+        // Função para editar perfil do usuário logado
+        async function editarPerfil(id) {
             try {
-                // Buscar dados do usuário
-                const usuarios = await apiRequest('/api/usuarios', { method: 'GET' });
-                const usuario = usuarios.find(u => u.id === id);
+                // Recuperar dados do usuário logado do sessionStorage
+                const usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+                
+                if (!usuarioLogado || !usuarioLogado.email) {
+                    showMessage('Usuário não logado. Redirecionando para login...', 'danger');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                // Buscar dados atualizados do usuário logado
+                const usuario = await apiRequest(`/api/usuarios/perfil?email=${encodeURIComponent(usuarioLogado.email)}`, { method: 'GET' });
                 
                 if (!usuario) {
-                    alert('Usuário não encontrado');
+                    showMessage('Erro ao carregar dados do perfil', 'danger');
                     return;
                 }
                 
-                // Criar modal de edição dinamicamente
+                // Criar modal de edição de perfil dinamicamente
                 const modalHtml = `
                     <div class="modal fade" id="editUserModal" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Editar Usuário</h5>
+                                    <h5 class="modal-title">Editar Meu Perfil</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
@@ -273,18 +284,23 @@
                                             <input type="email" class="form-control" id="editEmail" value="${usuario.email}" required>
                                         </div>
                                         <div class="mb-3">
+                                            <label for="editSenha" class="form-label">Nova Senha (deixe em branco para manter atual)</label>
+                                            <input type="password" class="form-control" id="editSenha" placeholder="Digite uma nova senha ou deixe em branco">
+                                        </div>
+                                        <div class="mb-3">
                                             <label for="editTipo" class="form-label">Tipo</label>
-                                            <select class="form-control" id="editTipo">
+                                            <select class="form-control" id="editTipo" disabled>
                                                 <option value="ADMIN" ${usuario.tipo === 'ADMIN' ? 'selected' : ''}>Administrador</option>
                                                 <option value="MEDICO" ${usuario.tipo === 'MEDICO' ? 'selected' : ''}>Médico</option>
                                                 <option value="ENFERMEIRO" ${usuario.tipo === 'ENFERMEIRO' ? 'selected' : ''}>Enfermeiro</option>
                                             </select>
+                                            <small class="form-text text-muted">O tipo de usuário não pode ser alterado.</small>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="button" class="btn btn-primary" onclick="salvarEdicaoUsuario(${id})">Salvar</button>
+                                    <button type="button" class="btn btn-primary" onclick="salvarEdicaoUsuario(${id})">Salvar Alterações</button>
                                 </div>
                             </div>
                         </div>
@@ -304,19 +320,26 @@
                 });
                 
             } catch (error) {
-                console.error('Erro ao editar usuário:', error);
-                alert('Erro ao carregar dados do usuário');
+                console.error('Erro ao carregar perfil:', error);
+                showMessage('Erro ao carregar dados do perfil', 'danger');
             }
         }
+        }
         
-        // Função para salvar edição do usuário
+        // Função para salvar edição do perfil
         async function salvarEdicaoUsuario(id) {
             try {
                 const nome = document.getElementById('editNome').value;
                 const email = document.getElementById('editEmail').value;
-                const tipo = document.getElementById('editTipo').value;
+                const senha = document.getElementById('editSenha').value;
                 
-                const dadosAtualizados = { nome, email, tipo };
+                // Preparar dados para atualização
+                const dadosAtualizados = { nome, email };
+                
+                // Se a senha foi fornecida, incluí-la na atualização
+                if (senha && senha.trim() !== '') {
+                    dadosAtualizados.senha = senha;
+                }
                 
                 const result = await apiRequest(`/api/usuarios/${id}`, {
                     method: 'PUT',
@@ -324,102 +347,26 @@
                 });
                 
                 if (result && result.success) {
-                    alert('Usuário atualizado com sucesso!');
+                    showMessage('Perfil atualizado com sucesso!', 'success');
+                    
+                    // Atualizar dados no sessionStorage se o email foi alterado
+                    const usuarioLogado = JSON.parse(sessionStorage.getItem('usuario'));
+                    usuarioLogado.nome = nome;
+                    usuarioLogado.email = email;
+                    sessionStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+                    
+                    // Fechar modal
                     bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
-                    carregarUsuarioLogado(); // Recarregar dados
+                    
+                    // Recarregar dados do perfil
+                    carregarUsuarioLogado();
                 } else {
-                    alert('Erro ao atualizar usuário');
+                    showMessage(result?.message || 'Erro ao atualizar perfil', 'danger');
                 }
             } catch (error) {
-                console.error('Erro ao salvar usuário:', error);
-                alert('Erro ao salvar alterações');
+                console.error('Erro ao salvar perfil:', error);
+                showMessage('Erro ao salvar alterações do perfil', 'danger');
             }
-        }
-
-        // Função para alterar status do usuário
-        function alterarStatusUsuario(id, ativar) {
-            const usuario = usuarios.find(u => u.id === id);
-            const acao = ativar ? 'ativar' : 'desativar';
-            
-            document.getElementById('confirmMessage').textContent = 
-                `Tem certeza que deseja ${acao} o usuário "${usuario.nome}"?`;
-            
-            const confirmButton = document.getElementById('confirmButton');
-            confirmButton.onclick = () => executarAlteracaoStatus(id, ativar);
-            
-            new bootstrap.Modal(document.getElementById('confirmModal')).show();
-        }
-
-        // Executar alteração de status
-        async function executarAlteracaoStatus(id, ativar) {
-            try {
-                const url = ativar ? `/api/usuarios/${id}/ativar` : `/api/usuarios/${id}`;
-                const method = ativar ? 'PUT' : 'DELETE';
-                
-                const result = await apiRequest(url, { method });
-                
-                if (result && result.success) {
-                    showMessage(result.message, 'success');
-                    carregarUsuarios();
-                } else {
-                    showMessage((result && result.message) || 'Erro ao alterar status do usuário', 'danger');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                showMessage('Erro ao conectar com o servidor', 'danger');
-            }
-            
-            bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
-        }
-
-        // Função para excluir usuário permanentemente
-        function excluirUsuario(id) {
-            const usuario = usuarios.find(u => u.id === id);
-            const mensagem = `ATENÇÃO: Esta ação irá EXCLUIR PERMANENTEMENTE o usuário "${usuario.nome}".\n\n` +
-                           `Todos os dados serão removidos do sistema e esta ação NÃO PODE SER DESFEITA.\n\n` +
-                           `Se você deseja apenas impedir o acesso temporariamente, use a opção "Desativar" em vez de excluir.\n\n` +
-                           `Tem certeza que deseja prosseguir com a EXCLUSÃO PERMANENTE?`;
-            
-            document.getElementById('confirmMessage').innerHTML = 
-                `<div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle-fill"></i> <strong>EXCLUSÃO PERMANENTE</strong>
-                </div>
-                <p>Esta ação irá <strong>EXCLUIR PERMANENTEMENTE</strong> o usuário:</p>
-                <p class="text-center"><strong>"${usuario.nome}"</strong></p>
-                <p class="text-danger"><small>⚠️ Esta ação não pode ser desfeita e removerá todos os dados do usuário do sistema.</small></p>`;
-            
-            const confirmButton = document.getElementById('confirmButton');
-            confirmButton.className = 'btn btn-danger';
-            confirmButton.innerHTML = '<i class="bi bi-trash"></i> Excluir Permanentemente';
-            confirmButton.onclick = () => executarExclusaoUsuario(id);
-            
-            new bootstrap.Modal(document.getElementById('confirmModal')).show();
-        }
-
-        // Executar exclusão permanente de usuário
-        async function executarExclusaoUsuario(id) {
-            try {
-                const result = await apiRequest(`/api/usuarios/${id}/excluir`, {
-                    method: 'DELETE'
-                });
-                
-                if (result && result.success) {
-                    showMessage(result.message, 'success');
-                    carregarUsuarios();
-                } else {
-                    showMessage((result && result.message) || 'Erro ao excluir usuário', 'danger');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                showMessage('Erro ao conectar com o servidor', 'danger');
-            }
-            
-            bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
-            
-            // Restaurar botão de confirmação para o padrão
-            const confirmButton = document.getElementById('confirmButton');
-            confirmButton.className = 'btn btn-primary';
-            confirmButton.innerHTML = 'Confirmar';
         }
 
         // Função para excluir própria conta
@@ -449,7 +396,11 @@
                 
                 if (result && (result.success || result.message)) {
                     alert('Conta excluída com sucesso. Você será redirecionado para o login.');
-                    localStorage.removeItem('usuario');
+                    
+                    // Limpar dados de sessão
+                    sessionStorage.removeItem('usuario');
+                    localStorage.removeItem('usuario'); // Por segurança, remover de ambos
+                    
                     window.location.href = 'login.html';
                 } else {
                     alert('Erro ao excluir conta. Tente novamente.');

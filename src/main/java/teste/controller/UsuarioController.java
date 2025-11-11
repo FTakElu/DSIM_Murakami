@@ -105,13 +105,31 @@ public class UsuarioController {
     }
     
     /**
-     * Listar todos os usuários
+     * Listar todos os usuários (apenas para admins - temporário)
      */
     @GetMapping
     public ResponseEntity<List<Usuario>> listarUsuarios() {
         List<Usuario> usuarios = usuarioService.buscarTodos();
         // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
         return ResponseEntity.ok(usuarios);
+    }
+    
+    /**
+     * Buscar dados do usuário logado por email
+     */
+    @GetMapping("/perfil")
+    public ResponseEntity<?> buscarPerfil(@RequestParam String email) {
+        try {
+            Usuario usuario = usuarioService.buscarPorEmail(email);
+            if (usuario == null) {
+                return ResponseEntity.notFound().build();
+            }
+            // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
+            return ResponseEntity.ok(usuario);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("success", false, "message", "Erro ao buscar perfil"));
+        }
     }
     
     /**

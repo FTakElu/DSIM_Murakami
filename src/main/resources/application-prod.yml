@@ -3,6 +3,7 @@
 
 server:
   port: 8080
+  address: 0.0.0.0  # Escutar em todas as interfaces (não apenas localhost)
   servlet:
     context-path: /
   error:
