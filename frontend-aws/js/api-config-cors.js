@@ -136,115 +136,60 @@ let mockData = {
     alertas: []
 };
 
-// Função para conectar APENAS ao PostgreSQL RDS via HTTPS
+// Função SIMPLES para PostgreSQL RDS via NGINX HTTPS
 window.apiRequest = async function(endpoint, options = {}) {
-    // APENAS URLs HTTPS para evitar Mixed Content
-    const proxies = [
-        { name: 'NGINX HTTPS', url: `https://54.82.30.167${endpoint}` },
-        { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}` },
-        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` }
-    ];
+    // APENAS NGINX HTTPS - Spring Boot gerencia CORS
+    const url = `https://54.82.30.167${endpoint}`;
     
-    // Configurar headers padrão
-    const defaultHeaders = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    };
+    console.log(`🌐 PostgreSQL RDS via NGINX: ${options.method || 'GET'} ${url}`);
     
     const config = {
         method: options.method || 'GET',
-        headers: { ...defaultHeaders, ...(options.headers || {}) },
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(options.headers || {})
+        },
         ...options
     };
     
-    // Tentar cada proxy em sequência
-    for (const proxy of proxies) {
-        console.log(`🌐 Tentando ${proxy.name}: ${config.method} ${proxy.url}`);
+    try {
+        const response = await fetch(url, config);
         
-        try {
-            let fetchConfig = { ...config };
-            
-            // Configuração especial para CORS-Anywhere
-            if (proxy.name === 'CORS-Anywhere') {
-                fetchConfig.headers = {
-                    ...fetchConfig.headers,
-                    'X-Requested-With': 'XMLHttpRequest'
-                };
-            }
-            
-            const response = await fetch(proxy.url, fetchConfig);
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
-            }
-            
-            let data;
-            const contentType = response.headers.get('content-type');
-            
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                // Tentar parsear como JSON mesmo se content-type não indicar
-                const text = await response.text();
-                try {
-                    data = JSON.parse(text);
-                } catch {
-                    data = { message: text };
-                }
-            }
-            
-            console.log(`✅ Sucesso via ${proxy.name}!`);
-            return data;
-            
-        } catch (error) {
-            console.warn(`⚠️ ${proxy.name} falhou:`, error.message);
-            
-            // Se for o último proxy, tentar uma última alternativa antes do mock
-            if (proxy === proxies[proxies.length - 1]) {
-                console.log('🔄 Todos os proxies falharam...');
-                console.log('🔧 Tentando conexão direta ignorando CORS...');
-                
-                try {
-                    // Última tentativa: fetch simples (pode funcionar em alguns casos)
-                    const directResponse = await fetch(`http://54.82.30.167:8080${endpoint}`, {
-                        method: config.method,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: config.body,
-                        mode: 'no-cors' // Ignora CORS mas não retorna dados
-                    });
-                    
-                    // Se chegou aqui, assumir sucesso (no-cors não permite ler response)
-                    if (endpoint.includes('/cadastrar') && config.method === 'POST') {
-                        console.log('✅ Cadastro enviado (modo no-cors)');
-                        return { success: true, message: 'Usuário cadastrado! Use admin@dsim.com/admin123 para testar.' };
-                    }
-                    
-                    if (endpoint.includes('/login') && config.method === 'POST') {
-                        console.log('✅ Login tentado (modo no-cors) - usando mock como fallback');
-                        throw new Error('Precisa usar mock para login');
-                    }
-                    
-                } catch (directError) {
-                    console.log('⚠️ Conexão direta também falhou');
-                }
-                
-                console.error('❌ CERTIFICADO NGINX NÃO ACEITO!');
-                console.error('🔐 SOLUÇÃO OBRIGATÓRIA:');
-                console.error('1. Abra nova aba: https://54.82.30.167/api/usuarios');
-                console.error('2. Clique "Avançado" → "Continuar para 54.82.30.167"');
-                console.error('3. Volte aqui e tente novamente');
-                console.error('💾 Sistema conecta apenas ao PostgreSQL RDS!');
-                
-                // Criar link clicável no console
-                console.log('🔗 CLIQUE AQUI:', 'https://54.82.30.167/api/usuarios');
-                
-                throw new Error('CERTIFICADO NGINX NECESSÁRIO! Abra https://54.82.30.167/api/usuarios e aceite o certificado.');
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+        }
+        
+        let data;
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch {
+                data = { message: text };
             }
         }
+        
+        console.log(`✅ PostgreSQL RDS - Sucesso!`);
+        return data;
+        
+    } catch (error) {
+        console.error(`❌ PostgreSQL RDS - Falhou:`, error.message);
+        
+        if (error.message.includes('ERR_CERT_AUTHORITY_INVALID')) {
+            console.error('🔐 CERTIFICADO NGINX NECESSÁRIO!');
+            console.error('1. Abra: https://54.82.30.167/api/usuarios');
+            console.error('2. Clique "Avançado" → "Continuar"');
+            console.error('3. Volte e tente novamente');
+            throw new Error('ACEITE O CERTIFICADO NGINX: https://54.82.30.167/api/usuarios');
+        }
+        
+        throw error;
     }
 };
 
