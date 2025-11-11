@@ -83,26 +83,34 @@ start-server.bat
 
 ### **🏗️ Arquitetura AWS**
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐
-│   AWS AMPLIFY   │───▶│     AWS EC2     │───▶│   PostgreSQL RDS    │
-│   (Frontend)    │    │   (Backend)     │    │   (Produção)        │
-│     HTTPS       │    │  IP: 98.93.94.17│    │  Auto Sinais Vitais │
-│  Static Hosting │    │   Java 17       │    │  dsim_postgres      │
-└─────────────────┘    └─────────────────┘    └─────────────────────┘
-          │                       │                       │
-          │                       │                       │
-      📱 Frontend              🖥️ Backend             🗄️ Database
-   Bootstrap + CSS         Spring Boot 3.1.5      PostgreSQL 13+
-   Responsive Design       Maven 3.8.8            HikariCP Pool
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐
+│   AWS AMPLIFY   │───▶│  AWS API GATEWAY │───▶│     AWS EC2     │───▶│   PostgreSQL RDS    │
+│   (Frontend)    │    │   (Proxy HTTPS)  │    │   (Backend)     │    │   (Produção)        │
+│     HTTPS       │    │ Resolve Mixed    │    │  IP: 98.93.94.17│    │  Auto Sinais Vitais │
+│  Static Hosting │    │    Content       │    │   Java 17       │    │  dsim_postgres      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────────┘
+          │                       │                       │                       │
+          │                       │                       │                       │
+      📱 Frontend              🌉 API Gateway         🖥️ Backend             🗄️ Database
+   Bootstrap + CSS         HTTPS Proxy Reverso    Spring Boot 3.1.5      PostgreSQL 13+
+   Responsive Design       CORS Habilitado         Maven 3.8.8            HikariCP Pool
 ```
 
 ### **⚙️ Recursos em Produção**
+- ✅ **API Gateway HTTPS**: Proxy reverso que resolve Mixed Content
 - ✅ **Sistema de Geração Automática**: Sinais vitais criados automaticamente
 - ✅ **Backend Robusto**: Spring Boot com conexão HikariCP ao PostgreSQL
 - ✅ **Frontend Responsivo**: AWS Amplify com HTTPS automático
-- ✅ **CORS Configurado**: Comunicação segura entre domínios
+- ✅ **CORS Configurado**: Via API Gateway para comunicação segura
 - ✅ **Logs CloudWatch**: Monitoramento completo da aplicação
 - ✅ **Auto-Deploy**: GitHub → Amplify integração automática
+
+### **🔧 Configurar API Gateway**
+Para resolver o problema Mixed Content definitivamente:
+1. 📖 Consulte: `CONFIGURAR-API-GATEWAY.md`
+2. 🚀 Configure API Gateway em ~15 minutos
+3. 🔄 Atualize frontend para usar URL HTTPS
+4. ✅ Remova dependência do sistema mock
 
 ---
 

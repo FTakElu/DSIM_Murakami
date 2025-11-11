@@ -2,8 +2,9 @@
 // Use este serviço temporariamente para desenvolvimento
 
 const API_CONFIG = {
-    // Configuração temporária - usar proxy CORS para resolver Mixed Content
-    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://98.93.94.17:8080',
+    // Múltiplos proxies CORS para maior confiabilidade
+    BASE_URL: 'https://corsproxy.io/?http://98.93.94.17:8080',
+    BACKUP_PROXY: 'https://api.allorigins.win/raw?url=http://98.93.94.17:8080',
     
     // URL direta como fallback
     FALLBACK_URL: 'http://98.93.94.17:8080',
@@ -32,7 +33,15 @@ const API_CONFIG = {
 // Sistema Mock completo para desenvolvimento
 let mockData = {
     usuarios: [
-        // Mock sem usuários pré-cadastrados - force uso do backend real
+        {
+            id: 1,
+            nome: "Administrador",
+            email: "admin@dsim.com",
+            senha: "admin123",
+            ativo: true,
+            dataCriacao: "2024-01-01T00:00:00Z",
+            dataAtualizacao: new Date().toISOString()
+        }
     ],
     pacientes: [
         {
@@ -117,8 +126,12 @@ let mockData = {
 
 // Função utilitária para chamar APIs reais (não mock)
 window.apiRequest = async function(endpoint, options = {}) {
-    // Primeiro tenta o proxy CORS para resolver Mixed Content
-    let url = API_CONFIG.BASE_URL + endpoint;
+    // Lista de proxies para tentar em ordem
+    const proxies = [
+        { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://98.93.94.17:8080${endpoint}` },
+        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://98.93.94.17:8080${endpoint}` },
+        { name: 'Direto', url: `http://98.93.94.17:8080${endpoint}` }
+    ];
     
     // Configurar headers padrão
     const defaultHeaders = {
@@ -132,29 +145,12 @@ window.apiRequest = async function(endpoint, options = {}) {
         ...options
     };
     
-    console.log(`🌐 API Real (Proxy CORS): ${config.method} ${url}`);
-    
-    try {
-        const response = await fetch(url, config);
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Resposta da API real recebida (Proxy CORS)');
-        return data;
-        
-    } catch (error) {
-        console.warn('⚠️ Proxy CORS falhou, tentando conexão direta:', error.message);
-        
-        // Tenta conexão direta como fallback (pode falhar por Mixed Content)
-        url = API_CONFIG.FALLBACK_URL + endpoint;
-        console.log(`🌐 API Real (Direto): ${config.method} ${url}`);
+    // Tentar cada proxy em sequência
+    for (const proxy of proxies) {
+        console.log(`🌐 Tentando ${proxy.name}: ${config.method} ${proxy.url}`);
         
         try {
-            const response = await fetch(url, config);
+            const response = await fetch(proxy.url, config);
             
             if (!response.ok) {
                 const errorText = await response.text();
@@ -162,17 +158,18 @@ window.apiRequest = async function(endpoint, options = {}) {
             }
             
             const data = await response.json();
-            console.log('✅ Resposta da API real recebida (Direto)');
+            console.log(`✅ Sucesso via ${proxy.name}!`);
             return data;
             
-        } catch (directError) {
-            console.error('❌ Erro na API real (Direto):', directError.message);
-            console.error('ℹ️ Isso é esperado devido ao Mixed Content (HTTPS → HTTP)');
+        } catch (error) {
+            console.warn(`⚠️ ${proxy.name} falhou:`, error.message);
             
-            // Se tudo falhar, informa ao usuário e usa mock temporariamente
-            console.log('🔄 Usando sistema mock temporariamente...');
-            console.log('💡 Para resolver permanentemente, configure HTTPS no backend EC2');
-            return await apiRequestMock(endpoint, options);
+            // Se for o último proxy, usar mock
+            if (proxy === proxies[proxies.length - 1]) {
+                console.log('🔄 Todos os proxies falharam, usando mock temporariamente...');
+                console.log('💡 Para resolver permanentemente, configure API Gateway ou HTTPS no EC2');
+                return await apiRequestMock(endpoint, options);
+            }
         }
     }
 };
@@ -189,15 +186,18 @@ window.apiRequestMock = async function(endpoint, options = {}) {
         // LOGIN
         if (endpoint.includes('/api/usuarios/login') && method === 'POST') {
             const body = JSON.parse(options.body);
+            console.log('🔐 Tentativa de login mock:', body.email);
+            
             const usuario = mockData.usuarios.find(u => 
-                u.email === body.email && u.senha === body.senha
+                u.email === body.email && u.senha === body.senha && u.ativo
             );
             
             if (usuario) {
                 const { senha, ...usuarioSemSenha } = usuario;
-                console.log('✅ Login bem-sucedido');
+                console.log('✅ Login bem-sucedido no mock para:', body.email);
                 return usuarioSemSenha;
             } else {
+                console.log('❌ Credenciais inválidas no mock para:', body.email);
                 throw new Error('Credenciais inválidas');
             }
         }
@@ -205,7 +205,14 @@ window.apiRequestMock = async function(endpoint, options = {}) {
         // CADASTRO DE USUÁRIO
         if (endpoint.includes('/api/usuarios/cadastrar') && method === 'POST') {
             const body = JSON.parse(options.body);
-            const novoId = Math.max(...mockData.usuarios.map(u => u.id)) + 1;
+            
+            // Verificar se email já existe
+            const emailExiste = mockData.usuarios.find(u => u.email === body.email);
+            if (emailExiste) {
+                throw new Error('Email já cadastrado');
+            }
+            
+            const novoId = Math.max(...mockData.usuarios.map(u => u.id), 0) + 1;
             const novoUsuario = {
                 id: novoId,
                 ...body,
@@ -214,7 +221,7 @@ window.apiRequestMock = async function(endpoint, options = {}) {
                 dataAtualizacao: new Date().toISOString()
             };
             mockData.usuarios.push(novoUsuario);
-            console.log('✅ Usuário cadastrado');
+            console.log('✅ Usuário cadastrado no mock:', body.email);
             return { success: true, message: 'Usuário cadastrado com sucesso' };
         }
         
