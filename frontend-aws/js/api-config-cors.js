@@ -138,11 +138,12 @@ let mockData = {
 
 // Função robusta com múltiplos proxies para resolver Mixed Content
 window.apiRequest = async function(endpoint, options = {}) {
-    // Lista de proxies HTTPS para tentar (em ordem de prioridade)
+    // Lista de proxies HTTPS para tentar (em ordem de confiabilidade)
     const proxies = [
+        `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}`,
+        `https://proxy.cors.sh/http://54.82.30.167:8080${endpoint}`,
         `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}`,
-        `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}`,
-        `https://thingproxy.freeboard.io/fetch/http://54.82.30.167:8080${endpoint}`
+        `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}`
     ];
     
     console.log(`🌐 Tentando proxies CORS para: ${options.method || 'GET'} ${endpoint}`);
@@ -161,7 +162,8 @@ window.apiRequest = async function(endpoint, options = {}) {
     // Tentar cada proxy até um funcionar
     for (let i = 0; i < proxies.length; i++) {
         const url = proxies[i];
-        const proxyName = i === 0 ? 'CORS-Anywhere' : i === 1 ? 'AllOrigins' : 'ThingProxy';
+        const proxyNames = ['CorsProxy.io', 'Proxy.cors.sh', 'CORS-Anywhere', 'AllOrigins'];
+        const proxyName = proxyNames[i];
         
         try {
             console.log(`📡 Tentando ${proxyName}: ${url}`);
