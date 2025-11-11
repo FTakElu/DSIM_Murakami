@@ -70,11 +70,11 @@ start-server.bat
 
 ### **🚀 URLs de Acesso**
 - **🌐 Frontend (Amplify)**: https://main.dd3d0c3znbvkh.amplifyapp.com
-- **🖥️ Backend API (EC2)**: http://98.93.94.17:8080
+- **🖥️ Backend API (EC2)**: http://54.82.30.167:8080
 - **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + PostgreSQL RDS
 
 ### **✅ STATUS**: **SISTEMA OPERACIONAL EM PRODUÇÃO**
-- ✅ **Backend**: Spring Boot ativo no EC2 IP 98.93.94.17:8080
+- ✅ **Backend**: Spring Boot ativo no EC2 IP 54.82.30.167:8080
 - ✅ **Banco**: PostgreSQL RDS conectado e operacional
 - ✅ **Geração Automática**: Sinais vitais sendo gerados a cada minuto
 - ✅ **APIs**: Todas funcionando (usuários, pacientes, login, sinais vitais)
@@ -86,7 +86,7 @@ start-server.bat
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐
 │   AWS AMPLIFY   │───▶│  AWS API GATEWAY │───▶│     AWS EC2     │───▶│   PostgreSQL RDS    │
 │   (Frontend)    │    │   (Proxy HTTPS)  │    │   (Backend)     │    │   (Produção)        │
-│     HTTPS       │    │ Resolve Mixed    │    │  IP: 98.93.94.17│    │  Auto Sinais Vitais │
+│     HTTPS       │    │ Resolve Mixed    │    │  IP: 54.82.30.167  │    │  Auto Sinais Vitais │
 │  Static Hosting │    │    Content       │    │   Java 17       │    │  dsim_postgres      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────────┘
           │                       │                       │                       │
@@ -238,7 +238,7 @@ O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma apl
 | Tecnologia | Versão | Descrição |
 |------------|--------|-----------|
 | ☁️ **AWS Amplify** | - | Hospedagem frontend com CI/CD automático via GitHub |
-| 🖥️ **AWS EC2** | t3.micro | Servidor backend Amazon Linux 2023 (IP: 98.93.94.17) |
+| 🖥️ **AWS EC2** | t3.micro | Servidor backend Amazon Linux 2023 (IP: 54.82.30.167) |
 | 🐘 **AWS RDS PostgreSQL** | 13+ | Banco de dados gerenciado (dsim-postgres-20251109083108...) |
 | 🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático AWS (frontend) |
 | 📊 **CloudWatch** | - | Logs e monitoramento completo da aplicação |
@@ -374,7 +374,7 @@ O sistema inicializa automaticamente com:
 ### **Backend (AWS EC2)**
 ```bash
 # 1. SSH na instância EC2 com a nova chave
-ssh -i "dsim-keypair-us-east-1.pem" ec2-user@98.93.94.17
+ssh -i "dsim-keypair-20251109083108.pem" ec2-user@54.82.30.167
 
 # 2. Verificar se aplicação está rodando
 sudo ps aux | grep java
@@ -387,7 +387,7 @@ pkill java && nohup mvn spring-boot:run > nohup.out 2>&1 &
 ```
 
 ### **Configuração Completa**
-1. **Frontend**: Alterar `API_BASE_URL` em `js/api-config-cors.js` para `http://98.93.94.17:8080`
+1. **Frontend**: Alterar `API_BASE_URL` em `js/api-config-cors.js` para `http://54.82.30.167:8080`
 2. **Backend**: CORS já configurado para URL do Amplify
 3. **PostgreSQL**: RDS conectado automaticamente
 4. **Integração**: Sistema testado e funcionando frontend ↔ backend ↔ database
@@ -395,13 +395,13 @@ pkill java && nohup mvn spring-boot:run > nohup.out 2>&1 &
 ### **🔍 Verificação do Sistema**
 ```bash
 # Testar API backend diretamente
-curl http://98.93.94.17:8080/api/usuarios
+curl http://54.82.30.167:8080/api/usuarios
 
 # Verificar conexão PostgreSQL
-curl http://98.93.94.17:8080/api/pacientes
+curl http://54.82.30.167:8080/api/pacientes
 
 # Status da aplicação Spring Boot
-curl http://98.93.94.17:8080/actuator/health
+curl http://54.82.30.167:8080/actuator/health
 ```
 
 ---

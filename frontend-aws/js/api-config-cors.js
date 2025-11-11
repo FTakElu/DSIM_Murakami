@@ -3,11 +3,11 @@
 
 const API_CONFIG = {
     // Múltiplos proxies CORS para maior confiabilidade
-    BASE_URL: 'https://corsproxy.io/?http://98.93.94.17:8080',
-    BACKUP_PROXY: 'https://api.allorigins.win/raw?url=http://98.93.94.17:8080',
+    BASE_URL: 'https://corsproxy.io/?http://54.82.30.167:8080',
+    BACKUP_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
     
     // URL direta como fallback
-    FALLBACK_URL: 'http://98.93.94.17:8080',
+    FALLBACK_URL: 'http://54.82.30.167:8080',
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
@@ -128,9 +128,9 @@ let mockData = {
 window.apiRequest = async function(endpoint, options = {}) {
     // Lista de proxies para tentar em ordem
     const proxies = [
-        { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://98.93.94.17:8080${endpoint}` },
-        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://98.93.94.17:8080${endpoint}` },
-        { name: 'Direto', url: `http://98.93.94.17:8080${endpoint}` }
+        { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}` },
+        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` },
+        { name: 'Direto', url: `http://54.82.30.167:8080${endpoint}` }
     ];
     
     // Configurar headers padrão

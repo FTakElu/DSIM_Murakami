@@ -36,7 +36,7 @@ Este guia mostra como configurar um AWS API Gateway para criar um proxy HTTPS qu
 4. Configure:
    - **Integration type**: `HTTP Proxy`
    - **HTTP method**: `ANY`
-   - **Endpoint URL**: `http://98.93.94.17:8080/{proxy}`
+   - **Endpoint URL**: `http://54.82.30.167:8080/{proxy}`
    - ✅ Marque **Use Default Timeout**
 5. Clique **Save**
 
@@ -76,7 +76,7 @@ const API_CONFIG = {
     // BACKUP_PROXY: '...',
     
     // URL direta como fallback
-    FALLBACK_URL: 'http://98.93.94.17:8080',
+    FALLBACK_URL: 'http://54.82.30.167:8080',
     
     // Endpoints permanecem os mesmos
     ENDPOINTS: {
@@ -112,7 +112,7 @@ curl https://sua-api-gateway.execute-api.us-east-1.amazonaws.com/prod/api/usuari
 
 ### **Erro 502 Bad Gateway:**
 - Verifique se EC2 está rodando na porta 8080
-- Confirme se o IP 98.93.94.17 está correto
+- Confirme se o IP 54.82.30.167 está correto
 
 ### **Erro de CORS:**
 - Re-configure CORS seguindo o passo 5
