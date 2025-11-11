@@ -281,7 +281,7 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
             
             try {
-                const data = await apiRequest('/api/usuarios/login', {
+                const response = await apiRequest('/api/usuarios/login', {
                     method: 'POST',
                     body: JSON.stringify({
                         email: email,
@@ -289,16 +289,35 @@
                     })
                 });
                 
-                if (data) {
-                    // Salvar dados do usuário no localStorage
-                    localStorage.setItem('usuario', JSON.stringify(data));
+                console.log('Resposta do login:', response);
+                
+                // Verificar se response tem a estrutura correta
+                if (response && (response.success || response.id || response.email)) {
+                    let usuario;
                     
-                    showMessage('Login realizado com sucesso! Redirecionando...', 'success');
+                    // Se veio do backend real (com success)
+                    if (response.success && response.usuario) {
+                        usuario = response.usuario;
+                    } 
+                    // Se veio direto (mock ou retorno direto)
+                    else if (response.id || response.email) {
+                        usuario = response;
+                    }
                     
-                    // Redirecionar para a página principal após 1 segundo
-                    setTimeout(() => {
-                        window.location.href = 'pacientes.html';
-                    }, 1500);
+                    if (usuario) {
+                        // Salvar dados do usuário no localStorage
+                        localStorage.setItem('usuario', JSON.stringify(usuario));
+                        console.log('Usuário salvo no localStorage:', usuario);
+                        
+                        showMessage('Login realizado com sucesso! Redirecionando...', 'success');
+                        
+                        // Redirecionar para a página principal após 1 segundo
+                        setTimeout(() => {
+                            window.location.href = 'pacientes.html';
+                        }, 1500);
+                    } else {
+                        throw new Error('Estrutura de resposta inválida');
+                    }
                 } else {
                     showMessage('Credenciais inválidas', 'error');
                 }
