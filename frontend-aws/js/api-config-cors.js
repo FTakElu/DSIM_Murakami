@@ -2,14 +2,17 @@
 // NGINX configurado como proxy reverso HTTPS no EC2
 
 const API_CONFIG = {
-    // NGINX HTTPS endpoint (solução para Mixed Content)
-    BASE_URL: 'https://54.82.30.167',
+    // Proxy CORS funcional (testado e aprovado)
+    BASE_URL: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',
     
     // Backups CORS (caso necessário)
-    BACKUP_PROXY: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
-    THIRD_PROXY: 'https://corsproxy.io/?http://54.82.30.167:8080',
+    BACKUP_PROXY: 'https://thingproxy.freeboard.io/fetch/http://54.82.30.167:8080',
+    THIRD_PROXY: 'https://api.codetabs.com/v1/proxy/?quest=http://54.82.30.167:8080',
     
-    // URL direta como último fallback
+    // NGINX HTTPS como alternativa
+    NGINX_URL: 'https://54.82.30.167',
+    
+    // URL direta como último fallback  
     FALLBACK_URL: 'http://54.82.30.167:8080',
     
     // Endpoints da API (corrigidos para backend real)
@@ -43,6 +46,15 @@ let mockData = {
             senha: "admin123",
             ativo: true,
             dataCriacao: "2024-01-01T00:00:00Z",
+            dataAtualizacao: new Date().toISOString()
+        },
+        {
+            id: 2,
+            nome: "Flávia Takato",
+            email: "flaviatakato@gmail.com",
+            senha: "123456",
+            ativo: true,
+            dataCriacao: "2024-01-01T00:00:00Z", 
             dataAtualizacao: new Date().toISOString()
         }
     ],
@@ -127,14 +139,14 @@ let mockData = {
     alertas: []
 };
 
-// Função utilitária para chamar APIs reais (ordem otimizada)
+// Função utilitária para chamar APIs reais (proxies funcionais)
 window.apiRequest = async function(endpoint, options = {}) {
-    // Lista de proxies em ordem de prioridade (sem problemas de certificado primeiro)
+    // Lista de proxies testados e funcionais
     const proxies = [
-        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://54.82.30.167:8080${endpoint}` },
+        { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080${endpoint}` },
+        { name: 'ThingProxy', url: `https://thingproxy.freeboard.io/fetch/http://54.82.30.167:8080${endpoint}` },
+        { name: 'CodeTabs', url: `https://api.codetabs.com/v1/proxy/?quest=http://54.82.30.167:8080${endpoint}` },
         { name: 'NGINX HTTPS', url: `https://54.82.30.167${endpoint}` },
-        { name: 'CorsProxy.io', url: `https://corsproxy.io/?http://54.82.30.167:8080${endpoint}` },
-        { name: 'HTMLDriven', url: `https://cors-proxy.htmldriven.com/?url=http://54.82.30.167:8080${endpoint}` },
         { name: 'Direto', url: `http://54.82.30.167:8080${endpoint}` }
     ];
     
@@ -155,22 +167,13 @@ window.apiRequest = async function(endpoint, options = {}) {
         console.log(`🌐 Tentando ${proxy.name}: ${config.method} ${proxy.url}`);
         
         try {
-            // Configuração especial para AllOrigins com POST
             let fetchConfig = { ...config };
             
-            if (proxy.name === 'AllOrigins' && config.method === 'POST') {
-                // AllOrigins requer encapsulamento para POST
-                fetchConfig = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        url: `http://54.82.30.167:8080${endpoint}`,
-                        method: config.method,
-                        headers: config.headers,
-                        body: config.body
-                    })
+            // Configuração especial para CORS-Anywhere
+            if (proxy.name === 'CORS-Anywhere') {
+                fetchConfig.headers = {
+                    ...fetchConfig.headers,
+                    'X-Requested-With': 'XMLHttpRequest'
                 };
             }
             
@@ -205,7 +208,8 @@ window.apiRequest = async function(endpoint, options = {}) {
             // Se for o último proxy, usar mock
             if (proxy === proxies[proxies.length - 1]) {
                 console.log('🔄 Todos os proxies falharam, usando mock temporariamente...');
-                console.log('💡 Para resolver permanentemente, aceite o certificado HTTPS do NGINX');
+                console.log('💡 Usuário cadastrado no sistema real não existe no mock!');
+                console.log('💡 Tente: admin@dsim.com / admin123 ou aceite certificado NGINX');
                 return await apiRequestMock(endpoint, options);
             }
         }
