@@ -19,30 +19,31 @@ spring:
   application:
     name: sistema-monitoramento-pacientes
   
-  # Configuração do banco H2 com persistência
+  # Configuração do PostgreSQL RDS - BANCO PADRÃO
   datasource:
-    url: jdbc:h2:file:./data/dsimdb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
-    driverClassName: org.h2.Driver
-    username: dsim
-    password: dsim123
-    
-  # Console H2 (para desenvolvimento)
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
+    url: jdbc:postgresql://dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com:5432/postgres
+    driverClassName: org.postgresql.Driver
+    username: dsim_admin
+    password: DSIM2025!Postgres
+    hikari:
+      connection-timeout: 30000      # 30 segundos
+      idle-timeout: 300000           # 5 minutos
+      max-lifetime: 600000           # 10 minutos
+      maximum-pool-size: 3
+      minimum-idle: 1
+      initialization-fail-timeout: 1 # Falhar rapidamente se não conectar
       
-  # JPA/Hibernate
+  # JPA/Hibernate para PostgreSQL
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
+        jdbc:
+          time_zone: UTC
     defer-datasource-initialization: true
   
   # SQL Initialization

@@ -306,7 +306,8 @@
                 const data = await apiRequest(url, { method: 'GET' });
                 
                 if (data) {
-                    configuracoes = Array.isArray(data.data) ? data.data : [];
+                    // Backend retorna lista diretamente
+                    configuracoes = Array.isArray(data) ? data : (Array.isArray(data.data) ? data.data : []);
                     aplicarFiltros();
                     renderizarTabela();
                 } else {
@@ -445,17 +446,15 @@
         // Executar alteração de status
         async function executarAlteracaoStatus(id, ativo) {
             try {
-                const response = await fetch(`/api/configuracao-alertas/${id}/status?ativo=${ativo}`, {
+                const result = await apiRequest(`/api/configuracao-alertas/${id}/status?ativo=${ativo}`, {
                     method: 'PUT'
                 });
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
+                if (result && result.success) {
                     showMessage(result.message, 'success');
                     carregarConfiguracoes();
                 } else {
-                    showMessage(result.message || 'Erro ao alterar status', 'danger');
+                    showMessage((result && result.message) || 'Erro ao alterar status', 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);
@@ -479,17 +478,15 @@
         // Executar exclusão
         async function executarExclusao(id) {
             try {
-                const response = await fetch(`/api/configuracao-alertas/${id}`, {
+                const result = await apiRequest(`/api/configuracao-alertas/${id}`, {
                     method: 'DELETE'
                 });
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
+                if (result && result.success) {
                     showMessage(result.message, 'success');
                     carregarConfiguracoes();
                 } else {
-                    showMessage(result.message || 'Erro ao excluir configuração', 'danger');
+                    showMessage((result && result.message) || 'Erro ao excluir configuração', 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);

@@ -131,10 +131,8 @@
         // Função para carregar dados do usuário
         async function carregarDadosUsuario(id) {
             try {
-                const response = await fetch(`/api/usuarios/${id}`);
-                
-                if (response.ok) {
-                    const usuario = await response.json();
+                const usuario = await apiRequest(`/api/usuarios/${id}`, { method: 'GET' });
+                if (usuario) {
                     preencherFormulario(usuario);
                 } else {
                     showMessage('Erro ao carregar dados do usuário', 'danger');
@@ -179,7 +177,7 @@
                 btnSalvar.disabled = true;
                 btnSalvar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Salvando...';
                 
-                const response = await fetch(`/api/usuarios/${usuarioId}`, {
+                const result = await apiRequest(`/api/usuarios/${usuarioId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -187,15 +185,13 @@
                     body: JSON.stringify(dados)
                 });
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
+                if (result && result.success) {
                     showMessage('Usuário atualizado com sucesso!', 'success');
                     setTimeout(() => {
                         window.location.href = 'usuarios.html';
                     }, 2000);
                 } else {
-                    showMessage(result.message || 'Erro ao atualizar usuário', 'danger');
+                    showMessage((result && result.message) || 'Erro ao atualizar usuário', 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);

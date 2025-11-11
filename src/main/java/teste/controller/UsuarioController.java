@@ -54,8 +54,7 @@ public class UsuarioController {
             boolean credenciaisValidas = usuarioService.validarCredenciais(email, senha);
             
             if (credenciaisValidas) {
-                // Remove senha da resposta por segurança
-                usuario.setSenha(null);
+                // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
                 return ResponseEntity.ok(Map.of(
                     "success", true, 
                     "message", "Login realizado com sucesso",
@@ -89,9 +88,7 @@ public class UsuarioController {
             
             Usuario usuario = usuarioService.cadastrarUsuario(nome, email, senha);
             
-            // Remove senha da resposta por segurança
-            usuario.setSenha(null);
-            
+            // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Usuário cadastrado com sucesso",
@@ -113,8 +110,7 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<List<Usuario>> listarUsuarios() {
         List<Usuario> usuarios = usuarioService.buscarTodos();
-        // Remove senhas da resposta por segurança
-        usuarios.forEach(u -> u.setSenha(null));
+        // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
         return ResponseEntity.ok(usuarios);
     }
     
@@ -124,8 +120,7 @@ public class UsuarioController {
     @GetMapping("/ativos")
     public ResponseEntity<List<Usuario>> listarUsuariosAtivos() {
         List<Usuario> usuarios = usuarioService.buscarAtivos();
-        // Remove senhas da resposta por segurança
-        usuarios.forEach(u -> u.setSenha(null));
+        // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
         return ResponseEntity.ok(usuarios);
     }
     
@@ -138,8 +133,7 @@ public class UsuarioController {
         if (usuario == null) {
             return ResponseEntity.notFound().build();
         }
-        // Remove senha da resposta por segurança
-        usuario.setSenha(null);
+        // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
         return ResponseEntity.ok(usuario);
     }
     
@@ -151,8 +145,7 @@ public class UsuarioController {
     @GetMapping("/buscar")
     public ResponseEntity<List<Usuario>> buscarPorNome(@RequestParam String nome) {
         List<Usuario> usuarios = usuarioService.buscarPorNome(nome);
-        // Remove senhas da resposta por segurança
-        usuarios.forEach(u -> u.setSenha(null));
+        // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
         return ResponseEntity.ok(usuarios);
     }
     
@@ -187,8 +180,7 @@ public class UsuarioController {
             }
             
             Usuario usuarioAtualizado = usuarioService.salvar(usuarioExistente);
-            // Remove senha da resposta por segurança
-            usuarioAtualizado.setSenha(null);
+            // Senha removida automaticamente por Jackson (@JsonProperty WRITE_ONLY)
             
             return ResponseEntity.ok(Map.of(
                 "success", true,

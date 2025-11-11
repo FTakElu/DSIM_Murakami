@@ -3,7 +3,8 @@
 
 const API_CONFIG = {
     // APENAS URLs HTTPS - sem mixed content
-    BASE_URL: 'https://54.82.30.167',
+    // Preferir hostname DNS em vez de IP direto (facilita mudança de IP)
+    BASE_URL: 'https://ec2-54-82-30-167.compute-1.amazonaws.com',
     
     // Backup HTTPS funcionais
     BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',

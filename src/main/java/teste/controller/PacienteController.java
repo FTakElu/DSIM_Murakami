@@ -1,5 +1,6 @@
 package teste.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +35,23 @@ public class PacienteController {
 	@Autowired
 	private UsuarioService usuarioService;
 
-	@GetMapping
+    @GetMapping
     public ResponseEntity<List<Paciente>> listarTodos() {
         try {
-            // Para teste: buscar todos os pacientes (sem filtro de usuário)
-            List<Paciente> pacientes = pacienteRepository.findAll();
+            System.out.println("🔍 Tentando listar pacientes...");
+            
+            // Buscar pacientes com estratégia de fetch adequada
+            List<Paciente> pacientes = pacienteRepository.findByAtivoTrue();
+            System.out.println("✅ Encontrados " + pacientes.size() + " pacientes");
+            
             return ResponseEntity.ok(pacientes);
         } catch (Exception e) {
-            System.err.println("Erro ao listar pacientes: " + e.getMessage());
+            System.err.println("❌ Erro ao listar pacientes: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ArrayList<>()); // Retornar lista vazia em caso de erro
         }
-    }
-
-    @GetMapping("/{id}")
+    }    @GetMapping("/{id}")
     public ResponseEntity<Paciente> buscarPorId(@PathVariable Long id) {
         try {
             Paciente paciente = pacienteService.buscarPeloCodigo(id);
@@ -64,21 +68,28 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Paciente> criarPaciente(@RequestBody Paciente paciente) {
+    public ResponseEntity<Paciente> criarPaciente(@RequestBody Paciente paciente, @RequestHeader("X-Usuario-Email") String emailUsuario) {
         try {
+            System.out.println("🆕 Criando paciente: " + paciente.getNome());
+            
             // Remove o ID para garantir que seja um novo registro
             paciente.setId(null);
             
-            // Para teste: buscar admin como usuário responsável
-            Usuario admin = usuarioService.buscarPorEmail("admin@dsim.com");
-            if (admin != null) {
-                paciente.setUsuarioResponsavel(admin);
+            // Associar ao usuário logado (via header)
+            Usuario usuario = usuarioService.buscarPorEmail(emailUsuario);
+            if (usuario == null) {
+                System.err.println("⚠️ Usuário não autenticado ou não encontrado: " + emailUsuario);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
+            paciente.setUsuarioResponsavel(usuario);
             
+            System.out.println("💾 Salvando paciente...");
             Paciente pacienteSalvo = pacienteService.salvar(paciente);
+            System.out.println("✅ Paciente salvo com ID: " + pacienteSalvo.getId());
+            
             return ResponseEntity.status(HttpStatus.CREATED).body(pacienteSalvo);
         } catch (Exception e) {
-            System.err.println("Erro ao salvar paciente: " + e.getMessage());
+            System.err.println("❌ Erro ao salvar paciente: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

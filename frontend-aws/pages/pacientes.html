@@ -349,7 +349,7 @@
                             id: paciente.id,
                             name: paciente.nome,
                             age: idade,
-                            room: paciente.quarto || 'N/A',
+                            room: (paciente.informacaoMedica && paciente.informacaoMedica.quarto) || paciente.quarto || 'N/A',
                             heartRate: sinais.batimentos || 0,
                             oxygen: sinais.oxigenio || 0,
                             temperature: sinais.temperatura || 0,
@@ -560,9 +560,10 @@
             document.getElementById('editPhone').value = paciente.telefone || '';
             document.getElementById('editRelationship').value = contato.parentesco || '';
             document.getElementById('editRoom').value = paciente.quarto || '';
-            document.getElementById('editBloodType').value = paciente.tipoSanguineo || '';
-            document.getElementById('editAllergies').value = paciente.alergias || '';
-            document.getElementById('editMedicalConditions').value = paciente.condicoesMedicas || '';
+            const infoMed = paciente.informacaoMedica || {};
+            document.getElementById('editBloodType').value = infoMed.tipoSangue || '';
+            document.getElementById('editAllergies').value = infoMed.problemasEspecificos || '';
+            document.getElementById('editMedicalConditions').value = infoMed.deficiencia || '';
             document.getElementById('editEmergencyName').value = contato.nome || '';
             document.getElementById('editParentesco').value = contato.parentesco || '';
             document.getElementById('editEmergencyPhone').value = contato.telefone || '';
@@ -651,10 +652,10 @@
                     instagram: null
                 },
                 informacaoMedica: {
-                    tipoSangue: data.bloodType || null,
-                    deficiencia: data.deficiencia || null,
-                    problemasEspecificos: data.medicalConditions || null
-                },
+                        tipoSangue: data.bloodType || null,
+                        deficiencia: data.deficiencia || null,
+                        problemasEspecificos: data.medicalConditions || null
+                    },
                 sinaisVitais: {
                     oxigenio: parseFloat(data.oxygen) || 98.0,
                     temperatura: parseFloat(data.temperature) || 36.5,

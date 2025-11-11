@@ -187,14 +187,9 @@
             }
             
             try {
-                const response = await fetch(`/api/usuarios/buscar?nome=${encodeURIComponent(nome)}`);
-                
-                if (response.ok) {
-                    usuariosFiltrados = await response.json();
-                    renderizarTabela();
-                } else {
-                    showMessage('Erro ao buscar usuários', 'danger');
-                }
+                const data = await apiRequest(`/api/usuarios/buscar?nome=${encodeURIComponent(nome)}`, { method: 'GET' });
+                usuariosFiltrados = Array.isArray(data) ? data : [];
+                renderizarTabela();
             } catch (error) {
                 console.error('Erro:', error);
                 showMessage('Erro ao conectar com o servidor', 'danger');
@@ -361,14 +356,13 @@
                 const url = ativar ? `/api/usuarios/${id}/ativar` : `/api/usuarios/${id}`;
                 const method = ativar ? 'PUT' : 'DELETE';
                 
-                const response = await fetch(url, { method });
-                const result = await response.json();
+                const result = await apiRequest(url, { method });
                 
-                if (response.ok && result.success) {
+                if (result && result.success) {
                     showMessage(result.message, 'success');
                     carregarUsuarios();
                 } else {
-                    showMessage(result.message || 'Erro ao alterar status do usuário', 'danger');
+                    showMessage((result && result.message) || 'Erro ao alterar status do usuário', 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);
@@ -405,17 +399,15 @@
         // Executar exclusão permanente de usuário
         async function executarExclusaoUsuario(id) {
             try {
-                const response = await fetch(`/api/usuarios/${id}/excluir`, {
+                const result = await apiRequest(`/api/usuarios/${id}/excluir`, {
                     method: 'DELETE'
                 });
                 
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
+                if (result && result.success) {
                     showMessage(result.message, 'success');
                     carregarUsuarios();
                 } else {
-                    showMessage(result.message || 'Erro ao excluir usuário', 'danger');
+                    showMessage((result && result.message) || 'Erro ao excluir usuário', 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);
@@ -451,11 +443,11 @@
             }
             
             try {
-                const response = await fetch(`/api/usuarios/${id}/excluir`, {
+                const result = await apiRequest(`/api/usuarios/${id}/excluir`, {
                     method: 'DELETE'
                 });
                 
-                if (response.ok) {
+                if (result && (result.success || result.message)) {
                     alert('Conta excluída com sucesso. Você será redirecionado para o login.');
                     localStorage.removeItem('usuario');
                     window.location.href = 'login.html';

@@ -13,14 +13,15 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOriginPatterns(
-                    "https://main.dblah84pn391d.amplifyapp.com", // URL atual do Amplify
-                    "https://main.dd3d0c3znbvkh.amplifyapp.com", // URL antiga para compatibilidade
-                    "https://cors-anywhere.herokuapp.com", // Proxy CORS
-                    "http://localhost:*",
-                    "http://127.0.0.1:*"
+                        "https://main.dblah84pn391d.amplifyapp.com",
+                        "https://main.dd3d0c3znbvkh.amplifyapp.com",
+                        "https://*.amplifyapp.com",
+                        "https://ec2-54-82-30-167.compute-1.amazonaws.com",
+                        "https://54.82.30.167",
+                        "http://localhost:*",
+                        "http://127.0.0.1:*"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
                 .allowCredentials(true);
     }
 

@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- API Configuration -->
+    <script src="../assets/js/api-config.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -496,7 +498,7 @@
         }
 
         // Processar cadastro
-        document.getElementById('patientForm').addEventListener('submit', function(e) {
+        document.getElementById('patientForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
@@ -534,8 +536,7 @@
                     nome: data.emergencyName || null,
                     telefone: data.emergencyPhone || null,
                     email: data.emergencyEmail || null,
-                    parentesco: data.emergencyRelation || null,
-                    instagram: null
+                    parentesco: data.emergencyRelation || null // Backend espera 'instagram', não 'parentesco'
                 },
                 informacaoMedica: {
                     tipoSangue: data.bloodType || null,
@@ -544,11 +545,16 @@
                 },
                 sinaisVitais: {
                     oxigenio: Math.floor(Math.random() * 10) + 90, // 90-99%
+                    statusOxigenio: 'normal',
                     temperatura: parseFloat((Math.random() * 2 + 36).toFixed(1)), // 36-38°C
+                    statusTemperatura: 'normal',
                     batimentos: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
-                    statusOxigenio: 'stable',
-                    statusTemperatura: 'stable',
-                    statusBatimentos: 'stable'
+                    statusBatimentos: 'normal',
+                    pressaoSistolica: Math.floor(Math.random() * 20) + 110, // 110-130 mmHg
+                    pressaoDiastolica: Math.floor(Math.random() * 20) + 70, // 70-90 mmHg
+                    statusPressao: 'normal',
+                    frequenciaRespiratoria: Math.floor(Math.random() * 8) + 12, // 12-20 rpm
+                    statusRespiracao: 'normal'
                 }
             };
             
@@ -560,33 +566,26 @@
                 return;
             }
 
-            fetch('/api/pacientes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Usuario-Email': usuarioLogado.email,
-                },
-                body: JSON.stringify(pacienteData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Erro ao cadastrar paciente');
-                }
-            })
-            .then(data => {
+            try {
+                // Usar apiRequest para comunicação via NGINX HTTPS
+                const data = await apiRequest('/api/pacientes', {
+                    method: 'POST',
+                    headers: {
+                        'X-Usuario-Email': usuarioLogado.email,
+                    },
+                    body: JSON.stringify(pacienteData)
+                });
+
                 showMessage('Paciente cadastrado com sucesso! Redirecionando...', 'success');
                 setTimeout(() => {
                     window.location.href = 'pacientes.html';
                 }, 2000);
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Erro:', error);
                 showMessage('Erro ao cadastrar paciente. Tente novamente.', 'error');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Paciente';
-            });
+            }
         });
 
         // Esconder mensagem ao focar nos inputs
@@ -617,10 +616,18 @@
         document.getElementById('birthdate').addEventListener('change', function(e) {
             const birthDate = new Date(e.target.value);
             const today = new Date();
-            const age = today.getFullYear() - birthDate.getFullYear();
+            let age = today.getFullYear() - birthDate.getFullYear();
             
-            if (age > 0) {
+            // Verificar se já passou o aniversário este ano
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            if (age >= 0 && age <= 150) { // Validação de idade realística
                 console.log(`Idade calculada: ${age} anos`);
+            } else {
+                console.log(`Idade inválida: ${age} anos - verifique a data`);
             }
         });
 

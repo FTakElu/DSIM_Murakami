@@ -52,7 +52,7 @@ mvn spring-boot:run
 - **Host**: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
 - **Usuário**: `dsim_admin`
 - **Senha**: `DSIM2025!Postgres`
-- **Banco**: `dsim_postgres`
+- **Banco**: `dsim_clean` ← **BANCO ATUAL EM USO**
 
 ### **🛠️ Solução de Problemas**
 Se der erro de porta ocupada:
@@ -75,11 +75,12 @@ start-server.bat
 
 ### **✅ STATUS**: **SISTEMA OPERACIONAL EM PRODUÇÃO**
 - ✅ **Backend**: Spring Boot ativo no EC2 IP 54.82.30.167:8080
-- ✅ **Banco**: PostgreSQL RDS conectado e operacional
+- ✅ **Banco**: PostgreSQL RDS `dsim_clean` conectado e operacional
 - ✅ **Geração Automática**: Sinais vitais sendo gerados a cada minuto
 - ✅ **APIs**: Todas funcionando (usuários, pacientes, login, sinais vitais)
 - ✅ **CORS**: Configurado para integração frontend-backend
 - ✅ **Logs**: CloudWatch ativo com monitoramento completo
+- ⚠️ **Sessão AWS**: Válida por 4h, requer procedimento de nova sessão
 
 ### **🏗️ Arquitetura AWS**
 ```
@@ -111,6 +112,166 @@ Para resolver o problema Mixed Content definitivamente:
 2. 🚀 Configure API Gateway em ~15 minutos
 3. 🔄 Atualize frontend para usar URL HTTPS
 4. ✅ Remova dependência do sistema mock
+
+---
+
+## 🔄 **NOVA SESSÃO AWS ACADEMY - PROCEDIMENTO OBRIGATÓRIO**
+
+### **⚠️ IMPORTANTE: Limitação de 4 Horas**
+A AWS Academy limita as sessões a **4 horas**. Quando a sessão expira:
+- ✅ **RDS PostgreSQL**: Mantém dados (persistente)
+- ❌ **EC2 Instance**: Para automaticamente
+- 🔄 **IP Público**: Muda a cada nova sessão
+
+### **🚀 Procedimento para Nova Sessão (~ 10 minutos)**
+
+#### **1️⃣ Obter Novo IP do EC2**
+```bash
+# 1. Inicie nova sessão AWS Academy
+# 2. Vá para EC2 Dashboard
+# 3. Start sua instância EC2
+# 4. Anote o NOVO IP público (ex: 3.85.123.45)
+```
+
+#### **2️⃣ Atualizar Configurações Frontend**
+```bash
+# Arquivo: frontend-aws/js/api-config-cors.js
+const API_BASE_URL = 'https://NOVO-IP-AQUI:8080';  # ← Trocar pelo novo IP
+```
+
+#### **3️⃣ Atualizar CORS Backend**
+```yaml
+# Arquivo: src/main/resources/application-prod.yml
+cors:
+  allowed-origins: 
+    - https://main.dd3d0c3znbvkh.amplifyapp.com
+    - https://NOVO-IP-AQUI                          # ← Trocar pelo novo IP
+    - https://ec2-NOVO-HOSTNAME.compute-1.amazonaws.com  # ← Atualizar hostname
+```
+
+#### **4️⃣ Recompilar e Transferir**
+```bash
+# No Windows (pasta do projeto):
+mvn package -DskipTests
+
+# Transferir JAR (trocar NOVO-IP e caminho-da-chave):
+scp -i "dsim-keypair-XXXXXXXX.pem" target/sistema-monitoramento-pacientes-1.0.0-SNAPSHOT.jar ec2-user@NOVO-IP:/home/ec2-user/app.jar
+```
+
+#### **5️⃣ Iniciar Aplicação no EC2**
+```bash
+# SSH no EC2 (trocar NOVO-IP):
+ssh -i "dsim-keypair-XXXXXXXX.pem" ec2-user@NOVO-IP
+
+# Instalar PostgreSQL client (se necessário):
+sudo amazon-linux-extras install postgresql13
+
+# Iniciar aplicação:
+nohup java -jar app.jar --spring.profiles.active=prod > startup.log 2>&1 &
+
+# Verificar logs:
+tail -f startup.log
+
+# Testar APIs:
+curl http://localhost:8080/api/pacientes
+```
+
+#### **6️⃣ Atualizar Amplify (Opcional)**
+```bash
+# Se necessário, fazer push das alterações:
+git add .
+git commit -m "Atualizar IP para nova sessão AWS Academy"
+git push origin main
+```
+
+### **📋 Checklist Rápida Nova Sessão**
+- [ ] ✅ EC2 iniciado e IP anotado
+- [ ] 🔄 api-config-cors.js atualizado
+- [ ] 🔧 application-prod.yml CORS atualizado  
+- [ ] 📦 Maven package executado
+- [ ] 🚀 JAR transferido via SCP
+- [ ] ⚡ PostgreSQL client instalado no EC2
+- [ ] 🎯 Aplicação iniciada com `nohup`
+- [ ] ✅ APIs testadas e funcionando
+
+### **🎯 Tempo Estimado: 8-12 minutos**
+
+**💡 Dica**: Salve o IP anterior em comentário para facilitar a troca:
+```javascript
+// IPs Anteriores: 54.82.30.167, 3.85.123.45
+const API_BASE_URL = 'https://18.207.45.123:8080';  // IP Atual
+```
+
+### **🤖 Scripts Automáticos para Produtividade**
+
+#### **🪟 Windows - Script de Deploy Rápido**
+```bash
+# Execute na pasta do projeto:
+deploy-nova-sessao.bat
+```
+- ✅ **Automatiza**: Atualização frontend + compilação Maven
+- ⚡ **Tempo**: ~2 minutos
+- 📁 **Arquivo**: `deploy-nova-sessao.bat` (raiz do projeto)
+
+#### **🐧 EC2 - Script de Inicialização**
+```bash
+# No EC2, após transferir JAR e script:
+chmod +x start-dsim-ec2.sh
+./start-dsim-ec2.sh
+```
+- ✅ **Automatiza**: PostgreSQL client + inicialização app + verificações
+- ⚡ **Tempo**: ~30 segundos  
+- 📁 **Arquivo**: `start-dsim-ec2.sh` (transferir para EC2)
+
+#### **📋 Fluxo Completo com Scripts**
+```bash
+# 1. Windows (pasta do projeto):
+deploy-nova-sessao.bat                    # ← Input: Novo IP
+
+# 2. Transferir arquivos:
+scp -i "chave.pem" target/*.jar start-dsim-ec2.sh ec2-user@NOVO-IP:/home/ec2-user/
+
+# 3. EC2 (execução única):
+ssh -i "chave.pem" ec2-user@NOVO-IP "./start-dsim-ec2.sh"
+```
+
+**⏱️ Tempo Total com Scripts: ~4 minutos** (vs 10-12 minutos manual)
+
+### **🔍 Troubleshooting Comum - Nova Sessão**
+
+#### **❌ Problema: "Port 8080 already in use"**
+```bash
+# EC2 - Eliminar processos Java:
+pkill -f java
+sudo netstat -tlnp | grep :8080    # Verificar porta livre
+```
+
+#### **❌ Problema: "Unable to access jarfile"**
+```bash
+# Verificar se JAR foi transferido:
+ls -la ~/app.jar
+file ~/app.jar                     # Deve mostrar "Java archive"
+```
+
+#### **❌ Problema: Conexão RDS falha**
+```bash
+# Testar conexão manual:
+PGPASSWORD="DSIM2025!Postgres" psql -h dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com -U dsim_admin -d dsim_clean -c "SELECT 1;"
+```
+
+#### **❌ Problema: APIs retornam erro 500**
+```bash
+# Verificar logs detalhados:
+tail -50 ~/startup.log | grep -i error
+```
+
+#### **✅ Verificação Final - Sistema OK**
+```bash
+# Todos devem retornar HTTP 200:
+curl -I http://localhost:8080/api/usuarios
+curl -I http://localhost:8080/api/pacientes
+curl -I http://localhost:8080/api/configuracao-alertas
+```
 
 ---
 
@@ -319,12 +480,13 @@ Para inspecionar dados durante desenvolvimento:
 - **Senha**: (vazio)
 
 ### **☁️ Produção (AWS RDS PostgreSQL)**
-Banco de dados em produção (apenas para referência):
+Banco de dados em produção:
 - **Host**: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
 - **Porta**: `5432`
-- **Banco**: `dsim_postgres`
+- **Banco**: `dsim_clean` ← **BANCO ATUAL**
 - **Usuário**: `dsim_admin`
 - **Senha**: `DSIM2025!Postgres`
+- **Status**: ✅ Dados persistentes (2 pacientes, 3 usuários, sinais vitais automáticos)
 
 ---
 
