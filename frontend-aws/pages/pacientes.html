@@ -492,9 +492,10 @@
         // Função para renderizar pacientes
         function renderPatients() {
             const grid = document.getElementById('patientsGrid');
-            
-            grid.innerHTML = patients.map(patient => `
-                <div class="patient-card">
+            grid.innerHTML = patients.map(patient => {
+                const statusClass = getStatusClass(patient.status); // danger, warning, normal
+                return `
+                <div class="patient-card ${statusClass}">
                     <div class="patient-header">
                         <div class="patient-avatar">
                             ${getInitials(patient.name)}
@@ -504,31 +505,29 @@
                             <p>${patient.age} anos • ${patient.room !== 'N/A' ? patient.room : 'Estado civil não informado'}</p>
                         </div>
                     </div>
-                    
                     <div class="vitals-grid">
                         <div class="vital-item">
-                            <div class="vital-icon ${getStatusClass(patient.status)}">
+                            <div class="vital-icon ${statusClass}">
                                 <i class="fas fa-heartbeat"></i>
                             </div>
                             <div class="vital-value">${patient.heartRate}</div>
                             <div class="vital-label">BPM</div>
                         </div>
                         <div class="vital-item">
-                            <div class="vital-icon ${patient.oxygen < 95 ? 'danger' : 'normal'}">
+                            <div class="vital-icon ${statusClass}">
                                 <i class="fas fa-lungs"></i>
                             </div>
                             <div class="vital-value">${patient.oxygen}%</div>
                             <div class="vital-label">SpO₂</div>
                         </div>
                         <div class="vital-item">
-                            <div class="vital-icon ${patient.temperature > 37.5 ? 'danger' : 'normal'}">
+                            <div class="vital-icon ${statusClass}">
                                 <i class="fas fa-thermometer-half"></i>
                             </div>
                             <div class="vital-value">${patient.temperature}°C</div>
                             <div class="vital-label">Temp</div>
                         </div>
                     </div>
-                    
                     <div class="patient-actions">
                         <button class="btn btn-primary" onclick="viewPatient(${patient.id})" title="Ver Detalhes">
                             <i class="fas fa-eye"></i>
@@ -541,7 +540,8 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // Funções de ação
