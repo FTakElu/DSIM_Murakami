@@ -136,12 +136,12 @@ let mockData = {
     alertas: []
 };
 
-// Função para NGINX HTTPS direto (sem proxies)
+// Função para conexão HTTP direto (sem SSL/TLS)
 window.apiRequest = async function(endpoint, options = {}) {
-    // URL HTTPS direta para NGINX proxy no EC2
-    const url = `https://44.213.58.90${endpoint}`;
+    // URL HTTP direta para EC2 (proxy NGINX porta 80)
+    const url = `http://44.213.58.90${endpoint}`;
     
-    console.log(`🌐 NGINX HTTPS Direto: ${options.method || 'GET'} ${url}`);
+    console.log(`🌐 HTTP Direto: ${options.method || 'GET'} ${url}`);
     
     const config = {
         method: options.method || 'GET',
@@ -175,11 +175,11 @@ window.apiRequest = async function(endpoint, options = {}) {
             }
         }
         
-        console.log(`✅ NGINX HTTPS - Sucesso!`);
+        console.log(`✅ HTTP - Sucesso!`);
         return data;
         
     } catch (error) {
-        console.error(`❌ NGINX HTTPS - Falhou:`, error.message);
+        console.error(`❌ HTTP - Falhou:`, error.message);
         
         // Se falhar, usar Mock como fallback
         console.warn('Usando Mock como fallback...');
