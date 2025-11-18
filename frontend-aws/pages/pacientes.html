@@ -422,9 +422,7 @@
 
         // Função para determinar status baseado nos sinais vitais e limites de alerta
         function determinarStatusComAlertas(sinais) {
-            // Se não houver limites, usar padrão antigo
             if (!alertConfigs || Object.keys(alertConfigs).length === 0) {
-                // ...existing code...
                 if (!sinais.oxigenio || !sinais.temperatura || !sinais.batimentos) {
                     return 'normal';
                 }
@@ -438,16 +436,16 @@
             }
 
             // Usar limites reais
-            // Para cada sinal, verifica limites
-            let status = 'normal';
+            let isCritical = false;
+            let isWarning = false;
             // Oxigênio
             if (alertConfigs.oxigenio) {
                 const min = alertConfigs.oxigenio.min;
                 const max = alertConfigs.oxigenio.max;
                 if (sinais.oxigenio < min || sinais.oxigenio > max) {
-                    return 'critical';
+                    isCritical = true;
                 } else if (sinais.oxigenio < min + ((max-min)*0.1) || sinais.oxigenio > max - ((max-min)*0.1)) {
-                    status = 'warning';
+                    isWarning = true;
                 }
             }
             // Temperatura
@@ -455,9 +453,9 @@
                 const min = alertConfigs.temperatura.min;
                 const max = alertConfigs.temperatura.max;
                 if (sinais.temperatura < min || sinais.temperatura > max) {
-                    return 'critical';
+                    isCritical = true;
                 } else if (sinais.temperatura < min + ((max-min)*0.1) || sinais.temperatura > max - ((max-min)*0.1)) {
-                    status = 'warning';
+                    isWarning = true;
                 }
             }
             // Batimentos
@@ -465,12 +463,14 @@
                 const min = alertConfigs.batimentos.min;
                 const max = alertConfigs.batimentos.max;
                 if (sinais.batimentos < min || sinais.batimentos > max) {
-                    return 'critical';
+                    isCritical = true;
                 } else if (sinais.batimentos < min + ((max-min)*0.1) || sinais.batimentos > max - ((max-min)*0.1)) {
-                    status = 'warning';
+                    isWarning = true;
                 }
             }
-            return status;
+            if (isCritical) return 'critical';
+            if (isWarning) return 'warning';
+            return 'normal';
         }
 
 
