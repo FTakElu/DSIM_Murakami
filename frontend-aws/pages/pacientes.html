@@ -318,7 +318,31 @@
 
     <script>
         // Variável para armazenar os pacientes carregados do backend
-        let patients = [];
+    let patients = [];
+    let alertConfigs = {};
+
+        // Função para buscar configurações de alerta do backend
+        async function carregarAlertConfigs() {
+            try {
+                const configs = await apiRequest('/api/configuracao-alertas', { method: 'GET' });
+                // Organizar por tipo de sinal
+                alertConfigs = {};
+                if (Array.isArray(configs)) {
+                    configs.forEach(cfg => {
+                        if (cfg.tipoSinal) {
+                            alertConfigs[cfg.tipoSinal] = {
+                                min: cfg.valorMinimo,
+                                max: cfg.valorMaximo
+                            };
+                        }
+                    });
+                }
+                console.log('Limites de alerta carregados:', alertConfigs);
+            } catch (error) {
+                console.error('Erro ao carregar limites de alerta:', error);
+                alertConfigs = {};
+            }
+        }
 
         // Função para buscar pacientes do backend
         async function carregarPacientes() {
@@ -342,12 +366,9 @@
                 });
                 
                 if (pacientesData && Array.isArray(pacientesData)) {
-                    
-                    // Converter dados do backend para formato usado no frontend
                     patients = pacientesData.map(paciente => {
                         const idade = calcularIdade(paciente.dataNascimento);
                         const sinais = paciente.sinaisVitais || {};
-                        
                         return {
                             id: paciente.id,
                             name: paciente.nome,
@@ -356,10 +377,9 @@
                             heartRate: sinais.batimentos || 0,
                             oxygen: sinais.oxigenio || 0,
                             temperature: sinais.temperatura || 0,
-                            status: determinarStatus(sinais)
+                            status: determinarStatusComAlertas(sinais)
                         };
                     });
-                    
                     console.log('Pacientes carregados:', patients);
                 } else {
                     console.error('Erro ao carregar pacientes');
@@ -400,23 +420,57 @@
             return estados[relacionamento] || relacionamento;
         }
 
-        // Função para determinar status baseado nos sinais vitais
-        function determinarStatus(sinais) {
-            if (!sinais.oxigenio || !sinais.temperatura || !sinais.batimentos) {
+        // Função para determinar status baseado nos sinais vitais e limites de alerta
+        function determinarStatusComAlertas(sinais) {
+            // Se não houver limites, usar padrão antigo
+            if (!alertConfigs || Object.keys(alertConfigs).length === 0) {
+                // ...existing code...
+                if (!sinais.oxigenio || !sinais.temperatura || !sinais.batimentos) {
+                    return 'normal';
+                }
+                if (sinais.oxigenio < 90 || sinais.temperatura > 38.5 || sinais.batimentos > 120 || sinais.batimentos < 50) {
+                    return 'critical';
+                }
+                if (sinais.oxigenio < 95 || sinais.temperatura > 37.5 || sinais.batimentos > 100 || sinais.batimentos < 60) {
+                    return 'warning';
+                }
                 return 'normal';
             }
 
-            // Critérios para status crítico
-            if (sinais.oxigenio < 90 || sinais.temperatura > 38.5 || sinais.batimentos > 120 || sinais.batimentos < 50) {
-                return 'critical';
+            // Usar limites reais
+            // Para cada sinal, verifica limites
+            let status = 'normal';
+            // Oxigênio
+            if (alertConfigs.oxigenio) {
+                const min = alertConfigs.oxigenio.min;
+                const max = alertConfigs.oxigenio.max;
+                if (sinais.oxigenio < min || sinais.oxigenio > max) {
+                    return 'critical';
+                } else if (sinais.oxigenio < min + ((max-min)*0.1) || sinais.oxigenio > max - ((max-min)*0.1)) {
+                    status = 'warning';
+                }
             }
-            
-            // Critérios para status de atenção
-            if (sinais.oxigenio < 95 || sinais.temperatura > 37.5 || sinais.batimentos > 100 || sinais.batimentos < 60) {
-                return 'warning';
+            // Temperatura
+            if (alertConfigs.temperatura) {
+                const min = alertConfigs.temperatura.min;
+                const max = alertConfigs.temperatura.max;
+                if (sinais.temperatura < min || sinais.temperatura > max) {
+                    return 'critical';
+                } else if (sinais.temperatura < min + ((max-min)*0.1) || sinais.temperatura > max - ((max-min)*0.1)) {
+                    status = 'warning';
+                }
             }
-            
-            return 'normal';
+            // Batimentos
+            if (alertConfigs.batimentos) {
+                const min = alertConfigs.batimentos.min;
+                const max = alertConfigs.batimentos.max;
+                if (sinais.batimentos < min || sinais.batimentos > max) {
+                    return 'critical';
+                } else if (sinais.batimentos < min + ((max-min)*0.1) || sinais.batimentos > max - ((max-min)*0.1)) {
+                    status = 'warning';
+                }
+            }
+            return status;
         }
 
 
@@ -737,13 +791,14 @@
 
             console.log('Usuário logado:', usuarioLogado.nome, usuarioLogado.email);
 
-            // Carregar pacientes do backend
+            // Carregar limites de alerta e pacientes
+            await carregarAlertConfigs();
             await carregarPacientes();
             renderPatients();
             updateStats();
-            
             // Atualizar dados periodicamente
             setInterval(async () => {
+                await carregarAlertConfigs();
                 await carregarPacientes();
                 renderPatients();
                 updateStats();
