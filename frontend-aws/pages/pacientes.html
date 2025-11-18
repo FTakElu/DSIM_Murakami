@@ -368,15 +368,20 @@
                 if (pacientesData && Array.isArray(pacientesData)) {
                     patients = pacientesData.map(paciente => {
                         const idade = calcularIdade(paciente.dataNascimento);
-                        const sinais = paciente.sinaisVitais || {};
+                        // garantir que sinais tenha as propriedades corretas
+                        const sinais = {
+                            batimentos: paciente.sinaisVitais?.batimentos ?? paciente.heartRate ?? 0,
+                            oxigenio: paciente.sinaisVitais?.oxigenio ?? paciente.oxygen ?? 0,
+                            temperatura: paciente.sinaisVitais?.temperatura ?? paciente.temperature ?? 0
+                        };
                         return {
                             id: paciente.id,
                             name: paciente.nome,
                             age: idade,
                             room: (paciente.informacaoMedica && paciente.informacaoMedica.quarto) || paciente.quarto || 'N/A',
-                            heartRate: sinais.batimentos || 0,
-                            oxygen: sinais.oxigenio || 0,
-                            temperature: sinais.temperatura || 0,
+                            heartRate: sinais.batimentos,
+                            oxygen: sinais.oxigenio,
+                            temperature: sinais.temperatura,
                             status: determinarStatusComAlertas(sinais)
                         };
                     });
