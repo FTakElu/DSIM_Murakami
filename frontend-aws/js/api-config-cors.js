@@ -135,14 +135,9 @@ let mockData = {
 
 // Função principal com múltiplos proxies CORS e fallback
 window.apiRequest = async function(endpoint, options = {}) {
-    const backends = [
-    { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://3.237.26.213:8080${endpoint}` },
-    { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://3.237.26.213:8080${endpoint}` },
-    { name: 'ThingProxy', url: `https://thingproxy.freeboard.io/fetch/http://3.237.26.213:8080${endpoint}` }
-    ];
-    
-    console.log(`🌐 Tentando conectar ao backend via proxy: ${options.method || 'GET'} ${endpoint}`);
-    
+    // Comunicação direta com backend HTTPS
+    const backendUrl = `https://3.237.26.213${endpoint}`;
+    console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${backendUrl}`);
     const config = {
         method: options.method || 'GET',
         headers: {
@@ -152,43 +147,29 @@ window.apiRequest = async function(endpoint, options = {}) {
         },
         ...options
     };
-
-    // Tentar cada proxy em sequência
-    for (const backend of backends) {
-        try {
-            console.log(`🔄 Tentando ${backend.name}...`);
-            const response = await fetch(backend.url, config);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            
-            let data;
-            const contentType = response.headers.get('content-type');
-            
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                try {
-                    data = JSON.parse(text);
-                } catch {
-                    data = { message: text };
-                }
-            }
-            
-            console.log(`✅ ${backend.name} - Sucesso!`);
-            return data;
-            
-        } catch (error) {
-            console.warn(`❌ ${backend.name} falhou:`, error.message);
-            continue;
+    try {
+        const response = await fetch(backendUrl, config);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
         }
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch {
+                data = { message: text };
+            }
+        }
+        console.log(`✅ Backend - Sucesso!`);
+        return data;
+    } catch (error) {
+        console.error('❌ Falha ao conectar ao backend:', error.message);
+        throw new Error('Não foi possível conectar ao backend');
     }
-    
-    // Se todos os proxies falharem, usar mock
-    console.error('❌ Todos os proxies falharam. Usando Mock como fallback.');
-    throw new Error('Não foi possível conectar ao backend');
 };
 
 // Salvar referência original dos proxies
