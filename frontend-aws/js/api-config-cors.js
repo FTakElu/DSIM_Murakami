@@ -419,7 +419,7 @@ window.API_CONFIG = API_CONFIG;
 // Função helper para aceitar certificado NGINX
 window.aceitarCertificado = function() {
     console.log('🔐 Abrindo página para aceitar certificado...');
-    const newWindow = window.open('https://44.213.58.90/api/usuarios', '_blank');
+    const newWindow = window.open('https://3.237.26.213/api/usuarios', '_blank');
     
     setTimeout(() => {
         console.log('💡 INSTRUÇÕES:');
