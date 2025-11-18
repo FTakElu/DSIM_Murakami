@@ -136,9 +136,9 @@ let mockData = {
 // Função principal com múltiplos proxies CORS e fallback
 window.apiRequest = async function(endpoint, options = {}) {
     const backends = [
-        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://44.213.58.90${endpoint}` },
-        { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://44.213.58.90${endpoint}` },
-        { name: 'ThingProxy', url: `https://thingproxy.freeboard.io/fetch/http://44.213.58.90${endpoint}` }
+    { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://3.237.26.213:8080${endpoint}` },
+    { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://3.237.26.213:8080${endpoint}` },
+    { name: 'ThingProxy', url: `https://thingproxy.freeboard.io/fetch/http://3.237.26.213:8080${endpoint}` }
     ];
     
     console.log(`🌐 Tentando conectar ao backend via proxy: ${options.method || 'GET'} ${endpoint}`);
@@ -424,7 +424,7 @@ window.aceitarCertificado = function() {
     setTimeout(() => {
         console.log('💡 INSTRUÇÕES:');
         console.log('1. Na nova aba, clique "Avançado"');
-        console.log('2. Clique "Continuar para 44.213.58.90 (não seguro)"');
+    console.log('2. Clique "Continuar para 3.237.26.213 (não seguro)"');
         console.log('3. Feche a aba e volte aqui');
         console.log('4. Tente cadastrar/logar novamente');
     }, 2000);
