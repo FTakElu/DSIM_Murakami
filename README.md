@@ -1,613 +1,89 @@
+# 🏥 Sistema de Monitoramento de Pacientes — DSIM Murakami
 
-# 🏥 Sistema de Monitoramento de Pacientes — **DSIM**
-
-> **Dispositivo de Segurança Inteligente para Monitoramento**  
-> Sistema completo de **monitoramento e gerenciamento de pacientes** em ambiente hospitalar com geração automática de sinais vitais.
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Java](https://img.shields.io/badge/Java-17-orange.svg)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen.svg)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
-![Version](https://img.shields.io/badge/version-4.0.0-success.svg)
-![AWS](https://img.shields.io/badge/AWS-Amplify%20%2B%20EC2%20%2B%20RDS-orange.svg)
-![Deploy](https://img.shields.io/badge/deploy-Production%20Active-brightgreen.svg)
+> Dispositivo de Segurança Inteligente para Monitoramento
+> Sistema completo de monitoramento e gerenciamento de pacientes em ambiente hospitalar com geração automática de sinais vitais.
 
 ---
 
-## 👥 **Integrantes do Grupo**
+## 📦 Estrutura do Projeto
+- `aws-setup/README.md`: Scripts e instruções para deploy AWS (EC2, RDS, Amplify)
+- `frontend-aws/README.md`: Frontend para AWS Amplify
+- `src/README.md`: Backend Spring Boot
+- `Diagramas/README.md`: Diagramas de arquitetura e entidades
 
+---
+
+## 🚀 Como Implantar o Projeto (Passo a Passo)
+
+### 1. **Pré-requisitos**
+- Java 21+
+- Maven 3.6+
+- Conta AWS (EC2, RDS, Amplify)
+- Git
+
+### 2. **Clonar o Repositório**
+```bash
+# Clone o projeto
+https://github.com/FTakElu/DSIM_Murakami.git
+cd DSIM_Murakami
+```
+
+### 3. **Configurar AWS**
+- Siga o passo a passo em `aws-setup/README.md` para:
+  - Criar banco RDS PostgreSQL
+  - Criar instância EC2
+  - Configurar backend
+  - Deploy do frontend no Amplify
+
+### 4. **Deploy Backend**
+- Compile e envie o backend para EC2:
+```bash
+cd aws-setup
+./03-deploy-backend.sh
+```
+- O backend será acessível em:
+  - `http://<IP-EC2>:8080/api`
+
+### 5. **Deploy Frontend**
+- Configure o Amplify conforme instruções em `frontend-aws/README.md`
+- O frontend será acessível em:
+  - `https://main.<dominio>.amplifyapp.com`
+
+### 6. **Acessar o Sistema**
+- Frontend: `https://main.d2jxbir2dzq8xg.amplifyapp.com`
+- Backend: `http://3.237.26.213:8080/api`
+- Banco RDS: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
+
+### 7. **Credenciais Padrão**
+- Email: `admin@dsim.com`
+- Senha: `admin123`
+
+---
+
+## 🛠️ Solução de Problemas
+- Verifique logs do backend via SSH na EC2
+- Aceite certificado HTTPS self-signed se necessário
+- Consulte os READMEs dos subdiretórios para detalhes específicos
+
+---
+
+## 📁 Subdiretórios
+- [`aws-setup/`](aws-setup/README.md): Scripts de automação AWS
+- [`frontend-aws/`](frontend-aws/README.md): Frontend para Amplify
+- [`src/`](src/README.md): Backend Spring Boot
+- [`Diagramas/`](Diagramas/README.md): Diagramas do projeto
+
+---
+
+## 👥 Integrantes
 | Nome                                |
-| ----------------------------------- | 
-| **Arthur Barboza Mostaço**          |
-| **Flávia Alessandra Elugo da Silva** | 
-| **Sara Maria Falcão**               |
-| **Stephany Caroline Carvalho**      | 
+| ----------------------------------- |
+| Arthur Barboza Mostaço              |
+| Flávia Alessandra Elugo da Silva    |
+| Sara Maria Falcão                   |
+| Stephany Caroline Carvalho          |
 
 ---
 
-## 🚀 **EXECUÇÃO RÁPIDA (PROFESSOR)**
-
-### **📋 Pré-requisitos**
-- ☕ **Java 21+** instalado
-- 🔧 **Maven 3.6+** instalado
-
-### **⚡ Execução em 3 passos**
-```bash
-# 1. Navegue até a pasta do projeto
-cd teste
-
-# 2. Execute o sistema
-mvn spring-boot:run
-
-# 3. Aguarde a mensagem de inicialização e acesse:
-# 🌐 http://localhost:8080
-```
-
-### **🔑 Credenciais de Acesso**
-- **Email**: `admin@dsim.com`
-- **Senha**: `admin123`
-
-### **🔑 Credenciais PostgreSQL RDS (Produção)**
-- **Host**: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
-- **Usuário**: `dsim_admin`
-- **Senha**: `DSIM2025!Postgres`
-- **Banco**: `dsim_clean` ← **BANCO ATUAL EM USO**
-
-### **🛠️ Solução de Problemas**
-Se der erro de porta ocupada:
-```bash
-# Windows - Mata processo na porta 8080
-taskkill /F /PID <número_do_processo>
-
-# Ou execute o script automático (se existir)
-start-server.bat
-```
-
----
-
-## 🌐 **SISTEMA EM PRODUÇÃO (AWS)**
-
-### **🚀 URLs de Acesso**
-- **🌐 Frontend (Amplify)**: https://main.dd3d0c3znbvkh.amplifyapp.com
-- **🖥️ Backend API (EC2)**: http://54.82.30.167:8080
-- **📊 Arquitetura**: Frontend HTTPS + Backend HTTP + PostgreSQL RDS
-
-### **✅ STATUS**: **SISTEMA OPERACIONAL EM PRODUÇÃO**
-- ✅ **Backend**: Spring Boot ativo no EC2 IP 54.82.30.167:8080
-- ✅ **Banco**: PostgreSQL RDS `dsim_clean` conectado e operacional
-- ✅ **Geração Automática**: Sinais vitais sendo gerados a cada minuto
-- ✅ **APIs**: Todas funcionando (usuários, pacientes, login, sinais vitais)
-- ✅ **CORS**: Configurado para integração frontend-backend
-- ✅ **Logs**: CloudWatch ativo com monitoramento completo
-- ⚠️ **Sessão AWS**: Válida por 4h, requer procedimento de nova sessão
-
-### **🏗️ Arquitetura AWS**
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────────┐
-│   AWS AMPLIFY   │───▶│  AWS API GATEWAY │───▶│     AWS EC2     │───▶│   PostgreSQL RDS    │
-│   (Frontend)    │    │   (Proxy HTTPS)  │    │   (Backend)     │    │   (Produção)        │
-│     HTTPS       │    │ Resolve Mixed    │    │  IP: 54.82.30.167  │    │  Auto Sinais Vitais │
-│  Static Hosting │    │    Content       │    │   Java 17       │    │  dsim_postgres      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────────┘
-          │                       │                       │                       │
-          │                       │                       │                       │
-      📱 Frontend              🌉 API Gateway         🖥️ Backend             🗄️ Database
-   Bootstrap + CSS         HTTPS Proxy Reverso    Spring Boot 3.1.5      PostgreSQL 13+
-   Responsive Design       CORS Habilitado         Maven 3.8.8            HikariCP Pool
-```
-
-### **⚙️ Recursos em Produção**
-- ✅ **API Gateway HTTPS**: Proxy reverso que resolve Mixed Content
-- ✅ **Sistema de Geração Automática**: Sinais vitais criados automaticamente
-- ✅ **Backend Robusto**: Spring Boot com conexão HikariCP ao PostgreSQL
-- ✅ **Frontend Responsivo**: AWS Amplify com HTTPS automático
-- ✅ **CORS Configurado**: Via API Gateway para comunicação segura
-- ✅ **Logs CloudWatch**: Monitoramento completo da aplicação
-- ✅ **Auto-Deploy**: GitHub → Amplify integração automática
-
-### **🔧 Configurar API Gateway**
-Para resolver o problema Mixed Content definitivamente:
-1. 📖 Consulte: `CONFIGURAR-API-GATEWAY.md`
-2. 🚀 Configure API Gateway em ~15 minutos
-3. 🔄 Atualize frontend para usar URL HTTPS
-4. ✅ Remova dependência do sistema mock
-
----
-
-## 🔄 **NOVA SESSÃO AWS ACADEMY - PROCEDIMENTO OBRIGATÓRIO**
-
-### **⚠️ IMPORTANTE: Limitação de 4 Horas**
-A AWS Academy limita as sessões a **4 horas**. Quando a sessão expira:
-- ✅ **RDS PostgreSQL**: Mantém dados (persistente)
-- ❌ **EC2 Instance**: Para automaticamente
-- 🔄 **IP Público**: Muda a cada nova sessão
-
-### **🚀 Procedimento para Nova Sessão (~ 10 minutos)**
-
-#### **1️⃣ Obter Novo IP do EC2**
-```bash
-# 1. Inicie nova sessão AWS Academy
-# 2. Vá para EC2 Dashboard
-# 3. Start sua instância EC2
-# 4. Anote o NOVO IP público (ex: 3.85.123.45)
-```
-
-#### **2️⃣ Atualizar Configurações Frontend**
-```bash
-# Arquivo: frontend-aws/js/api-config-cors.js
-const API_BASE_URL = 'https://NOVO-IP-AQUI:8080';  # ← Trocar pelo novo IP
-```
-
-#### **3️⃣ Atualizar CORS Backend**
-```yaml
-# Arquivo: src/main/resources/application-prod.yml
-cors:
-  allowed-origins: 
-    - https://main.dd3d0c3znbvkh.amplifyapp.com
-    - https://NOVO-IP-AQUI                          # ← Trocar pelo novo IP
-    - https://ec2-NOVO-HOSTNAME.compute-1.amazonaws.com  # ← Atualizar hostname
-```
-
-#### **4️⃣ Recompilar e Transferir**
-```bash
-# No Windows (pasta do projeto):
-mvn package -DskipTests
-
-# Transferir JAR (trocar NOVO-IP e caminho-da-chave):
-scp -i "dsim-keypair-XXXXXXXX.pem" target/sistema-monitoramento-pacientes-1.0.0-SNAPSHOT.jar ec2-user@NOVO-IP:/home/ec2-user/app.jar
-```
-
-#### **5️⃣ Iniciar Aplicação no EC2**
-```bash
-# SSH no EC2 (trocar NOVO-IP):
-ssh -i "dsim-keypair-XXXXXXXX.pem" ec2-user@NOVO-IP
-
-# Instalar PostgreSQL client (se necessário):
-sudo amazon-linux-extras install postgresql13
-
-# Iniciar aplicação:
-nohup java -jar app.jar --spring.profiles.active=prod > startup.log 2>&1 &
-
-# Verificar logs:
-tail -f startup.log
-
-# Testar APIs:
-curl http://localhost:8080/api/pacientes
-```
-
-#### **6️⃣ Atualizar Amplify (Opcional)**
-```bash
-# Se necessário, fazer push das alterações:
-git add .
-git commit -m "Atualizar IP para nova sessão AWS Academy"
-git push origin main
-```
-
-### **📋 Checklist Rápida Nova Sessão**
-- [ ] ✅ EC2 iniciado e IP anotado
-- [ ] 🔄 api-config-cors.js atualizado
-- [ ] 🔧 application-prod.yml CORS atualizado  
-- [ ] 📦 Maven package executado
-- [ ] 🚀 JAR transferido via SCP
-- [ ] ⚡ PostgreSQL client instalado no EC2
-- [ ] 🎯 Aplicação iniciada com `nohup`
-- [ ] ✅ APIs testadas e funcionando
-
-### **🎯 Tempo Estimado: 8-12 minutos**
-
-**💡 Dica**: Salve o IP anterior em comentário para facilitar a troca:
-```javascript
-// IPs Anteriores: 54.82.30.167, 3.85.123.45
-const API_BASE_URL = 'https://18.207.45.123:8080';  // IP Atual
-```
-
-### **🤖 Scripts Automáticos para Produtividade**
-
-#### **🪟 Windows - Script de Deploy Rápido**
-```bash
-# Execute na pasta do projeto:
-deploy-nova-sessao.bat
-```
-- ✅ **Automatiza**: Atualização frontend + compilação Maven
-- ⚡ **Tempo**: ~2 minutos
-- 📁 **Arquivo**: `deploy-nova-sessao.bat` (raiz do projeto)
-
-#### **🐧 EC2 - Script de Inicialização**
-```bash
-# No EC2, após transferir JAR e script:
-chmod +x start-dsim-ec2.sh
-./start-dsim-ec2.sh
-```
-- ✅ **Automatiza**: PostgreSQL client + inicialização app + verificações
-- ⚡ **Tempo**: ~30 segundos  
-- 📁 **Arquivo**: `start-dsim-ec2.sh` (transferir para EC2)
-
-#### **📋 Fluxo Completo com Scripts**
-```bash
-# 1. Windows (pasta do projeto):
-deploy-nova-sessao.bat                    # ← Input: Novo IP
-
-# 2. Transferir arquivos:
-scp -i "chave.pem" target/*.jar start-dsim-ec2.sh ec2-user@NOVO-IP:/home/ec2-user/
-
-# 3. EC2 (execução única):
-ssh -i "chave.pem" ec2-user@NOVO-IP "./start-dsim-ec2.sh"
-```
-
-**⏱️ Tempo Total com Scripts: ~4 minutos** (vs 10-12 minutos manual)
-
-### **🔍 Troubleshooting Comum - Nova Sessão**
-
-#### **❌ Problema: "Port 8080 already in use"**
-```bash
-# EC2 - Eliminar processos Java:
-pkill -f java
-sudo netstat -tlnp | grep :8080    # Verificar porta livre
-```
-
-#### **❌ Problema: "Unable to access jarfile"**
-```bash
-# Verificar se JAR foi transferido:
-ls -la ~/app.jar
-file ~/app.jar                     # Deve mostrar "Java archive"
-```
-
-#### **❌ Problema: Conexão RDS falha**
-```bash
-# Testar conexão manual:
-PGPASSWORD="DSIM2025!Postgres" psql -h dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com -U dsim_admin -d dsim_clean -c "SELECT 1;"
-```
-
-#### **❌ Problema: APIs retornam erro 500**
-```bash
-# Verificar logs detalhados:
-tail -50 ~/startup.log | grep -i error
-```
-
-#### **✅ Verificação Final - Sistema OK**
-```bash
-# Todos devem retornar HTTP 200:
-curl -I http://localhost:8080/api/usuarios
-curl -I http://localhost:8080/api/pacientes
-curl -I http://localhost:8080/api/configuracao-alertas
-```
-
----
-
-## 📚 **Contexto Acadêmico - LP2**
-
-Este projeto foi desenvolvido para a disciplina **Linguagem de Programação 2 (LP2)** como trabalho acadêmico, com foco no aprendizado de:
-
-### 🎯 **Objetivos Pedagógicos**
-- **Programação Orientada a Objetos** com Java
-- **Arquitetura MVC** (Model-View-Controller)  
-- **Desenvolvimento Full-Stack** com integração frontend-backend
-- **Banco de Dados Relacionais** com PostgreSQL
-- **Boas práticas de desenvolvimento** e versionamento
-
-### 📋 **Escopo de Entrega - Acordo Acadêmico**
-Como acordado em sala de aula, para a disciplina de **LP2** será entregue:
-- ✅ **Diagramas UML** completos (Caso de Uso, Classes, Arquitetura)
-- ✅ **Código-fonte** funcional e documentado
-- ✅ **Sistema operacional** demonstrável
-
-**⚠️ Observação**: Recursos avançados de infraestrutura AWS e deploy em produção foram implementados como diferencial, mas não são obrigatórios para LP2. Estes recursos eram originalmente destinados apenas para alunos que cursam **Engenharia de Software 2**.
-
-### 👥 **Equipe de Desenvolvimento**
-- **Arthur Barboza Mostaço**
-- **Flávia Alessandra Elugo da Silva** 
-- **Sara Maria Falcão**
-- **Stephany Caroline Carvalho**
-
----
-
-## 📅 **Cronograma de Desenvolvimento**
-
-### ✅ **FASE 1 - 28/10/2025 (CONCLUÍDA)**
-- ✅ **Caso de Uso**: Cadastrar Paciente (`/pages/adicionar-paciente.html`)
-- ✅ **Caso de Uso**: Dashboard de Pacientes (`/pages/pacientes.html`) 
-- ✅ **Repositório**: Criado no GitHub
-- ✅ **Diagramas**: Caso de uso, classe e arquitetura
-
-### ✅ **FASE 2 - 04/11/2025 (CONCLUÍDA)**
-- ✅ **Caso de Uso**: Gerenciar Usuários
-- ✅ **Caso de Uso**: Detalhes de Paciente
-- ✅ **Frontend**: Interface aprimorada e responsiva
-- ✅ **Sistema de Alertas**: Configuração personalizada
-
-### 🚀 **FASE 3 - 11/11/2025 (CONCLUÍDA)**
-- ✅ **Código Organizado**: CSS centralizado e componentes reutilizáveis
-- ✅ **Navbar Universal**: Sistema de navegação unificado
-- ✅ **Deploy AWS**: Frontend no Amplify + Backend no EC2 + RDS PostgreSQL
-- ✅ **Produção Completa**: Sistema 100% operacional em AWS
-- ✅ **Integração Full-Stack**: Frontend HTTPS ↔ Backend HTTP ↔ PostgreSQL RDS
-- ✅ **Geração Automática**: Sistema de sinais vitais automático implementado
-- ✅ **Documentação**: README atualizado com configurações reais de produção
-
----
-
-## 📋 **Sobre o Projeto - DSIM**
-
-O **DSIM (Dispositivo de Segurança Inteligente para Monitoramento)** é uma aplicação web completa para **monitoramento de sinais vitais de pacientes** em ambiente hospitalar. Desenvolvido especificamente para a disciplina **LP2**, o sistema demonstra **conceitos fundamentais de programação orientada a objetos** e **arquitetura de software moderna**.
-
-### 🎯 **Problema a ser Resolvido**
-- **Monitoramento manual** de sinais vitais é ineficiente e propenso a erros
-- **Falta de alertas automáticos** para situações críticas de pacientes  
-- **Documentação em papel** dificulta o acesso rápido a informações médicas
-- **Ausência de histórico digitalizado** dos sinais vitais
-
-### 💡 **Solução Implementada**
-- **Dashboard interativo** para visualização de todos os pacientes
-- **Sistema de alertas configuráveis** por tipo de sinal vital
-- **Geração automática de dados** simulando dispositivos IoT
-- **Interface responsiva** acessível de qualquer dispositivo
-- **Banco de dados robusto** para persistência de informações médicas
-
-### 🎓 **Conceitos LP2 Aplicados**
-- **Encapsulamento**: Classes modelo com getters/setters e validações
-- **Herança**: Estrutura hierárquica de entidades médicas
-- **Polimorfismo**: Interfaces de repositório com implementações específicas
-- **Abstração**: Camadas de serviço abstraindo regras de negócio
-- **SOLID**: Princípios aplicados na arquitetura de classes
-- **MVC**: Separação clara entre Model, View e Controller
-
-### ✨ **Características Principais**
-
-* 🎨 **Interface Moderna e Responsiva** — Layout limpo, intuitivo e adaptável a qualquer dispositivo
-* ⚙️ **Arquitetura Full-Stack AWS** — Integração completa Frontend (Amplify) + Backend (EC2) + Database (RDS)
-* 📊 **Geração Automática de Sinais Vitais** — Sistema inteligente que gera dados realistas a cada minuto
-* � **Monitoramento em Tempo Real** — Temperatura, batimentos cardíacos e oxigenação atualizados automaticamente
-* 👥 **Gestão Completa de Usuários** — CRUD completo com autenticação segura e criptografia BCrypt
-* 🔔 **Sistema de Alertas Configurável** — Personalização por paciente e prioridade com notificações automáticas
-* �️ **PostgreSQL RDS em Produção** — Banco de dados robusto na nuvem AWS com alta disponibilidade
-* 🔐 **Segurança Empresarial** — CORS configurado, HTTPS no frontend e validações rigorosas
-
----
-
-## 🚀 **Funcionalidades Implementadas**
-
-### 🏠 **Dashboard Principal**
-- ✅ **Painel interativo** com estatísticas em tempo real
-- ✅ **Cards de pacientes** com sinais vitais atualizados
-- ✅ **Indicadores visuais** (normal, atenção, crítico)
-- ✅ **Navegação intuitiva** entre seções
-
-### 🔐 **Sistema de Autenticação**
-- ✅ **Login seguro** com validação de credenciais
-- ✅ **Cadastro simplificado** de usuários
-- ✅ **Criptografia BCrypt** para senhas
-- ✅ **Validação de email único**
-
-### 👥 **Gestão de Usuários**
-- ✅ **CRUD completo**: criar, visualizar, editar, excluir
-- ✅ **Busca e filtros** por nome e status
-- ✅ **Ativação/Desativação** de contas
-- ✅ **Interface responsiva** com modais
-
-### 🏥 **Gestão de Pacientes**
-- ✅ **Cadastro completo** (dados pessoais, médicos, emergência)
-- ✅ **Campo deficiência** nas informações médicas
-- ✅ **Edição preservando dados** (correção de bug de sinais vitais zerados)
-- ✅ **Exclusão com dupla confirmação** (correção de bug de exclusão)
-
-### 🔔 **Sistema de Alertas**
-- ✅ **Configuração por paciente** com limites personalizados
-- ✅ **Múltiplos tipos**: oxigenação, temperatura, batimentos
-- ✅ **Níveis de prioridade**: baixa, média, alta, crítica
-- ✅ **Interface completa** para criação, edição e exclusão
-- ✅ **Validações robustas** de valores
-
-### 📊 **Monitoramento Avançado**
-- ✅ **Geração Automática de Dados** — Sistema de sinais vitais que gera valores realistas automaticamente
-- ✅ **Atualização em Tempo Real** — Interface se atualiza automaticamente sem necessidade de refresh
-- ✅ **Feedback Visual Dinâmico** baseado em status dos pacientes (normal, atenção, crítico)
-- ✅ **Alertas Automáticos** conforme configurações personalizadas por paciente
-- ✅ **Persistência PostgreSQL** — Todos os dados são salvos permanentemente na nuvem AWS RDS
-
----
-
-## 🛠️ **Tecnologias Utilizadas**
-
-### ⚙️ **Backend**
-| Tecnologia | Versão | Função |
-|------------|--------|---------|
-| ☕ **Java** | 17 | Linguagem principal |
-| 🌱 **Spring Boot** | 3.1.5 | Framework web |
-| 📊 **Spring Data JPA** | 3.1.5 | Persistência |
-| 🌐 **Spring Web** | 3.1.5 | APIs REST |
-| 🔐 **Spring Security** | BCrypt | Criptografia |
-| 🐘 **PostgreSQL** | 13+ | Banco de dados produção (AWS RDS) |
-| 🗃️ **H2 Database** | Embutido | Banco desenvolvimento (local) |
-| 📦 **Lombok** | 1.18.30 | Redução de código |
-| 🔧 **Maven** | 3.8.8 | Build e dependências |
-| ⚡ **HikariCP** | - | Pool de conexões PostgreSQL |
-
-### 💻 **Frontend**
-| Tecnologia | Versão | Função |
-|------------|--------|---------|
-| 🌐 **HTML5** | Padrão | Estrutura |
-| 🎨 **CSS3** | Padrão | Estilização moderna |
-| ⚡ **JavaScript** | ES2020+ | Interatividade |
-| 📱 **Bootstrap** | 5.3.0 | Framework responsivo |
-| 🎯 **Font Awesome** | 6.4.0 | Ícones |
-| 📖 **Google Fonts** | Inter | Tipografia |
-
-### ☁️ **Tecnologias AWS (Produção)**
-| Tecnologia | Versão | Descrição |
-|------------|--------|-----------|
-| ☁️ **AWS Amplify** | - | Hospedagem frontend com CI/CD automático via GitHub |
-| 🖥️ **AWS EC2** | t3.micro | Servidor backend Amazon Linux 2023 (IP: 54.82.30.167) |
-| 🐘 **AWS RDS PostgreSQL** | 13+ | Banco de dados gerenciado (dsim-postgres-20251109083108...) |
-| 🔐 **HTTPS/SSL** | TLS 1.3 | Certificado automático AWS (frontend) |
-| 📊 **CloudWatch** | - | Logs e monitoramento completo da aplicação |
-| 🌐 **CORS** | - | Comunicação segura HTTPS frontend → HTTP backend |
-| 🔄 **Auto-Deploy** | - | GitHub push → Amplify deploy automático |
-
----
-
-## 📁 **Estrutura do Projeto**
-
-```
-teste/
-├── 📂 src/main/java/teste/
-│   ├── 🎯 controller/          # Controladores REST
-│   ├── 🏗️ model/              # Entidades JPA
-│   ├── 📊 repository/          # Repositórios de dados
-│   ├── ⚙️ service/            # Lógica de negócio
-│   └── 🔧 config/             # Configurações (CORS, segurança)
-├── 📂 src/main/resources/
-│   ├── 📄 application.yml     # Configurações locais (H2)
-│   ├── 📄 application-prod.yml # Configurações produção (PostgreSQL)
-│   └── 📊 data.sql           # Dados iniciais (usuário admin)
-├── 📂 src/main/webapp/view/   # Frontend local
-│   ├── 🎨 css/               # Estilos centralizados
-│   ├── ⚡ js/                # Scripts reutilizáveis
-│   └── 📄 pages/             # Páginas HTML
-├── 📂 Diagramas/             # Documentação técnica UML
-├── 📋 pom.xml               # Dependências Maven
-└── 📋 README.md             # Este arquivo (atualizado)
-```
----
-
-## 📊 **Acesso ao Banco**
-
-### **🏠 Desenvolvimento (Local)**
-Para inspecionar dados durante desenvolvimento:
-- **URL**: http://localhost:8080/h2-console
-- **JDBC URL**: `jdbc:h2:mem:dsimdb`
-- **Usuário**: `dsim`
-- **Senha**: (vazio)
-
-### **☁️ Produção (AWS RDS PostgreSQL)**
-Banco de dados em produção:
-- **Host**: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
-- **Porta**: `5432`
-- **Banco**: `dsim_clean` ← **BANCO ATUAL**
-- **Usuário**: `dsim_admin`
-- **Senha**: `DSIM2025!Postgres`
-- **Status**: ✅ Dados persistentes (2 pacientes, 3 usuários, sinais vitais automáticos)
-
----
-
-## 🔧 **Comandos Úteis**
-
-```bash
-# 🚀 Executar aplicação
-mvn spring-boot:run
-
-# 🧹 Limpar e compilar
-mvn clean compile  
-
-# 📦 Gerar JAR
-mvn package -DskipTests
-
-# ⚡ Compilação rápida
-mvn compile
-
-# 🔍 Debug completo
-mvn spring-boot:run -X
-
-# 💀 Matar processo (Windows)
-taskkill /F /IM java.exe
-```
-
----
-
-## 🧪 **Dados de Teste**
-
-O sistema inicializa automaticamente com:
-
-### 👤 **Usuários**
-- **Admin**: `admin@dsim.com` | `admin123`
-
-### 🏥 **Pacientes**
-- **João Silva** (Masculino, sinais estáveis) - Dados criados automaticamente pelo sistema
-- **Sistema Automático** gera sinais vitais realistas para todos os pacientes a cada minuto
-
-### **📊 Monitoramento Atual**
-- ✅ **Temperatura**: 36.5°C - 37.5°C (normal)
-- ✅ **Batimentos**: 70-100 bpm (normal)  
-- ✅ **Oxigenação**: 95%-100% (normal)
-- 🔄 **Atualização**: Automática a cada 60 segundos
-
----
-
-## 📱 **URLs Principais**
-
-| Funcionalidade | URL |
-|----------------|-----|
-| 🏠 **Início** | `http://localhost:8080/` |
-| 📊 **Dashboard** | `http://localhost:8080/pages/pacientes.html` |
-| 👥 **Usuários** | `http://localhost:8080/pages/usuarios.html` |
-| ➕ **Novo Paciente** | `http://localhost:8080/pages/adicionar-paciente.html` |
-| 🔔 **Alertas** | `http://localhost:8080/pages/configurar-alertas.html` |
-| 🔐 **Login** | `http://localhost:8080/pages/login.html` |
-
----
-
-## 📝 **Status do Projeto**
-
-### 🎯 **PROJETO COMPLETO E OPERACIONAL EM PRODUÇÃO** ✅
-
-- ✅ **Sistema Completamente Funcional** em AWS (Amplify + EC2 + RDS)
-- ✅ **Geração Automática de Dados** — Sinais vitais gerados automaticamente a cada minuto
-- ✅ **Backend Robusto** — Spring Boot conectado ao PostgreSQL RDS com HikariCP
-- ✅ **Frontend Responsivo** — AWS Amplify com HTTPS e deploy automático via GitHub
-- ✅ **Banco de Dados Persistente** — PostgreSQL RDS 13+ com dados permanentes
-- ✅ **Monitoramento CloudWatch** — Logs e métricas em tempo real
-- ✅ **CORS Configurado** — Comunicação segura entre frontend HTTPS e backend HTTP
-- ✅ **Documentação Atualizada** — README com todas as configurações reais de produção
-
----
-
-## 🚀 **Como Fazer Deploy**
-
-### **Frontend (AWS Amplify)**
-```bash
-# 1. O deploy é automático via GitHub
-# 2. Cada push na branch main dispara novo deploy
-# 3. Amplify detecta automaticamente o amplify.yml
-# 4. Build e deploy em ~3 minutos
-```
-
-### **Backend (AWS EC2)**
-```bash
-# 1. SSH na instância EC2 com a nova chave
-ssh -i "dsim-keypair-20251109083108.pem" ec2-user@54.82.30.167
-
-# 2. Verificar se aplicação está rodando
-sudo ps aux | grep java
-
-# 3. Ver logs em tempo real
-tail -f nohup.out
-
-# 4. Restart se necessário
-pkill java && nohup mvn spring-boot:run > nohup.out 2>&1 &
-```
-
-### **Configuração Completa**
-1. **Frontend**: Alterar `API_BASE_URL` em `js/api-config-cors.js` para `http://54.82.30.167:8080`
-2. **Backend**: CORS já configurado para URL do Amplify
-3. **PostgreSQL**: RDS conectado automaticamente
-4. **Integração**: Sistema testado e funcionando frontend ↔ backend ↔ database
-
-### **🔍 Verificação do Sistema**
-```bash
-# Testar API backend diretamente
-curl http://54.82.30.167:8080/api/usuarios
-
-# Verificar conexão PostgreSQL
-curl http://54.82.30.167:8080/api/pacientes
-
-# Status da aplicação Spring Boot
-curl http://54.82.30.167:8080/actuator/health
-```
-
----
-
-## 📄 **Licença**
-
-Este projeto é distribuído sob a licença [**MIT**](https://opensource.org/licenses/MIT).
-
----
+## 📜 Licença
+MIT

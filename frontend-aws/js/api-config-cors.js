@@ -3,14 +3,11 @@
 
 const API_CONFIG = {
     // Proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
-    BASE_URL: 'https://api.allorigins.win/raw?url=http://44.213.58.90:8080',
+  BASE_URL: 'https://api.allorigins.win/raw?url=http://3.237.26.213:8080',
+    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://3.237.26.213:8080',
+    DIRECT_HTTP: 'http://3.237.26.213:8080',  // Para uso local/desenvolvimento
     
-    // URLs backup
-    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://44.213.58.90:8080',
-    DIRECT_HTTP: 'http://44.213.58.90:8080',  // Para uso local/desenvolvimento
-    
-    // URLs HTTP removidas para evitar Mixed Content
-    // FALLBACK_URL: 'http://54.82.30.167:8080', // REMOVIDO
+  
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
