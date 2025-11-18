@@ -325,12 +325,13 @@
         async function carregarAlertConfigs() {
             try {
                 const configs = await apiRequest('/api/configuracao-alertas', { method: 'GET' });
-                // Organizar por tipo de sinal
+                // Organizar por tipo de sinal, padronizando para minúsculo
                 alertConfigs = {};
                 if (Array.isArray(configs)) {
                     configs.forEach(cfg => {
                         if (cfg.tipoSinal) {
-                            alertConfigs[cfg.tipoSinal] = {
+                            const tipo = cfg.tipoSinal.toLowerCase();
+                            alertConfigs[tipo] = {
                                 min: cfg.valorMinimo,
                                 max: cfg.valorMaximo
                             };
