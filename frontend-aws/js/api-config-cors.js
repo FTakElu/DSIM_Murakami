@@ -3,11 +3,11 @@
 
 const API_CONFIG = {
     // Proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
-    BASE_URL: 'https://api.allorigins.win/raw?url=http://54.82.30.167:8080',
+    BASE_URL: 'https://api.allorigins.win/raw?url=http://44.213.58.90:8080',
     
     // URLs backup
-    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://54.82.30.167:8080',
-    DIRECT_HTTP: 'http://54.82.30.167:8080',  // Para uso local/desenvolvimento
+    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://44.213.58.90:8080',
+    DIRECT_HTTP: 'http://44.213.58.90:8080',  // Para uso local/desenvolvimento
     
     // URLs HTTP removidas para evitar Mixed Content
     // FALLBACK_URL: 'http://54.82.30.167:8080', // REMOVIDO
@@ -420,7 +420,7 @@ window.aceitarCertificado = function() {
     setTimeout(() => {
         console.log('💡 INSTRUÇÕES:');
         console.log('1. Na nova aba, clique "Avançado"');
-        console.log('2. Clique "Continuar para 54.82.30.167 (não seguro)"');
+        console.log('2. Clique "Continuar para 44.213.58.90 (não seguro)"');
         console.log('3. Feche a aba e volte aqui');
         console.log('4. Tente cadastrar/logar novamente');
     }, 2000);

@@ -41,7 +41,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update  # Produção: update para criar tabelas automaticamente na primeira vez
+      ddl-auto: create  # Cria tabelas automaticamente na primeira execução
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     
@@ -55,6 +55,14 @@ spring:
           fetch_size: 50
         order_inserts: true
         order_updates: true
+    defer-datasource-initialization: true  # Aguarda criação das tabelas
+
+  # ============================================
+  # SQL Initialization - DESABILITADO TEMPORARIAMENTE
+  # ============================================
+  sql:
+    init:
+      mode: never  # Desabilitado - dados serão criados via DadosIniciais.java
 
   # ============================================
   # Jackson - JSON Serialization

@@ -1,0 +1,28 @@
+# Arquivos de configuração gerados
+*.env
+rds-config.env
+ec2-config.env
+amplify-config.txt
+
+# Chaves SSH
+*.pem
+*.key
+
+# Arquivos de log
+*.log
+application.log
+
+# Arquivos temporários
+ec2-user-data.sh
+application-production.yml
+
+# Backups
+*.backup
+*.bak
+
+# Arquivos do Windows
+Thumbs.db
+desktop.ini
+
+# Arquivos do Mac
+.DS_Store

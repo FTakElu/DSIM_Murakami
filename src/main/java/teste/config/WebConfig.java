@@ -13,16 +13,17 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOriginPatterns(
-                        "https://main.dblah84pn391d.amplifyapp.com",
-                        "https://main.dd3d0c3znbvkh.amplifyapp.com",
+                        "https://main.d2jxbir2dzq8xg.amplifyapp.com",
                         "https://*.amplifyapp.com",
-                        "https://ec2-54-82-30-167.compute-1.amazonaws.com",
-                        "https://54.82.30.167",
+                        "https://44.213.58.90",
+                        "http://44.213.58.90",
                         "http://localhost:*",
                         "http://127.0.0.1:*"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowCredentials(true);
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 
     @Override

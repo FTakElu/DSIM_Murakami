@@ -323,17 +323,22 @@
         // Função para buscar pacientes do backend
         async function carregarPacientes() {
             try {
-                // Obter usuário logado do sessionStorage
-                const usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado'));
+                // Obter usuário logado do localStorage (corrigido)
+                const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
                 if (!usuarioLogado || !usuarioLogado.email) {
                     console.error('Usuário não encontrado. Redirecionando para login...');
                     window.location.href = 'login.html';
                     return;
                 }
 
+                console.log('🔍 Carregando pacientes para:', usuarioLogado.email);
+
                 // Filtrar pacientes por usuário logado
                 const pacientesData = await apiRequest(`/api/pacientes?usuarioEmail=${encodeURIComponent(usuarioLogado.email)}`, {
-                    method: 'GET'
+                    method: 'GET',
+                    headers: {
+                        'X-Usuario-Email': usuarioLogado.email
+                    }
                 });
                 
                 if (pacientesData && Array.isArray(pacientesData)) {
@@ -601,26 +606,33 @@
                 return;
             }
 
+            console.log('🗑️ Excluindo paciente ID:', id);
+
             try {
                 const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
-                const data = await apiRequest(`/api/pacientes/${id}`, {
+                if (!usuarioLogado || !usuarioLogado.email) {
+                    alert('Erro: Usuário não autenticado');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await apiRequest(`/api/pacientes/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'X-Usuario-Email': usuarioLogado.email
+                        'X-Usuario-Email': usuarioLogado.email,
+                        'Content-Type': 'application/json'
                     }
                 });
 
-                if (data) {
-                    alert('Paciente excluído com sucesso!');
-                    await carregarPacientes();
-                    renderPatients();
-                    updateStats();
-                } else {
-                    alert('Erro ao excluir paciente. Tente novamente.');
-                }
+                console.log('✅ Paciente excluído:', response);
+
+                alert('Paciente excluído com sucesso!');
+                await carregarPacientes();
+                renderPatients();
+                updateStats();
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao conectar com o servidor. Tente novamente.');
+                console.error('❌ Erro ao excluir:', error);
+                alert('Erro ao excluir paciente: ' + error.message);
             }
         }
 
@@ -650,42 +662,53 @@
                     instagram: null
                 },
                 informacaoMedica: {
-                        tipoSangue: data.bloodType || null,
-                        deficiencia: data.deficiencia || null,
-                        problemasEspecificos: data.medicalConditions || null
-                    },
+                    tipoSangue: data.bloodType || null,
+                    deficiencia: data.medicalConditions || null,
+                    problemasEspecificos: data.allergies || null
+                },
                 sinaisVitais: {
                     oxigenio: parseFloat(data.oxygen) || 98.0,
                     temperatura: parseFloat(data.temperature) || 36.5,
                     batimentos: parseInt(data.heartRate) || 72,
-                    statusOxigenio: 'stable',
-                    statusTemperatura: 'stable',
-                    statusBatimentos: 'stable'
+                    statusOxigenio: 'normal',
+                    statusTemperatura: 'normal',
+                    statusBatimentos: 'normal'
                 }
             };
 
+            console.log('📤 Enviando atualização do paciente:', pacienteData);
+
             try {
                 const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
-                const data = await apiRequest(`/api/pacientes/${currentPatientId}`, {
+                if (!usuarioLogado || !usuarioLogado.email) {
+                    alert('Erro: Usuário não autenticado');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await apiRequest(`/api/pacientes/${currentPatientId}`, {
                     method: 'PUT',
                     headers: {
                         'X-Usuario-Email': usuarioLogado.email,
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(pacienteData)
                 });
 
-                if (data) {
+                console.log('✅ Resposta do servidor:', response);
+
+                if (response && (response.id || response.success !== false)) {
                     closeModal('editModal');
                     await carregarPacientes();
                     renderPatients();
                     updateStats();
                     alert('Paciente atualizado com sucesso!');
                 } else {
-                    alert('Erro ao atualizar paciente');
+                    alert('Erro ao atualizar paciente: ' + (response.message || 'Erro desconhecido'));
                 }
             } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao atualizar paciente. Tente novamente.');
+                console.error('❌ Erro ao atualizar:', error);
+                alert('Erro ao atualizar paciente: ' + error.message);
             }
         });
 

@@ -40,7 +40,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update  # Mantém dados existentes
+      ddl-auto: create  # Cria tabelas automaticamente
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: false
@@ -48,12 +48,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
-    defer-datasource-initialization: false
+    defer-datasource-initialization: true  # Aguarda tabelas serem criadas
   
-  # SQL Initialization
+  # SQL Initialization - DESABILITADO
   sql:
     init:
-      mode: always
+      mode: never  # Dados iniciais via DadosIniciais.java
 
 # Logging para produção
 # CORS Configuration
