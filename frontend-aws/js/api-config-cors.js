@@ -139,7 +139,7 @@ let mockData = {
 // Função para NGINX HTTPS direto (sem proxies)
 window.apiRequest = async function(endpoint, options = {}) {
     // URL HTTPS direta para NGINX proxy no EC2
-    const url = `https://54.82.30.167${endpoint}`;
+    const url = `https://44.213.58.90${endpoint}`;
     
     console.log(`🌐 NGINX HTTPS Direto: ${options.method || 'GET'} ${url}`);
     
@@ -415,7 +415,7 @@ window.API_CONFIG = API_CONFIG;
 // Função helper para aceitar certificado NGINX
 window.aceitarCertificado = function() {
     console.log('🔐 Abrindo página para aceitar certificado...');
-    const newWindow = window.open('https://54.82.30.167/api/usuarios', '_blank');
+    const newWindow = window.open('https://44.213.58.90/api/usuarios', '_blank');
     
     setTimeout(() => {
         console.log('💡 INSTRUÇÕES:');
