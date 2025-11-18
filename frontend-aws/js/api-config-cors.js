@@ -136,12 +136,15 @@ let mockData = {
     alertas: []
 };
 
-// Função para conexão HTTP direto (sem SSL/TLS)
+// Função principal com múltiplos proxies CORS e fallback
 window.apiRequest = async function(endpoint, options = {}) {
-    // URL HTTP direta para EC2 (proxy NGINX porta 80)
-    const url = `http://44.213.58.90${endpoint}`;
+    const backends = [
+        { name: 'AllOrigins', url: `https://api.allorigins.win/raw?url=http://44.213.58.90${endpoint}` },
+        { name: 'CORS-Anywhere', url: `https://cors-anywhere.herokuapp.com/http://44.213.58.90${endpoint}` },
+        { name: 'ThingProxy', url: `https://thingproxy.freeboard.io/fetch/http://44.213.58.90${endpoint}` }
+    ];
     
-    console.log(`🌐 HTTP Direto: ${options.method || 'GET'} ${url}`);
+    console.log(`🌐 Tentando conectar ao backend via proxy: ${options.method || 'GET'} ${endpoint}`);
     
     const config = {
         method: options.method || 'GET',
@@ -153,38 +156,42 @@ window.apiRequest = async function(endpoint, options = {}) {
         ...options
     };
 
-    try {
-        const response = await fetch(url, config);
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
-        }
-        
-        let data;
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-        } else {
-            const text = await response.text();
-            try {
-                data = JSON.parse(text);
-            } catch {
-                data = { message: text };
+    // Tentar cada proxy em sequência
+    for (const backend of backends) {
+        try {
+            console.log(`🔄 Tentando ${backend.name}...`);
+            const response = await fetch(backend.url, config);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
             }
+            
+            let data;
+            const contentType = response.headers.get('content-type');
+            
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    data = { message: text };
+                }
+            }
+            
+            console.log(`✅ ${backend.name} - Sucesso!`);
+            return data;
+            
+        } catch (error) {
+            console.warn(`❌ ${backend.name} falhou:`, error.message);
+            continue;
         }
-        
-        console.log(`✅ HTTP - Sucesso!`);
-        return data;
-        
-    } catch (error) {
-        console.error(`❌ HTTP - Falhou:`, error.message);
-        
-        // Se falhar, usar Mock como fallback
-        console.warn('Usando Mock como fallback...');
-        throw error;
     }
+    
+    // Se todos os proxies falharem, usar mock
+    console.error('❌ Todos os proxies falharam. Usando Mock como fallback.');
+    throw new Error('Não foi possível conectar ao backend');
 };
 
 // Salvar referência original dos proxies
