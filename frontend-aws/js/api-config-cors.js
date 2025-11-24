@@ -133,11 +133,10 @@ let mockData = {
     alertas: []
 };
 
-// Função principal com múltiplos proxies CORS e fallback
+// Função principal com fallback para conectar ao backend
 window.apiRequest = async function(endpoint, options = {}) {
-    // Usar proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('http://3.239.95.166:8080' + endpoint)}`;
-    console.log(`🌐 Tentando conectar ao backend via proxy: ${options.method || 'GET'} ${endpoint}`);
+    const backendUrl = `https://3.239.95.166${endpoint}`;
+    console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${endpoint}`);
     
     const config = {
         method: options.method || 'GET',
@@ -150,10 +149,12 @@ window.apiRequest = async function(endpoint, options = {}) {
     };
     
     try {
-        const response = await fetch(proxyUrl, config);
+        const response = await fetch(backendUrl, config);
+        
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
+        
         let data;
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
@@ -166,11 +167,21 @@ window.apiRequest = async function(endpoint, options = {}) {
                 data = { message: text };
             }
         }
-        console.log(`✅ Backend via proxy - Sucesso!`);
+        console.log(`✅ Backend HTTPS - Sucesso!`);
         return data;
     } catch (error) {
-        console.error('❌ Falha ao conectar ao backend via proxy:', error.message);
-        throw new Error('Não foi possível conectar ao backend');
+        console.error('❌ Falha ao conectar ao backend:', error.message);
+        
+        // Se falhar por certificado autoassinado
+        if (error.message.includes('Failed to fetch')) {
+            console.warn('⚠️ Certificado SSL não confiável!');
+            console.warn('💡 Solução:');
+            console.warn('1. Abra https://3.239.95.166/api/usuarios em nova aba');
+            console.warn('2. Aceite o certificado autoassinado');
+            console.warn('3. Volte e recarregue esta página');
+        }
+        
+        throw error;
     }
 };
 
