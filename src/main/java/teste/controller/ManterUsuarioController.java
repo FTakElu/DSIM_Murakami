@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import teste.model.Usuario;
-import teste.service.UsuarioService;
+import teste.service.ManterUsuarioService;
 
 @RestController
 @RequestMapping("/api/usuarios")
-public class UsuarioController {
+public class ManterUsuarioController {
     
     @Autowired
-    private UsuarioService usuarioService;
+    private ManterUsuarioService usuarioService;
     
     /**
      * Endpoint para login de usuário

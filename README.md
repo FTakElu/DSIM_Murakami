@@ -6,10 +6,12 @@
 ---
 
 ## 📦 Estrutura do Projeto
-- `aws-setup/README.md`: Scripts e instruções para deploy AWS (EC2, RDS, Amplify)
-- `frontend-aws/README.md`: Frontend para AWS Amplify
-- `src/README.md`: Backend Spring Boot
-- `Diagramas/README.md`: Diagramas de arquitetura e entidades
+- `aws-setup/`: Scripts e instruções para deploy AWS (EC2, RDS, Amplify)
+- `frontend-aws/`: Frontend para AWS Amplify (páginas HTML, CSS, JS)
+- `src/`: Backend Spring Boot (controllers, services, models, repositories)
+- `diagrams/`: Diagramas de arquitetura e entidades UML
+- `scripts/`: Scripts de deploy e configuração (deploy-nova-sessao.bat, setup-dsim.bat)
+- `config/`: Arquivos de configuração (amplify.yml, pom.xml)
 
 ---
 
@@ -69,9 +71,29 @@ cd aws-setup
 
 ## 📁 Subdiretórios
 - [`aws-setup/`](aws-setup/README.md): Scripts de automação AWS
-- [`frontend-aws/`](frontend-aws/README.md): Frontend para Amplify
-- [`src/`](src/README.md): Backend Spring Boot
-- [`Diagramas/`](Diagramas/README.md): Diagramas do projeto
+- [`frontend-aws/`](frontend-aws/README.md): Frontend para Amplify (HTML/CSS/JS)
+- [`src/`](src/README.md): Backend Spring Boot (API REST)
+- [`diagrams/`](diagrams/README.md): Diagramas UML do projeto
+
+## 🏗️ Arquitetura
+
+### Backend (Spring Boot + JPA)
+- **Controllers**: Endpoints REST com padrão `ManterXController` (ex: ManterPacienteController)
+- **Services**: Lógica de negócio com padrão `ManterXService` para CRUD (ex: ManterPacienteService)
+- **Repositories**: Acesso a dados seguindo padrão Spring Data JPA: `XRepository` (ex: PacienteRepository)
+- **Models**: Entidades JPA (Paciente, Usuario, Alerta, SinaisVitais, etc)
+- **Enums**: Enumerações em pacote separado (TipoAlerta, NivelPrioridade, StatusSinal)
+- **Schedulers**: Serviços agendados (SinaisVitaisAutomaticoService - executa a cada 5 minutos)
+
+### Frontend (HTML/CSS/JS)
+Páginas seguem nomenclatura dos casos de uso:
+- `cadastrar-usuario.html`: UC01 - Cadastrar Usuário
+- `login.html`: UC02 - Autenticar Usuário
+- `cadastrar-paciente.html`: UC03 - Cadastrar Paciente
+- `configurar-alertas.html`: UC04 - Configurar Alertas
+- `visualizar-painel-pacientes.html`: UC05 - Visualizar Painel de Pacientes
+- `visualizar-informacoes-paciente.html`: UC06 - Visualizar Informações do Paciente
+- `visualizar-painel-usuarios.html`: Gerenciar Usuários (Admin)
 
 ---
 

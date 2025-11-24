@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import teste.model.Alerta;
-import teste.model.Alerta.NivelPrioridade;
-import teste.model.Alerta.TipoAlerta;
 import teste.model.Paciente;
 import teste.model.SinaisVitais;
+import teste.model.enums.NivelPrioridade;
+import teste.model.enums.TipoAlerta;
 import teste.repository.AlertaRepository;
 
 @Service
 @Transactional
-public class AlertaService {
+public class ManterAlertaService {
     
     @Autowired
     private AlertaRepository alertaRepository;

@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import teste.model.ConfiguracaoAlerta;
-import teste.service.ConfiguracaoAlertaService;
+import teste.service.ManterConfiguracaoAlertaService;
 
 @RestController
 @RequestMapping("/api/configuracao-alertas")
-public class ConfiguracaoAlertaController {
+public class ManterAlertaController {
     
     @Autowired
-    private ConfiguracaoAlertaService configuracaoAlertaService;
+    private ManterConfiguracaoAlertaService configuracaoAlertaService;
     
     /**
      * Listar todas as configurações de alerta

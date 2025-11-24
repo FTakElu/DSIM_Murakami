@@ -60,12 +60,12 @@ public class Paciente implements Serializable {
     @Column(name = "ativo", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean ativo = true;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "contato_emergencial_id")
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "contato_emergencial_id", nullable = false)
     private ContatoEmergencial contatoEmergencial;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "informacao_medica_id")
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "informacao_medica_id", nullable = false)
     private InformacaoMedica informacaoMedica;
     
     @OneToOne(cascade = CascadeType.ALL)

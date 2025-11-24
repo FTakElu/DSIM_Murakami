@@ -14,7 +14,7 @@ import teste.repository.PacienteRepository;
 
 @Service
 @Transactional
-public class ConfiguracaoAlertaService {
+public class ManterConfiguracaoAlertaService {
     
     @Autowired
     private ConfiguracaoAlertaRepository configuracaoAlertaRepository;

@@ -23,11 +23,11 @@ import teste.model.Paciente;
 import teste.model.Usuario;
 import teste.repository.PacienteRepository;
 import teste.service.ManterPacienteService;
-import teste.service.UsuarioService;
+import teste.service.ManterUsuarioService;
 
 @RestController
 @RequestMapping("/api/pacientes")
-public class PacienteController {
+public class ManterPacienteController {
 
 	@Autowired
 	private ManterPacienteService pacienteService;
@@ -36,7 +36,7 @@ public class PacienteController {
 	private PacienteRepository pacienteRepository;
 
 	@Autowired
-	private UsuarioService usuarioService;
+	private ManterUsuarioService usuarioService;
 
     @GetMapping
     public ResponseEntity<List<Paciente>> listarTodos(

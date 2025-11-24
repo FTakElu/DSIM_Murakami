@@ -18,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import teste.model.enums.NivelPrioridade;
+import teste.model.enums.TipoAlerta;
 
 @Data
 @NoArgsConstructor
@@ -83,43 +85,5 @@ public class Alerta implements Serializable {
     @PrePersist
     protected void onCreate() {
         dataCriacao = LocalDateTime.now();
-    }
-    
-    public enum TipoAlerta {
-        OXIGENIO_BAIXO("Oxigenação Baixa"),
-        OXIGENIO_ALTO("Oxigenação Alta"),
-        TEMPERATURA_BAIXA("Temperatura Baixa"),
-        TEMPERATURA_ALTA("Temperatura Alta"),
-        BATIMENTOS_BAIXO("Batimentos Baixos"),
-        BATIMENTOS_ALTO("Batimentos Altos"),
-        EMERGENCIA("Emergência Médica"),
-        SISTEMA("Alerta do Sistema");
-        
-        private final String descricao;
-        
-        TipoAlerta(String descricao) {
-            this.descricao = descricao;
-        }
-        
-        public String getDescricao() {
-            return descricao;
-        }
-    }
-    
-    public enum NivelPrioridade {
-        BAIXA("Baixa"),
-        MEDIA("Média"),
-        ALTA("Alta"),
-        CRITICA("Crítica");
-        
-        private final String descricao;
-        
-        NivelPrioridade(String descricao) {
-            this.descricao = descricao;
-        }
-        
-        public String getDescricao() {
-            return descricao;
-        }
     }
 }

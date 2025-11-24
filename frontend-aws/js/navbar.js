@@ -28,23 +28,23 @@ function getNavbarButtons(currentPage) {
                 <i class="fas fa-users"></i>
                 Usuários
             </a>
-            <a href="adicionar-paciente.html" class="btn btn-primary">
+            <a href="cadastrar-paciente.html" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 Novo Paciente
             </a>
         `,
         'usuarios': `
-            <a href="pacientes.html" class="btn btn-light">
+            <a href="visualizar-painel-pacientes.html" class="btn btn-light">
                 <i class="fas fa-chart-line"></i>
                 Dashboard
             </a>
-            <a href="adicionar-paciente.html" class="btn btn-primary">
+            <a href="cadastrar-paciente.html" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 Novo Paciente
             </a>
         `,
         'adicionar-paciente': `
-            <a href="pacientes.html" class="btn btn-light">
+            <a href="visualizar-painel-pacientes.html" class="btn btn-light">
                 <i class="fas fa-chart-line"></i>
                 Dashboard
             </a>
@@ -54,7 +54,7 @@ function getNavbarButtons(currentPage) {
             </a>
         `,
         'detalhes-paciente': `
-            <a href="pacientes.html" class="btn btn-light">
+            <a href="visualizar-painel-pacientes.html" class="btn btn-light">
                 <i class="fas fa-arrow-left"></i>
                 Voltar
             </a>
@@ -64,7 +64,7 @@ function getNavbarButtons(currentPage) {
             </button>
         `,
         'configurar-alertas': `
-            <a href="pacientes.html" class="btn btn-light">
+            <a href="visualizar-painel-pacientes.html" class="btn btn-light">
                 <i class="fas fa-chart-line"></i>
                 Dashboard
             </a>

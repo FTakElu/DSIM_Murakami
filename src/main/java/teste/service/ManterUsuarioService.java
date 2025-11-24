@@ -13,7 +13,7 @@ import teste.repository.UsuarioRepository;
 
 @Service
 @Transactional
-public class UsuarioService {
+public class ManterUsuarioService {
     
     @Autowired
     private UsuarioRepository usuarioRepository;

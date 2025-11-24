@@ -6,9 +6,10 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import teste.model.Alerta;
 import teste.model.Paciente;
 import teste.model.SinaisVitais;
+import teste.model.enums.NivelPrioridade;
+import teste.model.enums.TipoAlerta;
 import teste.repository.PacienteRepository;
 import teste.repository.SinaisVitaisRepository;
 
@@ -22,7 +23,7 @@ public class SinaisVitaisService {
     private PacienteRepository pacienteRepository;
     
     @Autowired
-    private AlertaService alertaService;
+    private ManterAlertaService alertaService;
     
     private final Random random = new Random();
     
@@ -151,9 +152,9 @@ public class SinaisVitaisService {
             if (sinaisVitais.getOxigenio() < 90.0) {
                 alertaService.criarAlerta(
                     paciente,
-                    Alerta.TipoAlerta.OXIGENIO_BAIXO,
+                    TipoAlerta.OXIGENIO_BAIXO,
                     "Saturação de oxigênio crítica: " + String.format("%.1f%%", sinaisVitais.getOxigenio()),
-                    Alerta.NivelPrioridade.CRITICA
+                    NivelPrioridade.CRITICA
                 );
             }
             
@@ -161,22 +162,22 @@ public class SinaisVitaisService {
             if (sinaisVitais.getTemperatura() > 38.5) {
                 alertaService.criarAlerta(
                     paciente,
-                    Alerta.TipoAlerta.TEMPERATURA_ALTA,
+                    TipoAlerta.TEMPERATURA_ALTA,
                     "Febre alta detectada: " + String.format("%.1f°C", sinaisVitais.getTemperatura()),
-                    Alerta.NivelPrioridade.ALTA
+                    NivelPrioridade.ALTA
                 );
             }
             
             // Verificar batimentos anômalos
             if (sinaisVitais.getBatimentos() < 50 || sinaisVitais.getBatimentos() > 120) {
                 String tipo = sinaisVitais.getBatimentos() < 50 ? "Bradicardia severa" : "Taquicardia severa";
-                Alerta.TipoAlerta tipoAlerta = sinaisVitais.getBatimentos() < 50 ? 
-                    Alerta.TipoAlerta.BATIMENTOS_BAIXO : Alerta.TipoAlerta.BATIMENTOS_ALTO;
+                TipoAlerta tipoAlerta = sinaisVitais.getBatimentos() < 50 ? 
+                    TipoAlerta.BATIMENTOS_BAIXO : TipoAlerta.BATIMENTOS_ALTO;
                 alertaService.criarAlerta(
                     paciente,
                     tipoAlerta,
                     tipo + ": " + sinaisVitais.getBatimentos() + " bpm",
-                    Alerta.NivelPrioridade.ALTA
+                    NivelPrioridade.ALTA
                 );
             }
         } catch (Exception e) {

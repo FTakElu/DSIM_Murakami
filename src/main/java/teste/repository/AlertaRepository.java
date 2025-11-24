@@ -9,9 +9,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import teste.model.Alerta;
-import teste.model.Alerta.NivelPrioridade;
-import teste.model.Alerta.TipoAlerta;
 import teste.model.Paciente;
+import teste.model.enums.NivelPrioridade;
+import teste.model.enums.TipoAlerta;
 
 @Repository
 public interface AlertaRepository extends JpaRepository<Alerta, Long> {
