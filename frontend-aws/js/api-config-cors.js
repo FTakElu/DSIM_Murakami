@@ -5,7 +5,6 @@ const API_CONFIG = {
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
-    ENDPOINTS: {
         // Pacientes
         PACIENTES: '/api/pacientes',
         PACIENTE_BY_ID: '/api/pacientes', // GET /api/pacientes/{id}
