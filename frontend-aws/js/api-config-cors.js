@@ -3,9 +3,9 @@
 
 const API_CONFIG = {
     // Proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
-  BASE_URL: 'https://api.allorigins.win/raw?url=http://3.237.26.213:8080',
-    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://3.237.26.213:8080',
-    DIRECT_HTTP: 'http://3.237.26.213:8080',  // Para uso local/desenvolvimento
+  BASE_URL: 'https://api.allorigins.win/raw?url=http://3.239.95.166:8080',
+    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://3.239.95.166:8080',
+    DIRECT_HTTP: 'http://3.239.95.166:8080',  // Para uso local/desenvolvimento
     
   
     
@@ -136,7 +136,7 @@ let mockData = {
 // Função principal com múltiplos proxies CORS e fallback
 window.apiRequest = async function(endpoint, options = {}) {
     // Comunicação direta com backend HTTPS
-    const backendUrl = `https://3.237.26.213${endpoint}`;
+    const backendUrl = `https://3.239.95.166${endpoint}`;
     console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${backendUrl}`);
     const config = {
         method: options.method || 'GET',
@@ -400,12 +400,12 @@ window.API_CONFIG = API_CONFIG;
 // Função helper para aceitar certificado NGINX
 window.aceitarCertificado = function() {
     console.log('🔐 Abrindo página para aceitar certificado...');
-    const newWindow = window.open('https://3.237.26.213/api/usuarios', '_blank');
+    const newWindow = window.open('https://3.239.95.166/api/usuarios', '_blank');
     
     setTimeout(() => {
         console.log('💡 INSTRUÇÕES:');
         console.log('1. Na nova aba, clique "Avançado"');
-    console.log('2. Clique "Continuar para 3.237.26.213 (não seguro)"');
+    console.log('2. Clique "Continuar para 3.239.95.166 (não seguro)"');
         console.log('3. Feche a aba e volte aqui');
         console.log('4. Tente cadastrar/logar novamente');
     }, 2000);
