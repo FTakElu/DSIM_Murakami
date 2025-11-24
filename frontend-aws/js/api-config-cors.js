@@ -135,8 +135,8 @@ let mockData = {
 
 // Função principal com múltiplos proxies CORS e fallback
 window.apiRequest = async function(endpoint, options = {}) {
-    // Comunicação direta com backend HTTPS
-    const backendUrl = `https://3.239.95.166${endpoint}`;
+    // Comunicação direta com backend HTTP
+    const backendUrl = `http://3.239.95.166:8080${endpoint}`;
     console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${backendUrl}`);
     const config = {
         method: options.method || 'GET',
