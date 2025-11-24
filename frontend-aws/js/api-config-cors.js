@@ -166,33 +166,13 @@ window.apiRequest = async function(endpoint, options = {}) {
     } catch (error) {
         console.error('❌ Falha ao conectar ao backend:', error.message);
         
-        // Se falhar por certificado, abrir popup automático para aceitar
+        // Apenas avisar no console, sem popup
         if (error.message.includes('Failed to fetch')) {
             console.warn('⚠️ Certificado SSL precisa ser aceito!');
-            
-            // Abrir popup para aceitar certificado
-            const width = 600;
-            const height = 400;
-            const left = (screen.width - width) / 2;
-            const top = (screen.height - height) / 2;
-            
-            const popup = window.open(
-                'https://3.237.34.95/api/usuarios',
-                'ssl_cert',
-                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
-            );
-            
-            if (popup) {
-                alert('⚠️ Um popup foi aberto para aceitar o certificado SSL.\n\n' +
-                      '1. Clique em "Avançado" ou "Advanced"\n' +
-                      '2. Clique em "Prosseguir para 3.237.34.95 (não seguro)"\n' +
-                      '3. Feche o popup e tente novamente');
-            } else {
-                alert('⚠️ Por favor, permita popups e:\n\n' +
-                      '1. Abra https://3.237.34.95/api/usuarios em nova aba\n' +
-                      '2. Aceite o certificado SSL\n' +
-                      '3. Volte e tente novamente');
-            }
+            console.info('💡 Para aceitar o certificado:');
+            console.info('   1. Abra https://3.237.34.95/api/usuarios em nova aba');
+            console.info('   2. Aceite o certificado SSL');
+            console.info('   3. Volte e tente novamente');
         }
         
         throw error;
