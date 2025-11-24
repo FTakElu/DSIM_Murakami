@@ -1,7 +1,7 @@
 // Configuração de API - Conexão direta HTTPS com backend
 const API_CONFIG = {
     // Backend HTTPS direto (NGINX com SSL)
-    BASE_URL: 'https://98.92.80.193',
+    BASE_URL: 'https://3.237.34.95',
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
@@ -129,7 +129,7 @@ let mockData = {
 
 // Função principal com fallback para conectar ao backend
 window.apiRequest = async function(endpoint, options = {}) {
-    const backendUrl = `https://98.92.80.193${endpoint}`;
+    const backendUrl = `https://3.237.34.95${endpoint}`;
     console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${endpoint}`);
     
     const config = {
@@ -177,7 +177,7 @@ window.apiRequest = async function(endpoint, options = {}) {
             const top = (screen.height - height) / 2;
             
             const popup = window.open(
-                'https://98.92.80.193/api/usuarios',
+                'https://3.237.34.95/api/usuarios',
                 'ssl_cert',
                 `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
             );
@@ -185,11 +185,11 @@ window.apiRequest = async function(endpoint, options = {}) {
             if (popup) {
                 alert('⚠️ Um popup foi aberto para aceitar o certificado SSL.\n\n' +
                       '1. Clique em "Avançado" ou "Advanced"\n' +
-                      '2. Clique em "Prosseguir para 98.92.80.193 (não seguro)"\n' +
+                      '2. Clique em "Prosseguir para 3.237.34.95 (não seguro)"\n' +
                       '3. Feche o popup e tente novamente');
             } else {
                 alert('⚠️ Por favor, permita popups e:\n\n' +
-                      '1. Abra https://98.92.80.193/api/usuarios em nova aba\n' +
+                      '1. Abra https://3.237.34.95/api/usuarios em nova aba\n' +
                       '2. Aceite o certificado SSL\n' +
                       '3. Volte e tente novamente');
             }
