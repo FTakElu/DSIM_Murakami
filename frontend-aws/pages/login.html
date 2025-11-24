@@ -178,6 +178,12 @@
             color: #047857;
             border-left: 4px solid #059669;
         }
+        
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #2563eb;
+        }
     </style>
 </head>
 
@@ -252,6 +258,7 @@
         // Mostrar mensagem
         function showMessage(text, type = 'error') {
             const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = ''; // Limpar conteúdo anterior
             messageDiv.textContent = text;
             messageDiv.className = `message ${type}`;
             messageDiv.style.display = 'block';
@@ -330,7 +337,24 @@
                 
             } catch (error) {
                 console.error('Erro:', error);
-                showMessage('Erro ao fazer login. Tente novamente.', 'error');
+                
+                // Se for erro de certificado SSL
+                if (error.message && error.message.includes('Failed to fetch')) {
+                    showMessage('⚠️ Erro de certificado SSL! Clique no botão abaixo para aceitar o certificado.', 'error');
+                    
+                    // Adicionar botão para aceitar certificado
+                    const messageDiv = document.getElementById('message');
+                    const acceptBtn = document.createElement('button');
+                    acceptBtn.textContent = '🔒 Aceitar Certificado SSL';
+                    acceptBtn.style.cssText = 'margin-top: 10px; padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; width: 100%;';
+                    acceptBtn.onclick = function() {
+                        window.open('https://98.92.80.193/api/usuarios', '_blank');
+                        showMessage('Após aceitar o certificado na nova aba, volte aqui e tente fazer login novamente.', 'info');
+                    };
+                    messageDiv.appendChild(acceptBtn);
+                } else {
+                    showMessage('Erro ao fazer login. Tente novamente.', 'error');
+                }
             } finally {
                 // Reabilitar botão
                 submitBtn.disabled = false;
