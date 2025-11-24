@@ -53,7 +53,7 @@ cd aws-setup
 
 ### 6. **Acessar o Sistema**
 - Frontend: `https://main.d2jxbir2dzq8xg.amplifyapp.com`
-- Backend: `http://3.239.95.166:8080/api`
+- Backend: `http://98.92.80.193:8080/api`
 - Banco RDS: `dsim-postgres-20251109083108.cbx9vaugpv1l.us-east-1.rds.amazonaws.com`
 
 ### 7. **Credenciais Padrão**

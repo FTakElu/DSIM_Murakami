@@ -3,9 +3,9 @@
 
 const API_CONFIG = {
     // Proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
-  BASE_URL: 'https://api.allorigins.win/raw?url=http://3.239.95.166:8080',
-    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://3.239.95.166:8080',
-    DIRECT_HTTP: 'http://3.239.95.166:8080',  // Para uso local/desenvolvimento
+  BASE_URL: 'https://api.allorigins.win/raw?url=http://98.92.80.193:8080',
+    BACKUP_PROXY: 'https://cors-anywhere.herokuapp.com/http://98.92.80.193:8080',
+    DIRECT_HTTP: 'http://98.92.80.193:8080',  // Para uso local/desenvolvimento
     
   
     
@@ -135,7 +135,7 @@ let mockData = {
 
 // Função principal com fallback para conectar ao backend
 window.apiRequest = async function(endpoint, options = {}) {
-    const backendUrl = `https://3.239.95.166${endpoint}`;
+    const backendUrl = `https://98.92.80.193${endpoint}`;
     console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${endpoint}`);
     
     const config = {
@@ -176,7 +176,7 @@ window.apiRequest = async function(endpoint, options = {}) {
         if (error.message.includes('Failed to fetch')) {
             console.warn('⚠️ Certificado SSL não confiável!');
             console.warn('💡 Solução:');
-            console.warn('1. Abra https://3.239.95.166/api/usuarios em nova aba');
+            console.warn('1. Abra https://98.92.80.193/api/usuarios em nova aba');
             console.warn('2. Aceite o certificado autoassinado');
             console.warn('3. Volte e recarregue esta página');
         }
