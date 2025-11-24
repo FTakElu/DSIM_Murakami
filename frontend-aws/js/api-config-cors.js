@@ -135,9 +135,10 @@ let mockData = {
 
 // Função principal com múltiplos proxies CORS e fallback
 window.apiRequest = async function(endpoint, options = {}) {
-    // Comunicação direta com backend HTTP
-    const backendUrl = `http://3.239.95.166:8080${endpoint}`;
-    console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${backendUrl}`);
+    // Usar proxy CORS para resolver Mixed Content (HTTPS frontend → HTTP backend)
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('http://3.239.95.166:8080' + endpoint)}`;
+    console.log(`🌐 Tentando conectar ao backend via proxy: ${options.method || 'GET'} ${endpoint}`);
+    
     const config = {
         method: options.method || 'GET',
         headers: {
@@ -147,8 +148,9 @@ window.apiRequest = async function(endpoint, options = {}) {
         },
         ...options
     };
+    
     try {
-        const response = await fetch(backendUrl, config);
+        const response = await fetch(proxyUrl, config);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
@@ -164,10 +166,10 @@ window.apiRequest = async function(endpoint, options = {}) {
                 data = { message: text };
             }
         }
-        console.log(`✅ Backend - Sucesso!`);
+        console.log(`✅ Backend via proxy - Sucesso!`);
         return data;
     } catch (error) {
-        console.error('❌ Falha ao conectar ao backend:', error.message);
+        console.error('❌ Falha ao conectar ao backend via proxy:', error.message);
         throw new Error('Não foi possível conectar ao backend');
     }
 };
