@@ -1,7 +1,7 @@
 // Configuração de API - Conexão direta HTTPS com backend
 const API_CONFIG = {
     // Backend HTTPS direto (NGINX com SSL)
-    BASE_URL: 'https://3.237.34.95',
+    BASE_URL: 'https://98.93.26.119',
     
     // Endpoints da API (corrigidos para backend real)
     ENDPOINTS: {
@@ -129,7 +129,7 @@ let mockData = {
 
 // Função principal com fallback para conectar ao backend
 window.apiRequest = async function(endpoint, options = {}) {
-    const backendUrl = `https://3.237.34.95${endpoint}`;
+    const backendUrl = `https://98.93.26.119${endpoint}`;
     console.log(`🌐 Tentando conectar ao backend: ${options.method || 'GET'} ${endpoint}`);
     
     const config = {
@@ -170,7 +170,7 @@ window.apiRequest = async function(endpoint, options = {}) {
         if (error.message.includes('Failed to fetch')) {
             console.warn('⚠️ Certificado SSL precisa ser aceito!');
             console.info('💡 Para aceitar o certificado:');
-            console.info('   1. Abra https://3.237.34.95/api/usuarios em nova aba');
+            console.info('   1. Abra https://98.93.26.119/api/usuarios em nova aba');
             console.info('   2. Aceite o certificado SSL');
             console.info('   3. Volte e tente novamente');
         }
